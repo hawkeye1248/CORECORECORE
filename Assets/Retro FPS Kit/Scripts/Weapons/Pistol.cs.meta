@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 052c3ef5ce4b61a4188217e7a00b75c9
+timeCreated: 1512318358
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Scripts/Weapons/Pistol.cs
+  uploadId: 487006

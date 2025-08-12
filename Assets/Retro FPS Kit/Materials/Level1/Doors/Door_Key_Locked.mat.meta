@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e43c3f45192e31641b85e6bf1665d329
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Materials/Level1/Doors/Door_Key_Locked.mat
+  uploadId: 487006

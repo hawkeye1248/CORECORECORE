@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 688943b6dd085bf4f9e824d4ce0bd9b7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Prefabs/Player.prefab
+  uploadId: 487006

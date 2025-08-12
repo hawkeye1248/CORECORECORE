@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 869614f144ed86545be5fe5a2afd0bca
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Scripts/Triggers/NewLevelScript.cs
+  uploadId: 487006
