@@ -16,10 +16,11 @@ MonoBehaviour:
   magazineSize: 5
   reloadTime: 1
   fireRate: 0.1
-  burstAmount: 1
+  burstAmount: 4
   burstRate: 0
   isAutomatic: 0
   xSpread: {x: -0.05, y: 0.05}
   ySpread: {x: -0.05, y: 0.05}
   range: 100
-  wallBulletHole: {fileID: 3153295823155394620, guid: 67f1ddd7c3af3804884401d43735ca80, type: 3}
+  wallBulletHole: {fileID: 3153295823155394620, guid: 67f1ddd7c3af3804884401d43735ca80,
+    type: 3}
