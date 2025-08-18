@@ -3,7 +3,22 @@ guid: 25e8bba46f0ef4249a2a46028dba61ee
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cloth_lp
+    second: {fileID: 2100000, guid: ef5d0ff6d0518054c8674503ecca2d05, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Gauntlet_lp
+    second: {fileID: 2100000, guid: 8e16fa8e7e251ba4c94d330a65781726, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glove
+    second: {fileID: 2100000, guid: c49818f5461ff6b4c8cadad32001785d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
