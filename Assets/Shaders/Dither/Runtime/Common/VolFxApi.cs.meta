@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: e4510fe2c968daf4a95af9db0c342587
+timeCreated: 1729157076
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280822
+  packageName: Dither - Retro pixelated pattern Effect
+  packageVersion: 1.3.2
+  assetPath: Assets/Dither/Runtime/Common/VolFxApi.cs
+  uploadId: 719434

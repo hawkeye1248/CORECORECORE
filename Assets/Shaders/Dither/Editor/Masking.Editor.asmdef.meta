@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 1b891e534e5dc4e41b36a715b33c332e
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280822
+  packageName: Dither - Retro pixelated pattern Effect
+  packageVersion: 1.3.2
+  assetPath: Assets/Dither/Editor/Masking.Editor.asmdef
+  uploadId: 719434

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: bef8869b65db49f4d8362f2864418141
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280822
+  packageName: Dither - Retro pixelated pattern Effect
+  packageVersion: 1.3.2
+  assetPath: Assets/Dither/Editor/CurveValueDraver.cs
+  uploadId: 719434

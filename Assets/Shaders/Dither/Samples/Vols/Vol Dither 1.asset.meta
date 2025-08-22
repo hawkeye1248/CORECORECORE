@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 69d57dfeecf20db40aa35802c1be94cb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280822
+  packageName: Dither - Retro pixelated pattern Effect
+  packageVersion: 1.3.2
+  assetPath: Assets/Dither/Samples/Vols/Vol Dither 1.asset
+  uploadId: 719434
