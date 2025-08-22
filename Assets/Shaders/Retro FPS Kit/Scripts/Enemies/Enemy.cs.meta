@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: f595c886f7a44334fb5537caae4354bf
+timeCreated: 1512309544
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Scripts/Enemies/Enemy.cs
+  uploadId: 487006

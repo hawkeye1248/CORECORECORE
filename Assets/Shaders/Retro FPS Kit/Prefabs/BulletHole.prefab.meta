@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: c7ff3c90108df484bb89509371b62e8a
+timeCreated: 1512307913
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Prefabs/BulletHole.prefab
+  uploadId: 487006

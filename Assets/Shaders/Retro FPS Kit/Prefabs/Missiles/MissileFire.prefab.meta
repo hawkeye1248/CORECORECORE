@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b128982cdf107df42b9ed6e827d23e18
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Prefabs/Missiles/MissileFire.prefab
+  uploadId: 487006

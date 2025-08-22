@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: da3af61a51b0e22488baa416b3a03d9a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 209391
+  packageName: FPS Retro Shooter - Complete KIT
+  packageVersion: 1.6
+  assetPath: Assets/Retro FPS Kit/Animations/Enemy/Flying_Monster_Anim/Right.anim
+  uploadId: 487006
