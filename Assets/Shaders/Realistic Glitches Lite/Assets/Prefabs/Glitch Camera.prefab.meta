@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 51064daf5944048349bdb57b962b25b4
+timeCreated: 1513429052
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107974
+  packageName: Realistic Glitches Lite
+  packageVersion: 1.0
+  assetPath: Assets/Realistic Glitches Lite/Assets/Prefabs/Glitch Camera.prefab
+  uploadId: 220978

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 5c710f5672e5a48f4ac48dbcb1029867
+timeCreated: 1511974648
+licenseType: Store
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107974
+  packageName: Realistic Glitches Lite
+  packageVersion: 1.0
+  assetPath: Assets/Realistic Glitches Lite/Assets/Shaders/Shift.shader
+  uploadId: 220978

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cd09f330e44ee48418e7a17595888123
+timeCreated: 1502460499
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107974
+  packageName: Realistic Glitches Lite
+  packageVersion: 1.0
+  assetPath: Assets/Realistic Glitches Lite/Assets/Shaders/Distortion2D__FullOnly.shader
+  uploadId: 220978
