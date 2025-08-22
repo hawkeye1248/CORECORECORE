@@ -15,31 +15,31 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 0.638
+    m_Value: 0.233
   m_Power:
     m_OverrideState: 1
-    m_Value: 0.153
+    m_Value: 1
   m_Scale:
     m_OverrideState: 1
-    m_Value: 0.752
+    m_Value: 0.989
   m_Pixelate:
     m_OverrideState: 1
     m_Value: 1
   m_Fps:
     m_OverrideState: 1
-    m_Value: 62
+    m_Value: 120
   m_Palette:
     m_OverrideState: 1
-    m_Value: {fileID: 2800000, guid: 32e8946a8a4d5f5429c5fc9aa1f8cadb, type: 3}
+    m_Value: {fileID: 2800000, guid: aa4600223c43bb64f9f80cddbdfb62c9, type: 3}
   m_Pattern:
     m_OverrideState: 1
-    m_Value: {fileID: 2800000, guid: 2356b0fb77bd87d45bb57815544505a2, type: 3}
+    m_Value: {fileID: 2800000, guid: 2600079fc3c0bcd4e9f07d5cac498666, type: 3}
   m_Mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   m_NoiseScale:
     m_OverrideState: 1
-    m_Value: 4.43
+    m_Value: 7
   m_Noise:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: 740b841d649449f428b57372f4eb05f2, type: 3}
