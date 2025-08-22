@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class Player : MonoBehaviour
     [Header("Other Objects and Children")]
     [SerializeField] private Transform playerModel;
     [SerializeField] private Transform orientation;
+    [SerializeField] private Transform weaponObject;
     private Camera mainCamera;
     [SerializeField] private CinemachineBasicMultiChannelPerlin cinemachinePerlin;
 
@@ -46,6 +48,22 @@ public class Player : MonoBehaviour
     private float startYscale;
     private bool isSliding = false;
 
+    [Header("Wall Run")]
+    private bool isWallRunning = false;
+    private bool wallRunCooldown = false;
+    private float wallRunCooldownTimer = 0f;
+    [SerializeField] private float wallRunMaxCooldown = 0.05f;
+    private bool wallLeft = false;
+    private bool wallRight = false;
+    [SerializeField] private float wallCheckDistance;
+    [SerializeField] private LayerMask whatIsWall;
+    private RaycastHit leftWallHit;
+    private RaycastHit rightWallHit;
+    [SerializeField] private float minJumpHeight;
+    [SerializeField] private float wallRunForce;
+    [SerializeField] private float wallJumpUpForce;
+    [SerializeField] private float wallJumpSideForce;
+
     private void Awake()
     {
         Instance = this;
@@ -73,7 +91,8 @@ public class Player : MonoBehaviour
         MyInput();
         GroundCheck();
         LimitSpeed();
-        Headbob();
+        //Headbob();
+        CheckWall();
     }
 
     void FixedUpdate()
@@ -97,7 +116,9 @@ public class Player : MonoBehaviour
         if (cameraForward != Vector3.zero)
         {
             Quaternion newRotation = Quaternion.LookRotation(cameraForward);
+            Quaternion weaponRotation = Quaternion.LookRotation(mainCamera.transform.forward);
             rb.MoveRotation(newRotation);
+            weaponObject.DORotateQuaternion(weaponRotation, 0.1f);
         }
     }
 
@@ -115,14 +136,30 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (isGrounded)
+        if ((wallLeft || wallRight) && movementInput.y > 0 && AboveWallRunLimit() && !wallRunCooldown)
+        {
+            WallRunning();
+            isWallRunning = true;
+        }
+        else if (wallRunCooldown)
+        {
+            isWallRunning = false;
+            wallRunCooldownTimer += Time.deltaTime;
+            if (wallRunCooldownTimer > wallRunMaxCooldown)
+            {
+                wallRunCooldown = false;
+                wallRunCooldownTimer = 0f;
+            }
+        }
+        else if (isGrounded)
         {
             rb.AddForce(10f * moveSpeed * moveDirection.normalized, ForceMode.Force);
+            isWallRunning = false;
         }
         else
         {
             rb.AddForce(10f * airMultiplier * moveSpeed * moveDirection.normalized, ForceMode.Force);
-
+            isWallRunning = false;
         }
 
         rb.useGravity = !OnSlope();
@@ -198,6 +235,11 @@ public class Player : MonoBehaviour
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+        else if (isWallRunning)
+        {
+            WallJump();
+            wallRunCooldown = true;
+        }
     }
 
     private void ResetJump()
@@ -267,5 +309,46 @@ public class Player : MonoBehaviour
             cinemachinePerlin.FrequencyGain = 0.5f;
             cinemachinePerlin.AmplitudeGain = 0.5f;
         }
+    }
+
+    private void CheckWall()
+    {
+        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallHit, wallCheckDistance, whatIsWall);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, wallCheckDistance, whatIsWall);
+    }
+
+    private bool AboveWallRunLimit()
+    {
+        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, whatIsGround);
+    }
+
+    private void WallRunning()
+    {
+        rb.useGravity = false;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        Vector3 wallForward = Vector3.Cross(wallNormal, transform.up);
+
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+        {
+            wallForward = -wallForward;
+        }
+        rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+        if (!(wallLeft && movementInput.x > 0) && !(wallRight && movementInput.x < 0))
+        {
+            rb.AddForce(-wallForward * 100, ForceMode.Force);
+        }
+    }
+
+    private void WallJump()
+    {
+        Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        rb.AddForce(forceToApply, ForceMode.Impulse);
     }
 }
