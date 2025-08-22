@@ -179,6 +179,7 @@ Material:
     - _MAIN_LIGHT_SHADOWS_ENABLED: 1
     - _Main_Light_Anisotropic_Blend: 0.8
     - _Main_Light_Anisotropy: 0.6
+    - _Main_Light_Anisotropy_Blend: 0.8
     - _Main_Light_Intensity: 0.5
     - _Main_Light_Self_Shadow_Absorption_Coefficient: 0.5
     - _Main_Light_Self_Shadow_Raymarch_Distance: 5

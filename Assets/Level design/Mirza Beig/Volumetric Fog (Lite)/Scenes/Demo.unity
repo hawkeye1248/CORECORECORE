@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1480098, g: 0.16558771, b: 0.1694898, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -1154,7 +1154,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 0, g: 0.5323076, b: 1, a: 1}
-  m_Intensity: 2
+  m_Intensity: 3.77
   m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2524,7 +2524,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.17143637, b: 0, a: 1}
-  m_Intensity: 2
+  m_Intensity: 1.98
   m_Range: 3
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -3580,7 +3580,7 @@ MonoBehaviour:
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 1
   FrequencyGain: 0.02
-  mNoiseOffsets: {x: -907.2471, y: 508.6522, z: 21.082031}
+  m_NoiseOffsets: {x: -907.2471, y: 508.6522, z: 21.082031}
 --- !u!114 &1382710635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4812,7 +4812,7 @@ MonoBehaviour:
     m_Value: 10
   OutputChannel: 1
   StandbyUpdate: 2
-  m_StreamingVersion: 20230301
+  m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   m_LookAt: {fileID: 1790653297}
   m_Follow: {fileID: 0}
