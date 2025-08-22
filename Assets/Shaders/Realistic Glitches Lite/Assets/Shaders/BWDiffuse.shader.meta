@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6271ecdf05ff34965800982d4c5ed7a4
+timeCreated: 1492005544
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 107974
+  packageName: Realistic Glitches Lite
+  packageVersion: 1.0
+  assetPath: Assets/Realistic Glitches Lite/Assets/Shaders/BWDiffuse.shader
+  uploadId: 220978
