@@ -6,15 +6,19 @@ public class PlayerWeapon : MonoBehaviour
 {
     private WeaponDataSO currentWeapon;
     private WeaponState currentState;
+    private GameObject currentWeaponModel;
     private int bulletsLeftInMagazine;
     private int burstBulletsLeft = 0;
     private bool isContinuingShooting = false;
     [SerializeField] private WeaponDataSO defaultWeapon;
-    private Camera mainCam;
+    [SerializeField] private Camera mainCam;
     private RaycastHit hitInfo;
     private CinemachineImpulseSource impulseSource;
 
-
+    private void Awake() {
+        
+        impulseSource = GetComponent<CinemachineImpulseSource>();
+    }
     private void Start()
     {
         GameInput.Instance.OnFirePerformed += on_fire_performed;
@@ -34,8 +38,7 @@ public class PlayerWeapon : MonoBehaviour
 
         }
 
-        mainCam = Camera.main;
-        impulseSource = GetComponent<CinemachineImpulseSource>();
+        //mainCam = Camera.main;
     }
 
     private void Update()
@@ -150,9 +153,9 @@ public class PlayerWeapon : MonoBehaviour
     public void SwitchWeapon(WeaponDataSO weaponData)
     {
         currentWeapon = weaponData;
-
-        //TODO mermi sayısını kontrol edip current state e karar ver
-        //TODO diğer silahla alakalı değişkenleri set et
+        Destroy(currentWeaponModel);
+        currentWeaponModel = Instantiate(weaponData.gunModel, transform);
+        bulletsLeftInMagazine = weaponData.magazineSize;
     }
 }
 
