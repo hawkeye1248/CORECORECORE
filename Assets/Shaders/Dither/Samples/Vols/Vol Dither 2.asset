@@ -29,10 +29,10 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.676
   m_Power:
     m_OverrideState: 1
-    m_Value: 0.182
+    m_Value: 0.484
   m_Scale:
     m_OverrideState: 1
     m_Value: 1
@@ -44,7 +44,7 @@ MonoBehaviour:
     m_Value: 0
   m_Palette:
     m_OverrideState: 1
-    m_Value: {fileID: 0}
+    m_Value: {fileID: 2800000, guid: aa4600223c43bb64f9f80cddbdfb62c9, type: 3}
   m_Pattern:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: f24f8b78d73a187439dd105ffd6b3b91, type: 3}

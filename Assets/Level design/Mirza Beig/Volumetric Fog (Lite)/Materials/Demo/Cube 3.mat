@@ -107,7 +107,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.4
+    - _Metallic: 0.434
     - _NdotLPower: 1
     - _NdotLRemapMax: 1
     - _NdotLRemapMin: 0
@@ -116,7 +116,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.5
+    - _Smoothness: 0.524
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -134,7 +134,7 @@ Material:
     - _BaseColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _Colour: {r: 0.08627451, g: 0.4509804, b: 1, a: 1}
-    - _EmissionColor: {r: 0.3329458, g: 3.9999995, b: 0, a: 1}
+    - _EmissionColor: {r: 1.9325485, g: 2.6399283, b: 1.8678738, a: 1}
     - _RimLightColour: {r: 16, g: 16, b: 16, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
