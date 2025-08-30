@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PickUpController : MonoBehaviour
 {
-    public ProjectileGun gunScript;
+    //public ProjectileGun gunScript;
     public Rigidbody rb;
     public BoxCollider coll;
     public Transform player, gunContainer, fpsCam;
@@ -20,13 +20,13 @@ public class PickUpController : MonoBehaviour
         //Setup
         if (!equipped)
         {
-            gunScript.enabled = false;
+            //gunScript.enabled = false;
             rb.isKinematic = false;
             coll.isTrigger = false;
         }
         if (equipped)
         {
-            gunScript.enabled = true;
+            //gunScript.enabled = true;
             rb.isKinematic = true;
             coll.isTrigger = true;
             slotFull = true;
@@ -59,7 +59,7 @@ public class PickUpController : MonoBehaviour
         coll.isTrigger = true;
 
         //Enable script
-        gunScript.enabled = true;
+        //gunScript.enabled = true;
     }
 
     private void Drop()
@@ -75,7 +75,7 @@ public class PickUpController : MonoBehaviour
         coll.isTrigger = false;
 
         //Gun carries momentum of player
-        rb.velocity = player.GetComponent<Rigidbody>().velocity;
+        rb.linearVelocity = player.GetComponent<Rigidbody>().linearVelocity;
 
         //AddForce
         rb.AddForce(fpsCam.forward * dropForwardForce, ForceMode.Impulse);
@@ -85,6 +85,6 @@ public class PickUpController : MonoBehaviour
         rb.AddTorque(new Vector3(random, random, random) * 10);
 
         //Disable script
-        gunScript.enabled = false;
+        //gunScript.enabled = false;
     }
 }
