@@ -551,6 +551,8 @@ MonoBehaviour:
   - {fileID: 5726990324923100737}
   - {fileID: -2275111547655099505}
   - {fileID: -1350829026624610365}
+  - {fileID: 2885188957514515792}
+  - {fileID: 7545796190105351291}
 --- !u!114 &1344303438772034873
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -598,6 +600,34 @@ MonoBehaviour:
   dirtIntensity:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &2885188957514515792
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f8317041eee140a38873daddb4b3a5f, type: 3}
+  m_Name: StylizedDetail
+  m_EditorClassIdentifier: 
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  blur:
+    m_OverrideState: 1
+    m_Value: 1
+  edgePreserve:
+    m_OverrideState: 1
+    m_Value: 1.25
+  rangeStart:
+    m_OverrideState: 1
+    m_Value: 10
+  rangeEnd:
+    m_OverrideState: 1
+    m_Value: 30
 --- !u!114 &3811909995242077938
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -788,6 +818,40 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   balance:
+    m_OverrideState: 1
+    m_Value: 0
+--- !u!114 &7545796190105351291
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f8f6e43869a48f991285995d4df1e93, type: 3}
+  m_Name: ColorGrading
+  m_EditorClassIdentifier: 
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  blueShadows:
+    m_OverrideState: 1
+    m_Value: 0
+  greenShadows:
+    m_OverrideState: 1
+    m_Value: 0
+  redHighlights:
+    m_OverrideState: 1
+    m_Value: 0
+  contrast:
+    m_OverrideState: 1
+    m_Value: 0
+  vibrance:
+    m_OverrideState: 1
+    m_Value: 0
+  saturation:
     m_OverrideState: 1
     m_Value: 0
 --- !u!114 &8667924469735426945
