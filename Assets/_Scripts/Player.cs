@@ -91,7 +91,6 @@ public class Player : MonoBehaviour
         MyInput();
         GroundCheck();
         LimitSpeed();
-        //Headbob();
         CheckWall();
     }
 
@@ -350,5 +349,17 @@ public class Player : MonoBehaviour
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
+    }
+
+    public void PickupWeapon(PickupableWeapon weapon)
+    {
+        weapon.transform.SetParent(weaponObject);
+
+        weaponObject.GetComponent<PlayerWeapon>().SwitchWeapon(weapon.weaponData);
+    }
+
+    public void DropWeapon()
+    {
+        weaponObject.GetComponent<PlayerWeapon>().SwitchToDefault();
     }
 }

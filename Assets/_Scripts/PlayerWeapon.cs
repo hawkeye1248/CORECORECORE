@@ -11,12 +11,14 @@ public class PlayerWeapon : MonoBehaviour
     private int burstBulletsLeft = 0;
     private bool isContinuingShooting = false;
     [SerializeField] private WeaponDataSO defaultWeapon;
+    [SerializeField] private GameObject defaultWeaponModel;
     [SerializeField] private Camera mainCam;
     private RaycastHit hitInfo;
     private CinemachineImpulseSource impulseSource;
+    private Animator animator;
 
-    private void Awake() {
-        
+    private void Awake()
+    {
         impulseSource = GetComponent<CinemachineImpulseSource>();
     }
     private void Start()
@@ -103,7 +105,8 @@ public class PlayerWeapon : MonoBehaviour
         {
             if (hitInfo.collider.CompareTag("Enemy"))
             {
-
+                hitInfo.collider.gameObject.TryGetComponent<Health>(out Health enemyHealth);
+                enemyHealth.DamageHealth(currentWeapon.damage);
             }
             else if (hitInfo.collider.CompareTag("Ground"))
             {
@@ -154,8 +157,17 @@ public class PlayerWeapon : MonoBehaviour
     {
         currentWeapon = weaponData;
         Destroy(currentWeaponModel);
-        currentWeaponModel = Instantiate(weaponData.gunModel, transform);
+        //currentWeaponModel = Instantiate(weaponData.gunModel, transform);
         bulletsLeftInMagazine = weaponData.magazineSize;
+        
+    }
+
+    public void SwitchToDefault()
+    {
+        currentWeapon = defaultWeapon;
+        Destroy(currentWeaponModel);
+        //currentWeaponModel = Instantiate(defaultWeapon.gunModel, transform);
+        bulletsLeftInMagazine = defaultWeapon.magazineSize;
     }
 }
 
