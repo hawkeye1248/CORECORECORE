@@ -214,7 +214,7 @@ MonoBehaviour:
         asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_Version: 0
-        m_VolumeProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510,
+        m_VolumeProfile: {fileID: 11400000, guid: 6861a57c718294b4dad835d6b90a8caa,
           type: 2}
     - rid: 6852985685364965385
       type: {class: RenderGraphSettings, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
