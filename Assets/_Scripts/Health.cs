@@ -68,6 +68,22 @@ public class Health : MonoBehaviour
         OnPlayerHealthUpdated?.Invoke(this, EventArgs.Empty);
     }
 
+    public void KillCharacter()
+    {
+        damaged?.Invoke();
+        OnPlayerHealthUpdated?.Invoke(this, EventArgs.Empty);
+        currentHealth = 0;
+        isDead = true;
+        OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+        death?.Invoke();
+    }
+
+    public void ResetCharacter()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+    }
+
     private void DrainHealth()
     {
         healthTimer += Time.deltaTime;

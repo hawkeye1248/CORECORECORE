@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform orientation;
     [SerializeField] private Transform weaponObject;
     private Camera mainCamera;
+    [SerializeField] private GameObject cinemachineCam;
     [SerializeField] private CinemachineBasicMultiChannelPerlin cinemachinePerlin;
 
     [Header("Components")]
@@ -63,7 +64,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float wallRunForce;
     [SerializeField] private float wallJumpUpForce;
     [SerializeField] private float wallJumpSideForce;
-
+    private Vector3 startPos;
+    private Quaternion startRot;
+    public event EventHandler OnPlayerDeath;
     private void Awake()
     {
         Instance = this;
@@ -76,6 +79,9 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
+        startPos = transform.position;
+        startRot = transform.rotation;
+
         mainCamera = Camera.main;
 
         GameInput.Instance.OnJumpPerformed += on_jump_performed;
@@ -84,6 +90,11 @@ public class Player : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (TryGetComponent<Health>(out Health playerHealth))
+        {
+            playerHealth.OnPlayerDeath += on_death;
+        }
     }
 
     void Update()
@@ -361,5 +372,31 @@ public class Player : MonoBehaviour
     public void DropWeapon()
     {
         weaponObject.GetComponent<PlayerWeapon>().SwitchToDefault();
+    }
+
+    private void on_death(object sender, EventArgs e)
+    {
+        OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void RestartLevel()
+    {
+
+        transform.position = startPos;
+        transform.rotation = startRot;
+        transform.localScale = Vector3.one;
+        rb.linearVelocity = Vector3.zero;
+
+        if (TryGetComponent<Health>(out Health health))
+        {
+            health.ResetCharacter();
+        }
+
+        if (cinemachineCam.TryGetComponent<FPSCam>(out FPSCam cam))
+        {
+            cam.ResetCam();
+        }
+
+        gameObject.SetActive(true);
     }
 }

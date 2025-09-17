@@ -11,6 +11,7 @@ TagManager:
   - AntiBulletHole
   - AmmoShotgunBonus
   - Ground
+  - MapBorder
   layers:
   - Default
   - TransparentFX

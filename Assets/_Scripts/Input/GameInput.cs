@@ -15,7 +15,12 @@ public class GameInput : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
         Instance = this;
+        DontDestroyOnLoad(gameObject);
         inputActions = new CoreInputActions();
         inputActions.Gameplay.Enable();
 

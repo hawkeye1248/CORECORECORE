@@ -23,8 +23,13 @@ public class GameManager : MonoBehaviour
         currentState = GameState.GAMEPLAY;
     }
 
-    private void Start() {
+    private void Start()
+    {
         //TODO inputa esc koyup oyunu durdurma ekle
+
+        GameInput.Instance.OnJumpPerformed += on_jump_performed;
+
+        Player.Instance.OnPlayerDeath += on_player_death;
     }
 
     private void Update()
@@ -40,6 +45,24 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    private void on_jump_performed(object sender, EventArgs e)
+    {
+        if (IsGameLost())
+        {
+            RestartLevel();
+        }
+    }
+    private void on_player_death(object sender, EventArgs e)
+    {
+        currentState = GameState.LOSE;
+    }
+
+    public void RestartLevel()
+    {
+        Player.Instance.RestartLevel();
+        currentState = GameState.GAMEPLAY;
     }
 
     public void LoseGame()

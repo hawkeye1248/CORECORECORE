@@ -40,7 +40,7 @@ public class PlayerWeapon : MonoBehaviour
 
         }
 
-        //mainCam = Camera.main;
+        mainCam = Camera.main;
     }
 
     private void Update()
