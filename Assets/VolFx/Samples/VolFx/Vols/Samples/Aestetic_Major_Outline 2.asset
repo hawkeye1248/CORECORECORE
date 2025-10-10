@@ -40,7 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   skipIterations:
     m_OverrideState: 1
     m_Value: 1
@@ -91,6 +91,7 @@ MonoBehaviour:
   - {fileID: -2455847263028183347}
   - {fileID: 601115197853340602}
   - {fileID: -144363217901083749}
+  - {fileID: 3976468173342580644}
 --- !u!114 &601115197853340602
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -106,10 +107,10 @@ MonoBehaviour:
   active: 1
   m_Sensitive:
     m_OverrideState: 1
-    m_Value: 0.347
+    m_Value: 0.41
   m_Thickness:
     m_OverrideState: 1
-    m_Value: 0.394
+    m_Value: 0.12
   m_Color:
     m_OverrideState: 1
     m_Value:
@@ -119,7 +120,7 @@ MonoBehaviour:
         key1: {r: 1, g: 0.2117647, b: 0.69309837, a: 1}
         key2: {r: 0.0047169924, g: 1, b: 0.33644447, a: 0}
         key3: {r: 0, g: 1, b: 0.6997552, a: 0}
-        key4: {r: 1, g: 0.999376, b: 0.8254717, a: 0}
+        key4: {r: 0, g: 0.9942422, b: 1, a: 0}
         key5: {r: 0.8661604, g: 0, b: 1, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
@@ -166,19 +167,19 @@ MonoBehaviour:
       - {r: 0, g: 1.0012808, b: 0.54509807, a: 1}
       - {r: 0, g: 1.0011339, b: 0.6, a: 1}
       - {r: 0, g: 1.0007057, b: 0.6509804, a: 1}
-      - {r: 0.015686275, g: 1.0000324, b: 0.69803923, a: 1}
-      - {r: 0.32941177, g: 1.0021791, b: 0.7137255, a: 1}
-      - {r: 0.46274513, g: 1.003808, b: 0.7294118, a: 1}
-      - {r: 0.5647059, g: 1.0049047, b: 0.7411765, a: 1}
-      - {r: 0.6509804, g: 1.0054531, b: 0.7568628, a: 1}
-      - {r: 0.7294118, g: 1.0054369, b: 0.7686275, a: 1}
-      - {r: 0.80392164, g: 1.004839, b: 0.7843138, a: 1}
-      - {r: 0.8705883, g: 1.0036392, b: 0.7960785, a: 1}
-      - {r: 0.93725497, g: 1.0018187, b: 0.8117648, a: 1}
-      - {r: 1, g: 1, b: 0.8235295, a: 1}
+      - {r: 0, g: 1.0000019, b: 0.7019608, a: 1}
+      - {r: 0, g: 1.000042, b: 0.7372549, a: 1}
+      - {r: 0, g: 1, b: 0.7725491, a: 1}
+      - {r: 0, g: 1, b: 0.80392164, a: 1}
+      - {r: 0, g: 1, b: 0.83921576, a: 1}
+      - {r: 0, g: 1, b: 0.8705883, a: 1}
+      - {r: 0, g: 0.9960785, b: 0.9058824, a: 1}
+      - {r: 0, g: 0.9960785, b: 0.93725497, a: 1}
+      - {r: 0, g: 0.9960785, b: 0.9686275, a: 1}
+      - {r: 0, g: 0.9960785, b: 1, a: 1}
   m_Fill:
     m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 1, g: 0.9716981, b: 0.9716981, a: 1}
   m_Mode:
     m_OverrideState: 1
     m_Value: 3
@@ -191,3 +192,46 @@ MonoBehaviour:
   m_Remap:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &3976468173342580644
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1f0f34434172684f90e4c0903cf4488, type: 3}
+  m_Name: DitherVol
+  m_EditorClassIdentifier: 
+  active: 1
+  m_Impact:
+    m_OverrideState: 1
+    m_Value: 0.421
+  m_Power:
+    m_OverrideState: 1
+    m_Value: 0.616
+  m_Scale:
+    m_OverrideState: 1
+    m_Value: 0.521
+  m_Pixelate:
+    m_OverrideState: 1
+    m_Value: 0
+  m_Fps:
+    m_OverrideState: 1
+    m_Value: 0
+  m_Palette:
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: 47371c3ad8f01f6439060488f1f1995f, type: 3}
+  m_Pattern:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+  m_Mode:
+    m_OverrideState: 1
+    m_Value: 1
+  m_NoiseScale:
+    m_OverrideState: 1
+    m_Value: 1.51
+  m_Noise:
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: a600c2cd1fddf094bafd88ca09d02ccb, type: 3}

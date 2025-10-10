@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   m_Scale:
     m_OverrideState: 1
-    m_Value: 0.971
+    m_Value: 0.985
   m_Ascii:
     m_OverrideState: 1
     m_Value: {r: 1, g: 0, b: 0, a: 1}
@@ -90,18 +90,18 @@ MonoBehaviour:
     m_Value: {fileID: 2800000, guid: 407030fde6f2483498d3fff627a69840, type: 3}
   m_Depth:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 4
   m_Fps:
     m_OverrideState: 1
-    m_Value: 33
+    m_Value: 57
   m_Noise:
     m_OverrideState: 1
-    m_Value: 0.86
+    m_Value: 0.74
   m_Palette:
-    m_OverrideState: 0
-    m_Value: {fileID: 2800000, guid: 5f8d03af77507ca46919c82ceeebab86, type: 3}
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: 0958c160ec13fc34cae5a8d66858c785, type: 3}
   m_Impact:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
 --- !u!114 &-420478536434375338
 MonoBehaviour:

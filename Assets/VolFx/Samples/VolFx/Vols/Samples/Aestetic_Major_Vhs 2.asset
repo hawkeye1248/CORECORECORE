@@ -29,13 +29,13 @@ MonoBehaviour:
   active: 1
   _weight:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.642
   _tape:
     m_OverrideState: 1
-    m_Value: 1.42
+    m_Value: 1.64
   _shades:
     m_OverrideState: 1
-    m_Value: 1.17
+    m_Value: 0.9
   _rocking:
     m_OverrideState: 1
     m_Value: 0.0186
