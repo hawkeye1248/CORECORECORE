@@ -44,7 +44,7 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: 4913142327145503463}
-  - {fileID: -4693080051877049689}
+  - {fileID: 0}
   m_RendererFeatureMap: e79a7164eafc2e44a78a65cd8ed4debe
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}
@@ -71,6 +71,42 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &4612191434173346180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c53165b379c3d94ca34b12cb8eb10f1, type: 3}
+  m_Name: VolFx
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  _event: 550
+  _format:
+    enabled: 1
+    value: 0
+  _mask:
+    enabled: 0
+    value:
+      serializedVersion: 2
+      m_Bits: 0
+  _source:
+    _source: 0
+    _globalTex: _inputTex
+    _renderTex: {fileID: 0}
+    _pool: {fileID: 0}
+  _output:
+    _output: 0
+    _renderTex: {fileID: 0}
+    _outputTex: _VolFxTex
+    _sortingOrder: 0
+    _camDistance: 100
+  _passes:
+    m_List: []
+  _blitShader: {fileID: 4800000, guid: a8a709d9db2241741ab3032b946ef258, type: 3}
 --- !u!114 &4913142327145503463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +143,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1764679f4a49ac8448ccd6db9f1cac82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shader: {fileID: 4800000, guid: 4cb56832a6ce9ec4399036e1c9b5077b, type: 3}
+  _active: 1
+  _shader: {fileID: 0}
   _scaleRange: {x: 1, y: 100}
   _noiseResolution: 512
   _palette: {fileID: 2800000, guid: 231968c350671734b9d209a7d4e6daa3, type: 3}
