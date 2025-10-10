@@ -27,7 +27,7 @@ MonoBehaviour:
     m_Value: 0.2
   _period:
     m_OverrideState: 1
-    m_Value: 0.693
+    m_Value: 0.817
   _color:
     m_OverrideState: 1
     m_Value:

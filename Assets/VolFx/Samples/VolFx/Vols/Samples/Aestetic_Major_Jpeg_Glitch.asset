@@ -77,31 +77,62 @@ MonoBehaviour:
   active: 1
   _intensity:
     m_OverrideState: 1
-    m_Value: -0.4
+    m_Value: 0.26
   _blockSize:
     m_OverrideState: 1
-    m_Value: 0.6
+    m_Value: 76
   _quantization:
     m_OverrideState: 1
-    m_Value: 19
+    m_Value: 10.7
   _distortionScale:
     m_OverrideState: 1
-    m_Value: 0.08
+    m_Value: 2.4
   _applyToY:
     m_OverrideState: 1
-    m_Value: 4.35
+    m_Value: 8.4
   _applyToChroma:
     m_OverrideState: 1
-    m_Value: 12.62
+    m_Value: 11.5
   _applyToGlitch:
     m_OverrideState: 1
     m_Value: 0.19
   _fps:
     m_OverrideState: 1
-    m_Value: 4.3
+    m_Value: 2.1
   _fpsBreak:
     m_OverrideState: 1
     m_Value: 0.037
+  _fpsLag:
+    m_OverrideState: 0
+    m_Value:
+      _curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  _fpsBlending:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
   _quantSpread:
     m_OverrideState: 1
     m_Value: 3
@@ -111,6 +142,9 @@ MonoBehaviour:
   _scanlineRes:
     m_OverrideState: 1
     m_Value: 322
+  _scanlinesFps:
+    m_OverrideState: 0
+    m_Value: 120
   _channelShiftPow:
     m_OverrideState: 1
     m_Value: 1.28
@@ -119,6 +153,9 @@ MonoBehaviour:
     m_Value: -0.037
   _channelShiftY:
     m_OverrideState: 1
+    m_Value: 0
+  _channelShiftSpread:
+    m_OverrideState: 0
     m_Value: 0
   _noise:
     m_OverrideState: 1
