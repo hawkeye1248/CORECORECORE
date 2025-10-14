@@ -10,17 +10,12 @@ public class PlayerWeapon : MonoBehaviour
     private int bulletsLeftInMagazine;
     private int burstBulletsLeft = 0;
     private bool isContinuingShooting = false;
-    [SerializeField] private WeaponDataSO defaultWeapon;
-    [SerializeField] private GameObject defaultWeaponModel;
+    [SerializeField] private WeaponDataSO handWeaponData;
+    [SerializeField] private GameObject handModel;
     [SerializeField] private Camera mainCam;
     private RaycastHit hitInfo;
-    private CinemachineImpulseSource impulseSource;
-    private Animator animator;
+    [SerializeField] private Animator handAnimator;
 
-    private void Awake()
-    {
-        impulseSource = GetComponent<CinemachineImpulseSource>();
-    }
     private void Start()
     {
         GameInput.Instance.OnFirePerformed += on_fire_performed;
@@ -29,15 +24,14 @@ public class PlayerWeapon : MonoBehaviour
 
         if (currentWeapon == null)
         {
-            if (defaultWeapon == null)
+            if (handWeaponData == null)
             {
                 currentState = WeaponState.DISABLED;
             }
             else
             {
-                SwitchWeapon(defaultWeapon);
+                SwitchWeapon(handWeaponData);
             }
-
         }
 
         mainCam = Camera.main;
@@ -100,7 +94,16 @@ public class PlayerWeapon : MonoBehaviour
         float ySpread = UnityEngine.Random.Range(currentWeapon.ySpread.x, currentWeapon.ySpread.y);
 
         Vector3 shootDirection = mainCam.transform.forward + new Vector3(xSpread, ySpread, 0);
-        impulseSource.GenerateImpulse();
+
+        if (currentWeapon == handWeaponData)
+        {
+            handAnimator.SetTrigger("attack1");
+        }
+        else
+        {
+            //TODO normal silah animasyonları
+        }
+        
         if (Physics.Raycast(mainCam.transform.position, shootDirection, out hitInfo, currentWeapon.range))
         {
             if (hitInfo.collider.CompareTag("Enemy"))
@@ -164,10 +167,10 @@ public class PlayerWeapon : MonoBehaviour
 
     public void SwitchToDefault()
     {
-        currentWeapon = defaultWeapon;
+        currentWeapon = handWeaponData;
         Destroy(currentWeaponModel);
         //currentWeaponModel = Instantiate(defaultWeapon.gunModel, transform);
-        bulletsLeftInMagazine = defaultWeapon.magazineSize;
+        bulletsLeftInMagazine = handWeaponData.magazineSize;
     }
 }
 
