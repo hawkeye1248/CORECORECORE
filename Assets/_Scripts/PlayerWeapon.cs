@@ -97,7 +97,7 @@ public class PlayerWeapon : MonoBehaviour
 
         if (currentWeapon == handWeaponData)
         {
-            handAnimator.SetTrigger("attack1");
+            //handAnimator.SetTrigger("attack1");
         }
         else
         {
