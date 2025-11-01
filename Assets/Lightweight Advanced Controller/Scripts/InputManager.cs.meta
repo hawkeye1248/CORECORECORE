@@ -9,3 +9,10 @@ MonoImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 244779
+  packageName: Lightweight Advanced FPS Movement
+  packageVersion: 1.0
+  assetPath: Assets/Lightweight Advanced Controller/Scripts/InputManager.cs
+  uploadId: 664140

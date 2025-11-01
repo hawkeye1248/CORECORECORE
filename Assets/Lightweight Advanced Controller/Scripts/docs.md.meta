@@ -5,3 +5,10 @@ TextScriptImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 244779
+  packageName: Lightweight Advanced FPS Movement
+  packageVersion: 1.0
+  assetPath: Assets/Lightweight Advanced Controller/Scripts/docs.md
+  uploadId: 664140
