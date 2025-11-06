@@ -38,7 +38,7 @@ namespace FPSRetroKit
         {
             if (other.CompareTag("Player")) //If missile hits Player
             {
-                other.SendMessage("EnemyHit", damage, SendMessageOptions.DontRequireReceiver); //Send to the enemy that we got hit
+                other.GetComponent<Health>().DamageHealth(damage);
             }
             Destroy(this.gameObject); //Destroy missile on hit any trigger (floor, walls, player etc)
         }

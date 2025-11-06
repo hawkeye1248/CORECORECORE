@@ -6,7 +6,6 @@ public class EnemyBehaviour : MonoBehaviour
     // --- Davranış Türünü Seçmek İçin ---
     public enum AIType { Sentry, Patrol };
     public enum AttackType { Melee, Ranged };
-    [Tooltip("Sentry: Olduğu yerde bekler, oyuncu görünce saldırır ve sonra yerine döner.\nPatrol: Gezici, oyuncu görünce saldırır ve sonra devriyeye devam eder.")]
     public AIType aiType;
     public AttackType attackType;
 
@@ -14,7 +13,6 @@ public class EnemyBehaviour : MonoBehaviour
     public NavMeshAgent agent;
     public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
-    public GameObject projectile;
 
     // --- Durum Değişkenleri ---
     public float sightRange, attackRange;
@@ -187,9 +185,9 @@ public class EnemyBehaviour : MonoBehaviour
         if (!alreadyAttacked)
         {
             // --- Saldırı Kodu ---
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            //Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+            //rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
+            //rb.AddForce(transform.up * 8f, ForceMode.Impulse);
             // --- Bitiş ---
 
             alreadyAttacked = true;

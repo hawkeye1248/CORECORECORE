@@ -1,96 +1,158 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public class EnemyAI : MonoBehaviour
 {
-    public NavMeshAgent agent;
+    public enum NonAlertBehaviourType {Sentry, RandomPatrol, DeterminedPatrol};
+    [SerializeField] private NonAlertBehaviourType nonAlertBehaviourType;
 
+    public enum EnemyState { Idle, Shock, Alert }
+    [SerializeField] private EnemyState currentState;
+
+    [Header("General Variables")]
+    private NavMeshAgent agent;
     public Transform player;
-
     public LayerMask whatIsGround, whatIsPlayer;
+    private Vector3 startingPos;
 
-    public Vector3 walkPoint;
-    bool walkPointSet;
+    [Header("Patrol Parameters")]
     public float walkPointRange;
+    private Vector3 walkPoint;
+    [SerializeField] private bool walkPointSet;
+    [SerializeField] private List<Transform> patrolPoints;
+    private int currentPatrolIndex = 0;
+    [SerializeField] private float sightRange;
 
-    public float timeBetweenAttacks;
-    bool alreadyAttacked;
-
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
-    public GameObject projectile;
-
+    [Header("Shock Parameters")]
+    [SerializeField] private GameObject alertIcon;
+    private float shockTimer = 0f;
+    private float shockMaxTime = 1f;
+    [Header("Attack Parameters")]
+    [SerializeField] private GameObject missilePrefab;
+    [SerializeField] private float missileSpeed;
+    [SerializeField] private float missileDamage;
+    private float nextFireTime;
+    [SerializeField]private float shotsPerSecond;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        startingPos = transform.position;
     }
 
     void Start()
     {
-        player = Player.Instance.transform;       
+        player = Player.Instance.transform;
+        currentState = EnemyState.Idle;
     }
 
     void Update()
     {
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
-
-        if (!playerInSightRange && !playerInAttackRange) Patroling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInAttackRange && playerInSightRange) AttackPlayer();       
+        switch (currentState)
+        {
+            case EnemyState.Idle:
+                Idle();
+                break;
+            case EnemyState.Shock:
+                Shock();
+                break;
+            case EnemyState.Alert:
+                Alert();
+                break;
+            default:
+                break;
+        }
     }
 
-    private void Patroling()
+    private void Idle()
     {
-        if (!walkPointSet) SearchWalkPoint();
+        if(Physics.CheckSphere(transform.position, sightRange, whatIsPlayer))
+        {
+            currentState = EnemyState.Shock;
+        }
 
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        switch (nonAlertBehaviourType)
+        {
+            case NonAlertBehaviourType.Sentry:
+                agent.SetDestination(startingPos);
+                break;
+            case NonAlertBehaviourType.RandomPatrol:
+                if (!walkPointSet)
+                {
+                    SearchWalkPoint();
+                }
 
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
+                if (walkPointSet)
+                {
+                    agent.SetDestination(walkPoint);
+                    Vector3 distanceToWalkPoint = transform.position - walkPoint;
+                    if (distanceToWalkPoint.magnitude < 2f)
+                        walkPointSet = false;
+                }
+                break;
+            case NonAlertBehaviourType.DeterminedPatrol:
+                if (patrolPoints == null || patrolPoints.Count == 0)
+                {
+                    return;
+                }
 
-        //Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f)
-            walkPointSet = false;
+                Transform targetPoint = patrolPoints[currentPatrolIndex];
+                agent.SetDestination(targetPoint.position);
+                Vector3 distanceToTarget = transform.position - targetPoint.position;
+                if (distanceToTarget.magnitude < 2f)
+                {
+                    currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private void SearchWalkPoint()
     {
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
-            walkPointSet = true;
-    }
-
-    private void ChasePlayer()
-    {
-        agent.SetDestination(player.position);
-    }
-
-    private void AttackPlayer()
-    {
-        agent.SetDestination(transform.position);
-
-        transform.LookAt(player);
-
-        if (!alreadyAttacked)
+        for (int i = 0; i < 10; i++) 
         {
-            ///Attack code here
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            float randomZ = Random.Range(-walkPointRange, walkPointRange);
+            float randomX = Random.Range(-walkPointRange, walkPointRange);
+            Vector3 randomPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomPoint, out hit, walkPointRange, NavMesh.AllAreas))
+            {
+                NavMeshPath path = new NavMeshPath();
+                if (agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
+                {
+                    walkPoint = hit.position;
+                    walkPointSet = true;
+                    return;
+                }
+            }
+        }
+    }
+
+    private void Shock()
+    {
+        alertIcon.SetActive(true);
+        shockTimer += Time.deltaTime;
+        if(shockTimer > shockMaxTime)
+        {
+            currentState = EnemyState.Alert;
+            alertIcon.SetActive(false);
+            shockTimer = 0;
         }
     }
     
-    private void ResetAttack()
+    private void Alert()
     {
-        alreadyAttacked = false;
+        if (Time.time >= nextFireTime)
+        {
+            nextFireTime = Time.time + (1.0f / shotsPerSecond);
+            GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+            missile.GetComponent<FPSRetroKit.Missile>().speed = missileSpeed;
+            missile.GetComponent<FPSRetroKit.Missile>().damage = missileDamage;
+        }
     }
+
 }
