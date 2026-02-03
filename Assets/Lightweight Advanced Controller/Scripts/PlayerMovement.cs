@@ -79,14 +79,6 @@ namespace peterkcodes.AdvancedMovement
 
         #region Sprint
         [Header("Sprint")]
-        [Tooltip("The rate at which stamina drains per second when sprinting.")]
-        [SerializeField] private float staminaDrainRate;
-
-        [Tooltip("The rate at which stamina regens when depleted.")]
-        [SerializeField] private float staminaRegenRate;
-
-        [Tooltip("The delay between stamina running out and beginning to refill.")]
-        [SerializeField] private float staminaWaitToRefill;
 
         [Tooltip("The minimum velocity required to start and maintain a sprint.")]
         [SerializeField] private float minimumSprintMagnitude;
@@ -100,7 +92,6 @@ namespace peterkcodes.AdvancedMovement
         [Tooltip("The acceleration rate towards top speed when sprinting.")]
         [SerializeField] private float sprintAcceleration;
 
-        private float refillTime;
         #endregion
 
         #region Slide
@@ -201,7 +192,6 @@ namespace peterkcodes.AdvancedMovement
         public event fxResetFOVDelegate fxResetFOV;
         public event FXShiftFOVDelegate fxAdjustFOV;
         public event FXJolt fxJolt;
-        public event UIStaminaUpdate uiStaminaUpdate;
         #endregion
 
         #region Ground Check
@@ -217,20 +207,15 @@ namespace peterkcodes.AdvancedMovement
         private bool grounded;
         #endregion
 
-        #region Stamina
-        [Header("Stamina")]
-        [Tooltip("Enables/disables the stamina system. When set to true, stamina will always stay at the maximum value allowing for infinite sprinting and movements.")]
-        [SerializeField] private bool useStamina = true;
-        #endregion
-
         private CharacterController cc;
-        private float stamina = 1;
+        private PlayerVisual ps;
         #endregion
 
         // Start is called before the first frame update
         void Start()
         {
             cc = GetComponent<CharacterController>();
+            ps = GetComponent<PlayerVisual>();
         }
 
         private void FixedUpdate()
@@ -242,19 +227,7 @@ namespace peterkcodes.AdvancedMovement
             nonVerticalMagnitude = _velocityNoY.magnitude;
 
             grounded = CheckGround();
-
-            //If stamina is disabled, keep it set to 1.
-            if (!useStamina)
-            {
-                stamina = 1;
-            }
-
-            //Refill stamina if able
-            if (Time.time > refillTime)
-            {
-                RefillStaminaOverTime();
-            }
-
+            
             //Runs the actual movement itself.
             Think();
 
@@ -274,7 +247,7 @@ namespace peterkcodes.AdvancedMovement
 
             //Reset input flags.
             jumpNextUpdate = false;
-            sprintNextUpdate = false;
+            sprintNextUpdate = true;
         }
 
         #region Input
@@ -334,7 +307,7 @@ namespace peterkcodes.AdvancedMovement
             fxSetTilt?.Invoke(0);
 
             //Sprint if allowed and desired.
-            if (sprintNextUpdate && stamina > 0 && nonVerticalMagnitude > minimumSprintMagnitude)
+            if (sprintNextUpdate && nonVerticalMagnitude > minimumSprintMagnitude)
             {
                 fxAdjustFOV?.Invoke(sprintFovMultiplier, sprintFovShiftTime);
                 SetMovementState(MoveState.sprint);
@@ -403,8 +376,6 @@ namespace peterkcodes.AdvancedMovement
                 //There is a wall ahead that we can mantle over. If we are allowed to mantle and the player presses jump/has auto-mantle set we mantle.
                 if ((jumpNextUpdate || (autoMantle && inputAxes.y > 0)) && isMantleValid)
                 {
-                    //Mantling just works by adding a force and granting some stamina back.
-                    GrantStamina(mantleStaminaGrant);
                     //Reset gravity if necessary.
                     velocity = new Vector3(velocity.x, Mathf.Max(velocity.y, 0), velocity.z);
                     AddImpulseForce(transform.TransformVector(mantleForce));
@@ -449,7 +420,8 @@ namespace peterkcodes.AdvancedMovement
             wasSprinting = true;
             Vector3 _input = GetMovementInputVector();
 
-
+            isAirborneFromJumping = false;
+            
             if (!grounded)
             {
                 SetMovementState(MoveState.air);
@@ -457,12 +429,12 @@ namespace peterkcodes.AdvancedMovement
             }
 
             ///Disable sprint if sprint button is pressed, we run out of stamina, or we get too slow.
-            if (sprintNextUpdate || stamina <= 0 || nonVerticalMagnitude < minimumSprintMagnitude)
+            /*if (sprintNextUpdate || nonVerticalMagnitude < minimumSprintMagnitude)
             {
                 fxResetFOV?.Invoke(sprintFovShiftTime);
                 SetMovementState(MoveState.walk);
                 return;
-            }
+            }*/
 
             //Enable slide if desired.
             if (slideNextUpdate)
@@ -481,9 +453,6 @@ namespace peterkcodes.AdvancedMovement
             _adjusted.y = velocity.y;
             velocity = _adjusted;
 
-            refillTime = Time.time + staminaWaitToRefill;
-            stamina -= staminaDrainRate * Time.fixedDeltaTime;
-            uiStaminaUpdate?.Invoke(stamina);
             slideNextUpdate = false;
         }
 
@@ -653,7 +622,6 @@ namespace peterkcodes.AdvancedMovement
             float _upForce = Mathf.Abs(velocity.y - wallkickForce.y);
             _upForce = Mathf.Clamp(_upForce, 0, wallkickForce.y);
             AddImpulseForce((wallNormal * wallkickForce.x + Vector3.up * _upForce) - stickForce);
-            GrantStamina(staminaOnWallkickGrant);
 
             //Count this as a jump to prevent coyote timing immediately after a wallkick.
             isAirborneFromJumping = true;
@@ -676,11 +644,32 @@ namespace peterkcodes.AdvancedMovement
         public void SetMovementState(MoveState _newState)
         {
             //print($"Changing state from {currentState} to {_newState}");
-
+            
             currentState = _newState;
             onStateChanged?.Invoke(currentState);
             isAgainstWall = false;
             isMantleValid = true;
+        
+            switch(_newState)
+            {
+                case MoveState.walk:
+                ps.SetStateToIdle();
+                break;
+                case MoveState.slide:
+                ps.SetStateToSlide();
+                break;
+                case MoveState.sprint:
+                ps.SetStateToRunning();
+                break;
+                case MoveState.wallrun:
+                ps.SetStateToWallrunning();
+                break;
+                case MoveState.air:
+                ps.SetStateToJumping();
+                break;
+                default:
+                break;
+            }
         }
         #endregion
 
@@ -820,25 +809,6 @@ namespace peterkcodes.AdvancedMovement
             }
 
             return newGrounded;
-        }
-        #endregion
-
-        #region Stamina
-        private void RefillStaminaOverTime()
-        {
-            stamina += staminaRegenRate * Time.fixedDeltaTime;
-            stamina = Mathf.Clamp(stamina, 0, 1);
-            uiStaminaUpdate?.Invoke(stamina);
-        }
-
-        /// <summary>
-        /// Adds stamina.
-        /// </summary>
-        public void GrantStamina(float ammount)
-        {
-            stamina += ammount;
-            stamina = Mathf.Clamp(stamina, 0, 1);
-            uiStaminaUpdate?.Invoke(stamina);
         }
         #endregion
 
