@@ -208,14 +208,14 @@ namespace peterkcodes.AdvancedMovement
         #endregion
 
         private CharacterController cc;
-        private PlayerVisual ps;
+        //private PlayerVisual ps;
         #endregion
 
         // Start is called before the first frame update
         void Start()
         {
             cc = GetComponent<CharacterController>();
-            ps = GetComponent<PlayerVisual>();
+            //ps = GetComponent<PlayerVisual>();
         }
 
         private void FixedUpdate()
@@ -653,19 +653,19 @@ namespace peterkcodes.AdvancedMovement
             switch(_newState)
             {
                 case MoveState.walk:
-                ps.SetStateToIdle();
+                //ps.SetStateToIdle();
                 break;
                 case MoveState.slide:
-                ps.SetStateToSlide();
+                //ps.SetStateToSlide();
                 break;
                 case MoveState.sprint:
-                ps.SetStateToRunning();
+                //ps.SetStateToRunning();
                 break;
                 case MoveState.wallrun:
-                ps.SetStateToWallrunning();
+                //ps.SetStateToWallrunning();
                 break;
                 case MoveState.air:
-                ps.SetStateToJumping();
+                //ps.SetStateToJumping();
                 break;
                 default:
                 break;

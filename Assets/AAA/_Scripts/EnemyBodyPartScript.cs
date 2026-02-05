@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyBodyPartScript : MonoBehaviour
@@ -5,15 +6,20 @@ public class EnemyBodyPartScript : MonoBehaviour
     public Rigidbody rb;
     public NewEnemyTest enemy;
 
-    void Start()
-    {
+    private void Awake() {
         rb = GetComponent<Rigidbody>();
-        enemy = GetComponentInParent<NewEnemyTest>();    
+        enemy = GetComponentInParent<NewEnemyTest>();  
     }
 
-    public void Die()
+    void Start()
     {
-        rb.AddExplosionForce(15, transform.position, 5);
+          
+    }
+
+    public void Die(Vector3 pos)
+    {
+        
+        rb.AddForce(pos * 50f, ForceMode.Impulse);
         enemy.Ragdoll();
     }
 }

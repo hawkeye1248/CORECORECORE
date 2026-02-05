@@ -5,7 +5,6 @@ public class NewEnemyTest : MonoBehaviour
 {
     Animator enemyAnim;
     public bool isDead;
-    //public Transform weaponParent;
 
     void Awake()
     {

@@ -16,7 +16,7 @@ namespace peterkcodes.AdvancedMovement.Demo
         [SerializeField] private float sensitivity;
 
         [Header("Camera Controls")]
-        [SerializeField] private Transform cameraTransform;
+        public Transform cameraTransform;
         [SerializeField] private new Camera camera;
         [SerializeField] private float stateTransitionTime;
 
