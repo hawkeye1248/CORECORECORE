@@ -4,20 +4,22 @@ using DG.Tweening;
 
 public class WeaponScript : MonoBehaviour
 {
-    public bool isEquippedByPlayer = false;
-    public bool isFireInterval = false;
+    [Header("Components")]
     private Rigidbody rb;
-    private Collider collider;
-    private Renderer renderer;
+    private Collider weaponCollider;
 
-    public int bulletAmount = 3;
+    [Header("Weapon Properties")]
     public float fireInterval = 0.3f;
-    [SerializeField] private GameObject bulletPrefab;
+    public int bulletAmount = 3;
+
+
+    [Header("Bools")]
+    public bool isEquippedByPlayer = false;
+    [SerializeField] public bool isFireInterval = false;
 
     private void Awake() {
         rb = GetComponent<Rigidbody>();
-        collider = GetComponent<Collider>();
-        renderer = GetComponent<Renderer>();
+        weaponCollider = GetComponent<Collider>();
 
         ChangeSettings();
     }
@@ -31,32 +33,12 @@ public class WeaponScript : MonoBehaviour
 
         rb.isKinematic = isEquippedByPlayer ? true : false;
         rb.interpolation = isEquippedByPlayer ? RigidbodyInterpolation.None : RigidbodyInterpolation.Interpolate;
-        collider.isTrigger = isEquippedByPlayer;
+        weaponCollider.isTrigger = isEquippedByPlayer;
     }
 
-    public void Shoot(Vector3 pos, Quaternion rot, bool isEnemy)
+    public virtual void Shoot(Vector3 pos, Quaternion rot, bool isEnemy)
     {
-        if(isFireInterval)
-        {
-            return;
-        }
-
-        if(bulletAmount <= 0)
-        {
-            return;
-        }
-
-        GameObject bullet = Instantiate(bulletPrefab, pos, rot);
-
-        if (GetComponentInChildren<ParticleSystem>() != null)
-        {
-            GetComponentInChildren<ParticleSystem>().Play();
-        }
-
-        if(isEquippedByPlayer)
-        {
-            StartCoroutine(FireInterval());
-        }
+        
     }
 
     public void Throw()
@@ -83,10 +65,16 @@ public class WeaponScript : MonoBehaviour
 
     public void Release()
     {
-        
+        transform.parent = null;
+        rb.isKinematic = false;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        weaponCollider.isTrigger = false;
+
+        rb.AddForce((Camera.main.transform.position - transform.position) * 2, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * 2, ForceMode.Impulse);
     }
 
-    IEnumerator FireInterval()
+    public IEnumerator FireInterval()
     {
         isFireInterval = true;
         yield return new WaitForSeconds(fireInterval);

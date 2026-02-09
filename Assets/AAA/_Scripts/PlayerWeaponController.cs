@@ -2,19 +2,26 @@ using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
 {
-    private bool canShoot = true;
+    [Header("Child Objects")]
     [SerializeField] private Transform weaponHolder;
-    private WeaponScript weapon;
+    [SerializeField] private PunchWeapon punchs;
     private Transform mainCam;
+
+    [Header("Weapon Settings")]
+    private WeaponScript weapon;
+    private bool canShoot = true;
+    
     [SerializeField] private LayerMask weaponLayer;
+
     void Start()
     {
         mainCam = GetComponent<peterkcodes.AdvancedMovement.Demo.CameraController>().cameraTransform;
         if(weaponHolder.GetComponentInChildren<WeaponScript>() != null)
         {
             weapon = weaponHolder.GetComponentInChildren<WeaponScript>();
-        }      
+        }
     }
+
     void Update()
     {
         if(canShoot)
@@ -24,6 +31,9 @@ public class PlayerWeaponController : MonoBehaviour
                 if(weapon != null)
                 {
                     weapon.Shoot(SpawnPos(), mainCam.rotation, false);
+                }else
+                {
+                    punchs.Shoot(SpawnPos(), mainCam.rotation);
                 }
             }
         }
@@ -39,7 +49,7 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         RaycastHit hit;
-        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit,10, weaponLayer))
+        if(Physics.Raycast(mainCam.position, mainCam.forward, out hit,10, weaponLayer))
         {
             if (Input.GetMouseButtonDown(0) && weapon == null)
             {

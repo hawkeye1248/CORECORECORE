@@ -13,6 +13,7 @@ namespace peterkcodes.AdvancedMovement.Demo
     {
         [SerializeField] private PlayerMovement movement;
         [SerializeField] new private Camera camera;
+        [SerializeField] new private Camera overlayCam;
         private Vector3 _cameraPosition;
         private Vector3 cameraDefaultPosition;
 
@@ -149,6 +150,8 @@ namespace peterkcodes.AdvancedMovement.Demo
             for (float _time = 0; _time < _finalTime; _time += Time.deltaTime)
             {
                 camera.fieldOfView = Mathf.Lerp(_startingFov, _target, _time / _finalTime);
+                overlayCam.fieldOfView = Mathf.Lerp(_startingFov, _target, _time / _finalTime);
+
                 yield return null;
             }
         }
