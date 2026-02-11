@@ -18,8 +18,8 @@ public class EnemyBodyPartScript : MonoBehaviour
 
     public void Die(Vector3 pos)
     {
-        
-        rb.AddForce(pos * 50f, ForceMode.Impulse);
         enemy.Ragdoll();
+        rb.AddForce(pos * 50f, ForceMode.Impulse);
+        
     }
 }

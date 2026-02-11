@@ -15,6 +15,11 @@ public class PunchWeapon : MonoBehaviour
     
     [SerializeField] public bool isFireInterval = false;
     private HashSet<NewEnemyTest> hitEnemies = new HashSet<NewEnemyTest>();
+    private Animator anim;
+
+    private void Start() {
+        anim = GetComponentInChildren<Animator>();
+    }
 
     public void Shoot(Vector3 pos, Quaternion rot)
     {
@@ -23,10 +28,12 @@ public class PunchWeapon : MonoBehaviour
             return;
         }
 
+        anim.SetTrigger("Punching");
+
         hitEnemies.Clear();
         float startAngle = -totalAngle / 2f;
         float angleStep = totalAngle / (numberOfCasts - 1);
-        Debug.Log("Punch Attack Executed");
+
         for (int i = 0; i < numberOfCasts; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
@@ -46,7 +53,6 @@ public class PunchWeapon : MonoBehaviour
                     {
                         enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position));
                         hitEnemies.Add(enemyPart.enemy);
-                        Debug.Log("Enemy Hit: " + enemyPart.enemy.name);
                     }
                 } //TODO duvarlara vurma ekle
             }
