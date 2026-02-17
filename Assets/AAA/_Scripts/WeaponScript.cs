@@ -1,12 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
+using peterkcodes.AdvancedMovement;
 
 public class WeaponScript : MonoBehaviour
 {
     [Header("Components")]
     private Rigidbody rb;
     private Collider weaponCollider;
+    private Transform mainCam;
+    public Outline outline;
 
     [Header("Weapon Properties")]
     public float fireInterval = 0.3f;
@@ -20,8 +23,13 @@ public class WeaponScript : MonoBehaviour
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         weaponCollider = GetComponent<Collider>();
+        outline = GetComponent<Outline>();
 
         ChangeSettings();
+    }
+
+    private void Start() {
+        mainCam = PlayerWeaponController.instance.GetComponent<peterkcodes.AdvancedMovement.Demo.CameraController>().cameraTransform;
     }
 
     private void ChangeSettings()
@@ -41,14 +49,15 @@ public class WeaponScript : MonoBehaviour
         
     }
 
-    public void Throw()
+    public void Throw(Vector3 hitpoint)
     {
         Sequence s = DOTween.Sequence();
-        s.Append(transform.DOMove(transform.position - transform.forward, .01f)).SetUpdate(true);
+        s.Append(transform.DOMove(transform.position + transform.forward, .01f)).SetUpdate(true);
         s.AppendCallback(() => transform.parent = null);
-        s.AppendCallback(() => transform.position = Camera.main.transform.position + (Camera.main.transform.right * .1f));
+        //s.AppendCallback(() => transform.position = mainCam.position + (mainCam.right * .1f) + (mainCam.forward * 3f));
         s.AppendCallback(() => ChangeSettings());
-        s.AppendCallback(() => rb.AddForce(Camera.main.transform.forward * 10, ForceMode.Impulse));
+        s.AppendCallback(() => rb.AddForce((hitpoint - transform.position).normalized * 25, ForceMode.Impulse));
+        s.AppendCallback(() => rb.AddForce(Vector3.up * 2, ForceMode.Impulse));
         s.AppendCallback(() => rb.AddTorque(transform.transform.right + transform.transform.up * 20, ForceMode.Impulse));
     }
 
@@ -83,14 +92,17 @@ public class WeaponScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy") && collision.relativeVelocity.magnitude < 15)
+        if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyBodyPartScript bp = collision.gameObject.GetComponent<EnemyBodyPartScript>();
 
             //if (!bp.enemy.isDead)
                 //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
 
-            bp.Die(transform.position);
+            bp.Die(transform.GetComponent<Rigidbody>().linearVelocity);
+
+            rb.AddForce((mainCam.position - transform.position).normalized * 2, ForceMode.Impulse);
+            //rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
         }
     }
 }

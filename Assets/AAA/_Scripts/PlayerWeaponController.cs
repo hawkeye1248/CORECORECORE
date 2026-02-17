@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour
 {
+    public static PlayerWeaponController instance;
+
     [Header("Child Objects")]
     [SerializeField] private Transform weaponHolder;
     [SerializeField] private PunchWeapon punchs;
@@ -12,6 +14,20 @@ public class PlayerWeaponController : MonoBehaviour
     private bool canShoot = true;
     
     [SerializeField] private LayerMask weaponLayer;
+    [SerializeField] private LayerMask throwLayer;
+
+
+    private GameObject lastWeaponLooked = null;
+
+    private void Awake() {
+        if(instance == null)
+        {
+            instance = this;
+        }else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -42,19 +58,48 @@ public class PlayerWeaponController : MonoBehaviour
         {
             if(weapon != null)
             {
-                weapon.Throw();
-                weapon.isEquippedByPlayer = false;
-                weapon = null;
+                RaycastHit castHit;
+                if(Physics.Raycast(mainCam.position, mainCam.forward, out castHit, 100))
+                {
+                    weapon.isEquippedByPlayer = false;
+                    weapon.Throw(castHit.point);
+                    weapon = null;
+                } else
+                {
+                    weapon.isEquippedByPlayer = false;
+                    weapon.Throw(mainCam.position + (mainCam.forward * 100));
+                    weapon = null;
+                }
+                
+                
+                
             }
         }
 
         RaycastHit hit;
-        if(Physics.Raycast(mainCam.position, mainCam.forward, out hit,10, weaponLayer))
+        if(Physics.Raycast(mainCam.position, mainCam.forward, out hit,3, weaponLayer))
         {
+            if(hit.collider.gameObject != lastWeaponLooked)
+            {
+                if(lastWeaponLooked != null)
+                {
+                    lastWeaponLooked.GetComponent<Outline>().enabled = false;
+                }
+                hit.collider.gameObject.GetComponent<Outline>().enabled = true;
+                lastWeaponLooked = hit.collider.gameObject;
+            }
+
             if (Input.GetMouseButtonDown(0) && weapon == null)
             {
                 hit.transform.GetComponent<WeaponScript>().Pickup(weaponHolder);
                 weapon = hit.transform.GetComponent<WeaponScript>();
+            }
+        } else
+        {
+            if(lastWeaponLooked != null)
+            {
+                lastWeaponLooked.GetComponent<Outline>().enabled = false;
+                lastWeaponLooked = null;
             }
         }
     }
