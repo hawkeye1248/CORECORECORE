@@ -5,7 +5,7 @@ using System.Collections;
 public class PunchWeapon : MonoBehaviour
 {
     [Header("Weapon Properties")]
-    public float fireInterval = 0.3f;
+    public float fireInterval = 0.2f;
     [SerializeField] private float range = 3f;
     [SerializeField] private float totalAngle = 90f;
     private int numberOfCasts = 10;
@@ -18,7 +18,7 @@ public class PunchWeapon : MonoBehaviour
     private Animator anim;
 
     private void Start() {
-        anim = GetComponentInChildren<Animator>();
+        anim = GetComponent<Animator>();
     }
 
     public void Shoot(Vector3 pos, Quaternion rot)
@@ -28,8 +28,26 @@ public class PunchWeapon : MonoBehaviour
             return;
         }
 
-        anim.SetTrigger("Punching");
+        if(anim.GetCurrentAnimatorStateInfo(layerIndex:0).IsName("Punch R"))
+        {
+            anim.SetTrigger("Punching2");
+        } else if(anim.GetCurrentAnimatorStateInfo(layerIndex:0).IsName("Punch L"))
+        {
+            anim.SetTrigger("PunchingReturn");
+        } else 
+        {
+            anim.SetTrigger("Punching");
+        }
+        
 
+        
+        
+        StartCoroutine(FireInterval());
+        
+    }
+
+    public void Punch()
+    {
         hitEnemies.Clear();
         float startAngle = -totalAngle / 2f;
         float angleStep = totalAngle / (numberOfCasts - 1);
@@ -62,9 +80,6 @@ public class PunchWeapon : MonoBehaviour
         {
             GetComponentInChildren<ParticleSystem>().Play();
         }
-        
-        StartCoroutine(FireInterval());
-        
     }
 
     void OnDrawGizmos()

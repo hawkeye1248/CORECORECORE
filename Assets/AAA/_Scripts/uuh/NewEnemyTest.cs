@@ -6,6 +6,7 @@ public class NewEnemyTest : MonoBehaviour
     Animator enemyAnim;
     public bool isDead;
 
+
     void Awake()
     {
         enemyAnim = GetComponent<Animator>();       
@@ -29,6 +30,7 @@ public class NewEnemyTest : MonoBehaviour
         {
             bp.rb.isKinematic = false;
             bp.rb.interpolation = RigidbodyInterpolation.Interpolate;
+            bp.gameObject.layer = 10;
         }
         isDead = true;
     }
