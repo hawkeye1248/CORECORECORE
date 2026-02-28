@@ -27,7 +27,6 @@ public class MeleeWeapon : WeaponScript
         hitEnemies.Clear();
         float startAngle = -totalAngle / 2f;
         float angleStep = totalAngle / (numberOfCasts - 1);
-        Debug.Log("Melee Attack Executed");
         for (int i = 0; i < numberOfCasts; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
@@ -45,10 +44,9 @@ public class MeleeWeapon : WeaponScript
                 {
                     if (!hitEnemies.Contains(enemyPart.enemy))
                     {
-                        enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position), GetComponentInParent<CharacterController>().velocity.magnitude);
+                        enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position),  Mathf.Lerp(minKnockbackForce, maxKnockbackForce, GetComponentInParent<CharacterController>().velocity.magnitude / 20));
                         bulletAmount--;
                         hitEnemies.Add(enemyPart.enemy);
-                        Debug.Log("Enemy Hit: " + enemyPart.enemy.name);
                     }
                 } //TODO duvarlara vurma ekle
             }

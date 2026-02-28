@@ -20,6 +20,9 @@ public class WeaponScript : MonoBehaviour
     public bool isEquippedByPlayer = false;
     [SerializeField] public bool isFireInterval = false;
 
+    [SerializeField] protected float minKnockbackForce;
+    [SerializeField] protected float maxKnockbackForce;
+
     private void Awake() {
         rb = GetComponent<Rigidbody>();
         weaponCollider = GetComponent<Collider>();
@@ -58,7 +61,7 @@ public class WeaponScript : MonoBehaviour
         s.AppendCallback(() => ChangeSettings());
         s.AppendCallback(() => rb.AddForce((hitpoint - transform.position).normalized * 25, ForceMode.Impulse));
         s.AppendCallback(() => rb.AddForce(Vector3.up * 2, ForceMode.Impulse));
-        s.AppendCallback(() => rb.AddTorque(transform.transform.right + transform.transform.up * 20, ForceMode.Impulse));
+        s.AppendCallback(() => rb.AddTorque( transform.transform.up * 20, ForceMode.Impulse));
     }
 
     public void Pickup(Transform weaponHolder)
@@ -99,9 +102,9 @@ public class WeaponScript : MonoBehaviour
             //if (!bp.enemy.isDead)
                 //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
 
-            bp.Die(transform.GetComponent<Rigidbody>().linearVelocity, rb.linearVelocity.sqrMagnitude);
+            bp.Die(rb.linearVelocity,  Mathf.Lerp(minKnockbackForce, maxKnockbackForce, rb.linearVelocity.magnitude/40));
 
-            rb.AddForce((mainCam.position - transform.position).normalized * 2, ForceMode.Impulse);
+            rb.AddForce((mainCam.position - transform.position).normalized, ForceMode.Impulse);
             //rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
         }
     }

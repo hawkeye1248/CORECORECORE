@@ -3,7 +3,7 @@ using UnityEngine;
 public class BulletMovement : MonoBehaviour
 {
     public float speed;
-    public float knockbackForce = 20f;
+    public float knockbackForce;
     private Rigidbody rb;
 
     void Start()
