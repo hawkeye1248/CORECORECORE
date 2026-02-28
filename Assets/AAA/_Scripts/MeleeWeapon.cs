@@ -45,7 +45,7 @@ public class MeleeWeapon : WeaponScript
                 {
                     if (!hitEnemies.Contains(enemyPart.enemy))
                     {
-                        enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position));
+                        enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position), GetComponentInParent<CharacterController>().velocity.magnitude);
                         bulletAmount--;
                         hitEnemies.Add(enemyPart.enemy);
                         Debug.Log("Enemy Hit: " + enemyPart.enemy.name);

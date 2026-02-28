@@ -99,7 +99,7 @@ public class WeaponScript : MonoBehaviour
             //if (!bp.enemy.isDead)
                 //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
 
-            bp.Die(transform.GetComponent<Rigidbody>().linearVelocity);
+            bp.Die(transform.GetComponent<Rigidbody>().linearVelocity, rb.linearVelocity.sqrMagnitude);
 
             rb.AddForce((mainCam.position - transform.position).normalized * 2, ForceMode.Impulse);
             //rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);

@@ -3,6 +3,7 @@ using UnityEngine;
 public class BulletMovement : MonoBehaviour
 {
     public float speed;
+    public float knockbackForce = 20f;
     private Rigidbody rb;
 
     void Start()
@@ -24,7 +25,7 @@ public class BulletMovement : MonoBehaviour
             //if (!bp.enemy.dead)
                 //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
 
-            bp.Die(transform.forward);
+            bp.Die(transform.forward, knockbackForce);
         }
         Destroy(gameObject);
     }

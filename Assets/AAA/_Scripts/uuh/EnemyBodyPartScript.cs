@@ -16,10 +16,10 @@ public class EnemyBodyPartScript : MonoBehaviour
           
     }
 
-    public void Die(Vector3 pos)
+    public void Die(Vector3 pos, float forceFactor)
     {
         enemy.Ragdoll();
-        rb.AddForce(pos.normalized * 25f, ForceMode.Impulse);
+        rb.AddForce(pos.normalized * 25f * forceFactor, ForceMode.Impulse);
         
     }
 }
