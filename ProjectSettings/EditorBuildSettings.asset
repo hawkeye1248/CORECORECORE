@@ -6,13 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/AAA/Scenes/Old Scenes/MainMenu.unity
-    guid: ee4df279d5eed6c44bcfac5653f71d85
-  - enabled: 1
-    path: Assets/AAA/Scenes/Old Scenes/TestScene1.unity
-    guid: de880357f1f41194bb7ce5ce2ad3ef26
-  - enabled: 1
-    path: Assets/AAA/Scenes/Old Scenes/PersistentGameplay.unity
-    guid: e9a37057517d6d746807e4746ed38e8b
+    path: Assets/AAA/Scenes/Gym.unity
+    guid: 0c7b8a7643ea6d84cbd43e00d3184339
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

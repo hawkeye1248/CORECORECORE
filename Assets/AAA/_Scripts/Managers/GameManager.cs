@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,9 +28,9 @@ public class GameManager : MonoBehaviour
     {
         //TODO inputa esc koyup oyunu durdurma ekle
 
-        GameInput.Instance.OnJumpPerformed += on_jump_performed;
+        //GameInput.Instance.OnJumpPerformed += on_jump_performed;
 
-        Player.Instance.OnPlayerDeath += on_player_death;
+        PlayerWeaponController.instance.GetComponent<Health>().OnPlayerDeath += on_player_death;
     }
 
     private void Update()
@@ -45,14 +46,19 @@ public class GameManager : MonoBehaviour
             default:
                 break;
         }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            if (IsGameLost())
+            {
+                RestartLevel();
+            }
+        }
     }
 
     private void on_jump_performed(object sender, EventArgs e)
     {
-        if (IsGameLost())
-        {
-            RestartLevel();
-        }
+        
     }
     private void on_player_death(object sender, EventArgs e)
     {
@@ -61,7 +67,8 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevel()
     {
-        Player.Instance.RestartLevel();
+        //Player.Instance.RestartLevel();
+        SceneManager.LoadScene(0);
         currentState = GameState.GAMEPLAY;
     }
 
