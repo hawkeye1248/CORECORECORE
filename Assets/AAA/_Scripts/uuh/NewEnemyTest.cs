@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,6 +19,18 @@ public class NewEnemyTest : MonoBehaviour
     [SerializeField] public GameObject bulletPrefab;
     [SerializeField] public Transform bulletSpawnPoint;
     public bool isFireCooldown = false;
+    public GameObject weaponPrefab; 
+
+    [SerializeField] public Transform weaponHand;
+    [SerializeField] public Transform weaponSpawnPoint;
+    
+    [SerializeField] private float range = 3f;
+    [SerializeField] private float totalAngle = 90f;
+    private int numberOfCasts = 10;
+    [SerializeField] private float boxWidth = 1f;
+    [SerializeField] private float boxHeight = 1f;
+    public LayerMask targetLayer;
+    private HashSet<PlayerWeaponController> hitEnemies = new HashSet<PlayerWeaponController>();
 
     void Awake()
     {
@@ -87,7 +100,7 @@ public class NewEnemyTest : MonoBehaviour
     public void Shoot()
     {
         Vector3 targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
-transform.LookAt(targetPosition);
+        transform.LookAt(targetPosition);
         if(!isFireCooldown)
         {
             StartCoroutine(ShootInterval());
@@ -126,14 +139,47 @@ transform.LookAt(targetPosition);
             enemyAnim.SetTrigger("PipeAttack2");
         }
         //melee attack
+        hitEnemies.Clear();
+        float startAngle = -totalAngle / 2f;
+        float angleStep = totalAngle / (numberOfCasts - 1);
+        for (int i = 0; i < numberOfCasts; i++)
+        {
+            float currentAngle = startAngle + (i * angleStep);
+            Quaternion rotation = transform.rotation * Quaternion.Euler(0, currentAngle, 0);
+            
+            Vector3 centerOffset = rotation * Vector3.forward * (range / 2f);
+            Vector3 boxCenter = bulletSpawnPoint.position + centerOffset;
+            Vector3 halfExtents = new Vector3(boxWidth / 2f, boxHeight / 2f, range / 2f);
+
+            Collider[] hitColliders = Physics.OverlapBox(boxCenter, halfExtents, rotation, targetLayer);
+
+            foreach (var col in hitColliders)
+            {
+                if(col.TryGetComponent<PlayerWeaponController>(out PlayerWeaponController player))
+                {
+                    if(!hitEnemies.Contains(player))
+                    {
+                        player.GetComponent<Health>().DamageHealth(30);
+                        hitEnemies.Add(player);
+                    }
+                    
+                }
+            }
+        }
         yield return new WaitForSeconds(fireInterval);
         isFireCooldown = false;
     }
 
     public void Ragdoll()
     {
+        if(isDead)
+        {
+            return;
+        }
         enemyAnim.enabled = false;
         agent.enabled = false;
+        weaponHand.gameObject.SetActive(false);
+        Instantiate(weaponPrefab, weaponSpawnPoint.position, Quaternion.identity);
         EnemyBodyPartScript[] parts = GetComponentsInChildren<EnemyBodyPartScript>();
         foreach (EnemyBodyPartScript bp in parts)
         {
@@ -142,5 +188,22 @@ transform.LookAt(targetPosition);
             bp.gameObject.layer = 10;
         }
         isDead = true;
+    }
+
+    void OnDrawGizmos()
+    {
+        // Önceki görselleştirme kodunun aynısı
+        Gizmos.color = Color.red;
+        float startAngle = -totalAngle / 2f;
+        float angleStep = totalAngle / (numberOfCasts - 1);
+        for (int i = 0; i < numberOfCasts; i++)
+        {
+            float currentAngle = startAngle + (i * angleStep);
+            Quaternion rotation = transform.rotation * Quaternion.Euler(0, currentAngle, 0);
+            Vector3 boxCenter = bulletSpawnPoint.position + (rotation * Vector3.forward * (range / 2f));
+            Matrix4x4 cubeMatrix = Matrix4x4.TRS(boxCenter, rotation, Vector3.one);
+            Gizmos.matrix = cubeMatrix;
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(boxWidth, boxHeight, range));
+        }
     }
 }
