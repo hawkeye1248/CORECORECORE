@@ -29,19 +29,19 @@ MonoBehaviour:
   active: 1
   _weight:
     m_OverrideState: 1
-    m_Value: 0.642
+    m_Value: 0.598
   _tape:
     m_OverrideState: 1
-    m_Value: 1.64
+    m_Value: 1.54
   _shades:
     m_OverrideState: 1
     m_Value: 0.9
   _rocking:
     m_OverrideState: 1
-    m_Value: 0.0186
+    m_Value: 0.0169
   _squeeze:
     m_OverrideState: 1
-    m_Value: 0.503
+    m_Value: 0.634
   _density:
     m_OverrideState: 1
     m_Value: 0.058
@@ -56,7 +56,7 @@ MonoBehaviour:
     m_Value: 0.16
   _color:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 0, b: 0, a: 1}
+    m_Value: {r: 1, g: 0.3198846, b: 0, a: 1}
   _bleed:
     m_OverrideState: 1
     m_Value: 0.81
