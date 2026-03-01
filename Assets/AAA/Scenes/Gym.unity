@@ -2790,6 +2790,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &283402883 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -5154,6 +5164,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &557870047 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -5409,6 +5429,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &577881987 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -5434,6 +5464,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &587078596 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -6401,6 +6441,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &624839408 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -11853,6 +11903,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &941215400 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -14572,6 +14632,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &1136522286 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -18437,6 +18507,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &1446719547 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -18808,6 +18888,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &1460607479 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -21495,6 +21585,133 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03c3417d3b971e045bcceea1546d9e26, type: 3}
+--- !u!1001 &1736402831
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1736402834}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1736402833}
+  m_SourcePrefab: {fileID: 100100000, guid: e06557bc1a2fdab49ac52ac2b699ba7d, type: 3}
+--- !u!1 &1736402832 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e06557bc1a2fdab49ac52ac2b699ba7d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1736402831}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1736402833
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736402832}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1736402834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736402832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5065c21dd7d5704b93f34b11acb97ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!1001 &1756369458
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25555,6 +25772,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDead: 0
+  isUsingPipe: 0
+  player: {fileID: 0}
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isAlarmed: 0
+  sightRange: 0
 --- !u!4 &2101085233 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8725554152193088012, guid: 24b5fb0c952c9bd4fb8bbffaaa853f21,
@@ -26787,3 +27014,4 @@ SceneRoots:
   - {fileID: 887789637}
   - {fileID: 1405528626}
   - {fileID: 1402708334}
+  - {fileID: 1736402831}
