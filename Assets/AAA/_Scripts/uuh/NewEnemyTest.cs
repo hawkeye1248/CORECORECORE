@@ -45,7 +45,6 @@ public class NewEnemyTest : MonoBehaviour
             enemyAnim.SetBool("Alarm", true);
             if(isUsingPipe)
             {
-                agent.SetDestination(player.position);
                 if(agent.velocity.magnitude >= 0)
                 {
                     enemyAnim.SetBool("Running", true);
@@ -53,9 +52,15 @@ public class NewEnemyTest : MonoBehaviour
                 {
                     enemyAnim.SetBool("Running", false);
                 }
+                
                 if((player.transform.position - transform.position).magnitude <= 2)
                 {
+                    agent.SetDestination(transform.position);
+                    enemyAnim.SetBool("Running", false);
                     MeleeAttack();
+                } else
+                {
+                    agent.SetDestination(player.position);
                 }
             } else
             {
@@ -81,6 +86,8 @@ public class NewEnemyTest : MonoBehaviour
 
     public void Shoot()
     {
+        Vector3 targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+transform.LookAt(targetPosition);
         if(!isFireCooldown)
         {
             StartCoroutine(ShootInterval());
@@ -91,7 +98,9 @@ public class NewEnemyTest : MonoBehaviour
     {
         isFireCooldown = true;
         enemyAnim.SetTrigger("Shoot");
-        //GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint, );
+        Vector3 bulletDirection = (new Vector3(player.position.x, player.position.y - 1, player.position.z) - transform.position).normalized;
+        Quaternion rotation = Quaternion.LookRotation(bulletDirection);
+        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, rotation);
         yield return new WaitForSeconds(fireInterval);
         isFireCooldown = false;
         
@@ -118,7 +127,7 @@ public class NewEnemyTest : MonoBehaviour
         }
         //melee attack
         yield return new WaitForSeconds(fireInterval);
-        isFireCooldown = true;
+        isFireCooldown = false;
     }
 
     public void Ragdoll()
