@@ -108,4 +108,13 @@ public class PlayerWeaponController : MonoBehaviour
     {
         return mainCam.position + (mainCam.forward * .5f) + (mainCam.up * -.02f);
     }
+
+    void OnTriggerEnter(UnityEngine.Collider other)
+
+    {
+        if(other.gameObject.CompareTag("MapBorder"))
+        {
+            GetComponent<Health>().DamageHealth(999);
+        }       
+    }
 }

@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/AAA/Scenes/Gym.unity
-    guid: 0c7b8a7643ea6d84cbd43e00d3184339
+    path: Assets/AAA/Scenes/Visual Test Scenes/scene_3_japan.unity
+    guid: 8aee5cb312387e3499bff0c1a1f3629a
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
