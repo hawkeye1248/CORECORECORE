@@ -26,10 +26,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb2952b95454955ba507c3d96778a76, type: 3}
   m_Name: VhsVol
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   _weight:
     m_OverrideState: 1
-    m_Value: 0.598
+    m_Value: 0.776
   _tape:
     m_OverrideState: 1
     m_Value: 1.54
@@ -56,10 +56,10 @@ MonoBehaviour:
     m_Value: 0.16
   _color:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 0.3198846, b: 0, a: 1}
+    m_Value: {r: 1, g: 0.3878283, b: 0, a: 1}
   _bleed:
     m_OverrideState: 1
-    m_Value: 0.81
+    m_Value: 0.91
   _flow:
     m_OverrideState: 1
     m_Value: 1
