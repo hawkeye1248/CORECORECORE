@@ -107,10 +107,10 @@ MonoBehaviour:
   active: 1
   m_Sensitive:
     m_OverrideState: 1
-    m_Value: 0.058
+    m_Value: 0.084
   m_Thickness:
     m_OverrideState: 1
-    m_Value: 0.123
+    m_Value: 0.287
   m_Color:
     m_OverrideState: 1
     m_Value:
@@ -204,12 +204,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1f0f34434172684f90e4c0903cf4488, type: 3}
   m_Name: DitherVol
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   m_Impact:
     m_OverrideState: 0
     m_Value: 0
   m_Power:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   m_Scale:
     m_OverrideState: 0

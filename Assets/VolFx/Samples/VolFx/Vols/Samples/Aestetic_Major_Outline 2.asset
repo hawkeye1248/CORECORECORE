@@ -40,7 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   skipIterations:
     m_OverrideState: 1
     m_Value: 1
@@ -49,10 +49,10 @@ MonoBehaviour:
     m_Value: 1.23
   intensity:
     m_OverrideState: 1
-    m_Value: 8.16
+    m_Value: 7.11
   scatter:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.046
   clamp:
     m_OverrideState: 1
     m_Value: 65465.17
@@ -107,7 +107,7 @@ MonoBehaviour:
   active: 1
   m_Sensitive:
     m_OverrideState: 1
-    m_Value: 0.224
+    m_Value: 0.211
   m_Thickness:
     m_OverrideState: 1
     m_Value: 0.082
@@ -207,31 +207,31 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 0.421
+    m_Value: 0.393
   m_Power:
     m_OverrideState: 1
-    m_Value: 0.616
+    m_Value: 0.46
   m_Scale:
     m_OverrideState: 1
-    m_Value: 0.521
+    m_Value: 1
   m_Pixelate:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   m_Fps:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 95
   m_Palette:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: 47371c3ad8f01f6439060488f1f1995f, type: 3}
   m_Pattern:
     m_OverrideState: 1
-    m_Value: {fileID: 0}
+    m_Value: {fileID: 2800000, guid: a600c2cd1fddf094bafd88ca09d02ccb, type: 3}
   m_Mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   m_NoiseScale:
     m_OverrideState: 1
-    m_Value: 1.51
+    m_Value: 3.79
   m_Noise:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: a600c2cd1fddf094bafd88ca09d02ccb, type: 3}
