@@ -30,6 +30,7 @@ namespace MovementRework
         [SerializeField] private LayerMask groundLayers;
         [SerializeField] private float coyoteTime = 0.25f;
         [SerializeField] private float coyoteTimer = 0f;
+        private float groundDotValue = 0f;
 
         [Header("Jumping Parameters")]
         [SerializeField] private float jumpForce;
@@ -95,7 +96,12 @@ namespace MovementRework
 
             if(isCrouching)
             {
-                core.AddForce(-core.linearVelocity.normalized * slideStoppingPower);
+                CheckGround();
+                if(groundDotValue >= 0.95f)
+                {
+                    Debug.Log("slowing");
+                    core.AddForce(-core.linearVelocity.normalized * slideStoppingPower);
+                }
 
                 if(core.linearVelocity.magnitude <= slideEndSpeed)
                 {
@@ -177,7 +183,8 @@ namespace MovementRework
 
         private bool CheckGround()
         {
-            bool newGrounded = Physics.OverlapBox(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale, transform.rotation, groundLayers).Length > 0;
+            Collider[] colliders = Physics.OverlapBox(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale, transform.rotation, groundLayers);
+            bool newGrounded = colliders.Length > 0;
             
             if(!isGrounded && newGrounded) //Yere iniş yapmış demektir.
             {
@@ -190,6 +197,18 @@ namespace MovementRework
             {
                 coyoteTimer = 0;
                 isJumped = false;
+
+                if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
+                {
+                    groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
+                    //Debug.Log(groundDotValue);
+
+                    Vector3 reflectVec = Vector3.Reflect(Vector3.up, hit.normal);
+
+                    // Draw lines to show the incoming "beam" and the reflection.
+                    Debug.DrawLine(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), hit.point, Color.yellow);
+                    Debug.DrawRay(hit.point, reflectVec, Color.green);
+                }
             } else
             {
                 coyoteTimer += Time.deltaTime;
