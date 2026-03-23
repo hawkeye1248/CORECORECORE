@@ -5,6 +5,11 @@ namespace MovementRework {
     {
         [SerializeField] private Transform cam;
 
+        [SerializeField] private float standingVerticalOffset = 0.5f;
+        [SerializeField] private float crouchingVerticalOffset = 1.5f;
+        [SerializeField] private float camMovementTime = 0.5f;
+        private float camVerticalOffset = 0.5f;
+
         [Header("Jolt Effect")]
         [SerializeField] private float crashForceLimit = 1f;
         [SerializeField] private float joltAmplitute;
@@ -13,7 +18,28 @@ namespace MovementRework {
 
         public void SimplePosition(Vector3 position)
         {
-            transform.position = new Vector3(position.x, position.y - 0.5f, position.z);
+            transform.position = new Vector3(position.x, position.y - camVerticalOffset, position.z);
+        }
+
+        public void MoveCamToCrouching()
+        {
+            StopCoroutine(MoveCam(standingVerticalOffset));
+            StartCoroutine(MoveCam(crouchingVerticalOffset));
+        }
+
+        public void MoveCamToStanding()
+        {
+            StopCoroutine(MoveCam(crouchingVerticalOffset));
+            StartCoroutine(MoveCam(standingVerticalOffset));
+        }
+
+        private IEnumerator MoveCam(float newPos)
+        {
+            for(float i = 0; i < camMovementTime; i += Time.deltaTime)
+            {
+                camVerticalOffset = Mathf.Lerp(camVerticalOffset, newPos, i);
+                yield return null;
+            }
         }
 
         public void Jolt(float verticalSpeed)

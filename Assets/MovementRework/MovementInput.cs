@@ -11,8 +11,8 @@ namespace MovementRework {
         public event EventHandler OnFirePerformed;
         public event EventHandler OnFireCanceled;
         public event EventHandler OnReloadPerformed;
-        public event EventHandler OnSlidePerformed;
-        public event EventHandler OnSlideCanceled;
+        public event EventHandler OnCrouchPerformed;
+        public event EventHandler OnCrouchCanceled;
 
         private void Awake()
         {
@@ -40,12 +40,12 @@ namespace MovementRework {
 
         private void on_slide_performed(InputAction.CallbackContext context)
         {
-            OnSlidePerformed?.Invoke(this, EventArgs.Empty);
+            OnCrouchPerformed?.Invoke(this, EventArgs.Empty);
         }
 
         private void on_slide_canceled(InputAction.CallbackContext context)
         {
-            OnSlideCanceled?.Invoke(this, EventArgs.Empty);
+            OnCrouchCanceled?.Invoke(this, EventArgs.Empty);
         }
 
         private void on_fire_performed(InputAction.CallbackContext context)

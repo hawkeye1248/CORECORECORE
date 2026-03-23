@@ -16,6 +16,7 @@ namespace MovementRework
         [SerializeField] private bool isGrounded = false;
         [SerializeField] private bool isWallrunning = false;
         [SerializeField] private bool isJumped = false;
+        [SerializeField] private bool isCrouching = false;
 
         [Header("Walking Parameters")]
         [SerializeField] private float acceleration = 2500f;
@@ -39,6 +40,12 @@ namespace MovementRework
         [SerializeField] private float airborneStoppingPower = 3f;
         [SerializeField] private float airborneSidewayDamping = 0.7f;
 
+        [Header("Slide Parameters")]
+        [SerializeField] private float slideForce = 5f;
+        [SerializeField] private float slideStoppingPower = 2f;
+        [SerializeField] private float slideEndSpeed = 1f;
+        [SerializeField] private bool tryingToSlide = false;
+
         private void Awake() {
             cameraController = GetComponentInChildren<CameraController>();
             camParent = GetComponentInChildren<CamPositioner>();
@@ -47,6 +54,8 @@ namespace MovementRework
 
         private void Start() {
             MovementInput.Instance.OnJumpPerformed += OnJumpPerformed;
+            MovementInput.Instance.OnCrouchPerformed += OnCrouchPerformed;
+            MovementInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
         }
 
         private void Update()
@@ -70,6 +79,32 @@ namespace MovementRework
 
         private void MovePlayer(Vector2 movementInput)
         {
+            if(tryingToSlide)
+            {
+                if(CheckGround())
+                {
+                    isCrouching = true;
+                    tryingToSlide = false;
+                    camParent.MoveCamToCrouching();
+                    if(core.linearVelocity.magnitude >= 0.1f)
+                    {
+                        core.AddForce(core.linearVelocity.normalized * slideForce, ForceMode.Impulse);
+                    }
+                }
+            }
+
+            if(isCrouching)
+            {
+                core.AddForce(-core.linearVelocity.normalized * slideStoppingPower);
+
+                if(core.linearVelocity.magnitude <= slideEndSpeed)
+                {
+                    isCrouching = false;
+                    camParent.MoveCamToStanding(); 
+                }
+                return;
+            }
+
             if(movementInput != Vector2.zero)
             {
                 Vector3 inputDir = movementInput.y * facingDirection + movementInput.x * new Vector3(facingDirection.z, 0, -facingDirection.x);
@@ -161,6 +196,32 @@ namespace MovementRework
             }
 
             return isGrounded;
+        }
+
+        private void OnCrouchPerformed(object sender, EventArgs e)
+        {
+            if(CheckGround())
+            {
+                isCrouching = true;
+                camParent.MoveCamToCrouching();
+                if(core.linearVelocity.magnitude >= 0.1f)
+                {
+                    core.AddForce(core.linearVelocity.normalized * slideForce, ForceMode.Impulse);
+                }
+            } else
+            {
+                tryingToSlide = true;
+            }
+        }
+
+        private void OnCrouchCanceled(object sender, EventArgs e)
+        {
+            tryingToSlide = false;
+            if(isCrouching)
+            {
+                isCrouching = false;
+                camParent.MoveCamToStanding(); 
+            }
         }
 
         private void OnDrawGizmos()
