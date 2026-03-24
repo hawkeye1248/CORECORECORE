@@ -1624,6 +1624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientation: {fileID: 899928996}
   core: {fileID: 1370727680}
+  cameraController: {fileID: 1135528636}
   isGrounded: 0
   isWallrunning: 0
   isJumped: 0
@@ -1641,6 +1642,7 @@ MonoBehaviour:
   coyoteTime: 0.25
   coyoteTimer: 0
   jumpForce: 14
+  fallGravity: 5
   airborneAcceleration: 500
   airborneMaxSpeed: 50
   airborneStoppingPower: 3

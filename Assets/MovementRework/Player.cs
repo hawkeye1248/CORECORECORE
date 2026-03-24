@@ -11,7 +11,7 @@ namespace MovementRework
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] private Rigidbody core;
-        private CameraController cameraController;
+        [SerializeField] private CameraController cameraController;
 
         [Header("Status Bools")]
         [SerializeField] private bool isGrounded = false;
@@ -38,6 +38,7 @@ namespace MovementRework
         [Header("Jumping Parameters")]
         [SerializeField] private float jumpForce;
         private float jumpCooldown = 0.1f;
+        [SerializeField] private float fallGravity;
 
         [Header("Airborne Movement Parameters")]
         [SerializeField] private float airborneAcceleration = 1500f;
@@ -58,7 +59,6 @@ namespace MovementRework
         [SerializeField] private float mantleLength = 1f;
 
         private void Awake() {
-            cameraController = GetComponentInChildren<CameraController>();
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
 
@@ -89,6 +89,11 @@ namespace MovementRework
             MovePlayer(MovementInput.Instance.GetMovementVector());
 
             CheckMantle();
+
+            if(core.linearVelocity.y < 0)
+            {
+                core.AddForce(Vector3.down * fallGravity);
+            }
         }
 
         private void SetFacingDirection()
@@ -271,7 +276,6 @@ namespace MovementRework
                 {
                     if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, groundLayers))
                     {
-                        Debug.Log("heyo");
                         isMantling = true;
                         core.useGravity = false;
                         core.linearVelocity = Vector3.zero;
