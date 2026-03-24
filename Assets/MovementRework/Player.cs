@@ -18,6 +18,7 @@ namespace MovementRework
         [SerializeField] private bool isWallrunning = false;
         [SerializeField] private bool isJumped = false;
         [SerializeField] private bool isCrouching = false;
+        [SerializeField] private bool isMantling = false;
 
         [Header("Walking Parameters")]
         [SerializeField] private float acceleration = 2500f;
@@ -51,6 +52,11 @@ namespace MovementRework
         [SerializeField] private float slideEndSpeed = 1f;
         [SerializeField] private bool tryingToSlide = false;
 
+        [Header("Mantle Parameters")]
+        [SerializeField] private Vector3 mantleRaycastPoint = new Vector3(0, 1.3f, 0);
+        [SerializeField] private float mantleDistance = 0.7f;
+        [SerializeField] private float mantleLength = 1f;
+
         private void Awake() {
             cameraController = GetComponentInChildren<CameraController>();
             camParent = GetComponentInChildren<CamPositioner>();
@@ -81,6 +87,8 @@ namespace MovementRework
         private void FixedUpdate()
         {
             MovePlayer(MovementInput.Instance.GetMovementVector());
+
+            CheckMantle();
         }
 
         private void SetFacingDirection()
@@ -90,6 +98,10 @@ namespace MovementRework
 
         private void MovePlayer(Vector2 movementInput)
         {
+            if(isMantling)
+            {
+                return;
+            }
 
             if(core.linearVelocity.magnitude <= 0.1f)
             {
@@ -180,7 +192,11 @@ namespace MovementRework
 
         private void OnJumpPerformed(object sender, EventArgs e)
         {   
-            if(isWallrunning)
+            if(isMantling)
+            {
+                LeaveMantle();
+                Jump();
+            } else if(isWallrunning)
             {
                 WallJump();
             } else if(CanJump())
@@ -247,6 +263,29 @@ namespace MovementRework
             return isGrounded;
         }
 
+        private void CheckMantle()
+        {
+            if(!CheckGround() && core.linearVelocity.y < 0)
+            {
+                if(Physics.Raycast(mantleRaycastPoint + core.position + cameraController.transform.forward * mantleDistance, Vector3.down, out RaycastHit verticalHit, mantleLength, groundLayers))
+                {
+                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, groundLayers))
+                    {
+                        Debug.Log("heyo");
+                        isMantling = true;
+                        core.useGravity = false;
+                        core.linearVelocity = Vector3.zero;
+                    }
+                }
+            }
+        }
+
+        private void LeaveMantle()
+        {
+            isMantling = false;
+            core.useGravity = true;
+        }
+
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
             if(CheckGround())
@@ -278,6 +317,33 @@ namespace MovementRework
             Gizmos.color = Color.red;
             //Ground Check Box
             Gizmos.DrawWireCube(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale);
+        
+            Gizmos.color = Color.red;
+            Vector3 vStart = mantleRaycastPoint + core.position + cameraController.transform.forward * mantleDistance;
+            Vector3 vDirection = Vector3.down * mantleLength;
+            Gizmos.DrawLine(vStart, vStart + vDirection);
+
+            // Fizik kontrolü (Görselleştirme için tekrar hesaplanır)
+            if (Physics.Raycast(vStart, Vector3.down, out RaycastHit vHit, 1f, groundLayers))
+            {
+                // Temas noktasına küçük bir küre çiz
+                Gizmos.color = Color.green;
+                Gizmos.DrawSphere(vHit.point, 0.05f);
+
+                // 2. Yatay Raycast Görselleştirmesi (Mavi)
+                Gizmos.color = Color.blue;
+                //Vector3 hStart = vHit.point + new Vector3(0, -0.1f, 0);
+                Vector3 hStart = new Vector3(core.position.x, vHit.point.y - 0.1f, core.position.z);
+                Vector3 hDirection = orientation.forward * 1f;
+                Gizmos.DrawLine(hStart, hStart + hDirection);
+
+                if (Physics.Raycast(hStart, orientation.forward, out RaycastHit hHit, 1f, groundLayers))
+                {
+                    // İkinci temas noktasını işaretle
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawSphere(hHit.point, 0.1f);
+                }
+            }
         }
 
         public float GetMovementSpeed()
