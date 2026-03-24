@@ -1628,22 +1628,24 @@ MonoBehaviour:
   isWallrunning: 0
   isJumped: 0
   isCrouching: 0
-  acceleration: 2500
-  maxSpeed: 25
-  stoppingPower: 5
+  acceleration: 8500
+  maxSpeed: 14
+  stoppingPower: 45
   sidewayDamping: 0.999
-  groundCheckScale: {x: 0.4, y: 0.3, z: 0.4}
+  backwardStoppingPower: 45
+  groundCheckScale: {x: 0.4, y: 0.2, z: 0.4}
   groundLayers:
     serializedVersion: 2
     m_Bits: 49152
   coyoteTime: 0.25
   coyoteTimer: 0
-  jumpForce: 15
-  airborneAcceleration: 1500
-  airborneMaxSpeed: 35
+  jumpForce: 14
+  airborneAcceleration: 500
+  airborneMaxSpeed: 50
   airborneStoppingPower: 3
   airborneSidewayDamping: 0.7
-  slideForce: 5
+  airborneBackwardStoppingPower: 10
+  slideForce: 3
   slideStoppingPower: 2
   slideEndSpeed: 3
   tryingToSlide: 0
@@ -5777,16 +5779,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperVerticalLimit: 60
   lowerVerticalLimit: 60
-  camSmoothingFactor: 25
-  camSpeed: 100
+  camSmoothingFactor: 50
+  camSpeed: 70
   facingDirection: {x: 0, y: 0, z: 0}
   upwardsDirection: {x: 0, y: 0, z: 0}
-  cameraTiltMultiplier: 5
+  cameraTiltMultiplier: 3
   cameraTiltSmoothTime: 0.03
   amplitute: 0.1
   frequency: 10
-  minFov: 60
-  maxFov: 80
+  minFov: 80
+  maxFov: 90
 --- !u!1001 &1149769737
 PrefabInstance:
   m_ObjectHideFlags: 0

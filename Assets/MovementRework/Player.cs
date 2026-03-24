@@ -23,6 +23,7 @@ namespace MovementRework
         [SerializeField] private float maxSpeed = 25f;
         [SerializeField] private float stoppingPower = 5f;
         [SerializeField] private float sidewayDamping = 0.999f;
+        [SerializeField] private float backwardStoppingPower = 45f;
         private Vector3 facingDirection = Vector3.zero;
 
         [Header("Ground Check Parameters")]
@@ -40,6 +41,7 @@ namespace MovementRework
         [SerializeField] private float airborneMaxSpeed = 35f;
         [SerializeField] private float airborneStoppingPower = 3f;
         [SerializeField] private float airborneSidewayDamping = 0.7f;
+        [SerializeField] private float airborneBackwardStoppingPower = 10f;
 
         [Header("Slide Parameters")]
         [SerializeField] private float slideForce = 5f;
@@ -51,6 +53,11 @@ namespace MovementRework
             cameraController = GetComponentInChildren<CameraController>();
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
+
+            //! sonra başka yere taşınacak
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            //! sonra başka yere taşınacak
         }
 
         private void Start() {
@@ -69,7 +76,6 @@ namespace MovementRework
 
         private void FixedUpdate()
         {
-            isGrounded = CheckGround();
             MovePlayer(MovementInput.Instance.GetMovementVector());
         }
 
@@ -99,7 +105,6 @@ namespace MovementRework
                 CheckGround();
                 if(groundDotValue >= 0.95f)
                 {
-                    Debug.Log("slowing");
                     core.AddForce(-core.linearVelocity.normalized * slideStoppingPower);
                 }
 
@@ -121,10 +126,15 @@ namespace MovementRework
 
                     orientation.LookAt(inputDir);
 
-                    Vector3 rightVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
-                    rightVelocity.x = Mathf.Lerp(rightVelocity.x, 0, sidewayDamping * Time.deltaTime);
-                    rightVelocity = orientation.transform.TransformVector(rightVelocity);
-                    core.linearVelocity = rightVelocity;
+                    Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
+                    localVelocity.x = Mathf.Lerp(localVelocity.x, 0, sidewayDamping * Time.deltaTime);
+                    localVelocity = orientation.transform.TransformVector(localVelocity);
+                    core.linearVelocity = localVelocity;
+
+                    if(Vector3.Dot(orientation.forward, core.linearVelocity.normalized) < 0)
+                    {
+                        core.AddForce(-core.linearVelocity.normalized * backwardStoppingPower);
+                    }
 
                     core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, maxSpeed);
                 } else
@@ -133,10 +143,15 @@ namespace MovementRework
 
                     orientation.LookAt(inputDir);
 
-                    Vector3 rightVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
-                    rightVelocity.x = Mathf.Lerp(rightVelocity.x, 0, airborneSidewayDamping * Time.deltaTime);
-                    rightVelocity = orientation.transform.TransformVector(rightVelocity);
-                    core.linearVelocity = rightVelocity;
+                    Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
+                    localVelocity.x = Mathf.Lerp(localVelocity.x, 0, airborneSidewayDamping * Time.deltaTime);
+                    localVelocity = orientation.transform.TransformVector(localVelocity);
+                    core.linearVelocity = localVelocity;
+
+                    if(Vector3.Dot(orientation.forward, core.linearVelocity.normalized) < 0)
+                    {
+                        core.AddForce(-core.linearVelocity.normalized * airborneBackwardStoppingPower);
+                    }
 
                     core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, airborneMaxSpeed);
                 }
@@ -154,7 +169,7 @@ namespace MovementRework
         }
 
         private void OnJumpPerformed(object sender, EventArgs e)
-        {
+        {   
             if(isWallrunning)
             {
                 WallJump();
@@ -166,9 +181,8 @@ namespace MovementRework
 
         private void Jump()
         {
-            
-            core.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isJumped = true;
+            core.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
         private void WallJump()
@@ -178,7 +192,11 @@ namespace MovementRework
 
         private bool CanJump ()
         {
-            return (CheckGround() || coyoteTimer <= coyoteTime) && !isJumped;
+            if(isJumped)
+            {
+                return false;
+            }
+            return CheckGround()|| coyoteTimer <= coyoteTime;
         }
 
         private bool CheckGround()
@@ -201,14 +219,8 @@ namespace MovementRework
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
                     groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
-                    //Debug.Log(groundDotValue);
-
-                    Vector3 reflectVec = Vector3.Reflect(Vector3.up, hit.normal);
-
-                    // Draw lines to show the incoming "beam" and the reflection.
-                    Debug.DrawLine(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), hit.point, Color.yellow);
-                    Debug.DrawRay(hit.point, reflectVec, Color.green);
                 }
+
             } else
             {
                 coyoteTimer += Time.deltaTime;
