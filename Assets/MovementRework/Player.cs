@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace MovementRework
@@ -35,6 +36,7 @@ namespace MovementRework
 
         [Header("Jumping Parameters")]
         [SerializeField] private float jumpForce;
+        private float jumpCooldown = 0.1f;
 
         [Header("Airborne Movement Parameters")]
         [SerializeField] private float airborneAcceleration = 1500f;
@@ -53,6 +55,8 @@ namespace MovementRework
             cameraController = GetComponentInChildren<CameraController>();
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
+
+            jumpCooldown += coyoteTime;
 
             //! sonra başka yere taşınacak
             Cursor.visible = false;
@@ -86,6 +90,12 @@ namespace MovementRework
 
         private void MovePlayer(Vector2 movementInput)
         {
+
+            if(core.linearVelocity.magnitude <= 0.1f)
+            {
+                core.linearVelocity = Vector3.zero;
+            }
+
             if(tryingToSlide)
             {
                 if(CheckGround())
@@ -181,8 +191,8 @@ namespace MovementRework
 
         private void Jump()
         {
-            isJumped = true;
             core.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            StartCoroutine(JumpCooldownTimer());
         }
 
         private void WallJump()
@@ -197,6 +207,15 @@ namespace MovementRework
                 return false;
             }
             return CheckGround()|| coyoteTimer <= coyoteTime;
+        }
+
+        private IEnumerator JumpCooldownTimer()
+        {
+            isJumped = true;
+            
+            yield return new WaitForSeconds(jumpCooldown);
+
+            isJumped = false;
         }
 
         private bool CheckGround()
@@ -214,7 +233,6 @@ namespace MovementRework
             if(isGrounded)
             {
                 coyoteTimer = 0;
-                isJumped = false;
 
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
