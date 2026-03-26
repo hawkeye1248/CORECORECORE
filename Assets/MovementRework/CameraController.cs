@@ -68,7 +68,11 @@ namespace MovementRework
 
             transform.localRotation = Quaternion.Euler(new Vector3(0, currentYAngle ,0));
 
-            facingDirection = transform.forward;
+            if(!player.IsWallrunning)
+            {
+                facingDirection = transform.forward;
+            }
+            
             upwardsDirection = transform.up;
 
             if(player.IsWallrunning)
