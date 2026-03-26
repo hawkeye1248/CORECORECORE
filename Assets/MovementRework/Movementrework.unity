@@ -2237,7 +2237,7 @@ MonoBehaviour:
     m_Bits: 49152
   coyoteTime: 0.25
   coyoteTimer: 0
-  jumpForce: 14
+  jumpForce: 16
   fallGravity: 5
   landingJoltPower: 2
   airborneAcceleration: 500
@@ -2256,6 +2256,7 @@ MonoBehaviour:
   mantleJumpForce: 5
   wallrunAcceleration: 1500
   wallrunMaxSpeed: 14
+  wallCheckDistance: 2
   wallrunCooldown: 0.25
   wallJumpForce: 10
 --- !u!1001 &434499652

@@ -65,6 +65,7 @@ namespace MovementRework
         [Header("Wallrunning Parameters")]
         [SerializeField] private float wallrunAcceleration = 1500f;
         [SerializeField] private float wallrunMaxSpeed = 25f;
+        [SerializeField] private float wallCheckDistance = 1f;
         private Vector3 wallForward = Vector3.zero;
         private bool didWallrun = false;
         [SerializeField] private float wallrunCooldown = 0.25f;
@@ -362,8 +363,8 @@ namespace MovementRework
         {
             if(!CheckGround() && !isMantling && !didWallrun)
             {
-                bool wallLeft = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(-facingDirection.z, 0, facingDirection.x), out RaycastHit hitLeft, 2f, groundLayers);
-                bool wallRight = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(facingDirection.z, 0, -facingDirection.x), out RaycastHit hitRight, 2f, groundLayers);
+                bool wallLeft = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(-facingDirection.z, 0, facingDirection.x), out RaycastHit hitLeft, wallCheckDistance, groundLayers);
+                bool wallRight = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(facingDirection.z, 0, -facingDirection.x), out RaycastHit hitRight, wallCheckDistance, groundLayers);
                 
                 if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
                 {
@@ -410,7 +411,10 @@ namespace MovementRework
             Gizmos.color = Color.red;
             //Ground Check Box
             Gizmos.DrawWireCube(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale);
-        
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(core.position, core.position + wallForward * 2);
+
             Gizmos.color = Color.red;
             Vector3 vStart = mantleRaycastPoint + core.position + facingDirection * mantleDistance;
             Vector3 vDirection = Vector3.down * mantleLength;
