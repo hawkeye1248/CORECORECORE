@@ -16,12 +16,13 @@ namespace MovementRework
         [SerializeField] private float camSmoothingFactor;
         [SerializeField] private float camSpeed;
 
-        public Vector3 facingDirection;
-        public Vector3 upwardsDirection;
+        [HideInInspector] public Vector3 facingDirection;
+        [HideInInspector] public Vector3 upwardsDirection;
 
         private Camera cam;
         private Player player;
         [SerializeField] private float cameraTiltMultiplier;
+        [SerializeField] private float wallrunTiltMultiplier;
         [SerializeField] private float cameraTiltSmoothTime;
         float cameraZTilt = 0;
 
@@ -31,6 +32,7 @@ namespace MovementRework
 
         [SerializeField] private float minFov;
         [SerializeField] private float maxFov;
+        [SerializeField] private float fovChangeMultiplier = 5f;
 
         float time = 0;
         float elapsedTime = 0;
@@ -46,7 +48,11 @@ namespace MovementRework
         private void Update() {
             RotateCam(MovementInput.Instance.GetLookVector().x, MovementInput.Instance.GetLookVector().y);
 
-            //Headbob(player.GetMovementSpeed(), player.GetSpeedPercentage());
+            if(player.IsGrounded && !player.IsMantling && !player.IsCrouching)
+            {
+                Headbob(player.GetMovementSpeed(), player.GetSpeedPercentage());
+            }
+            
             SetFOV(player.GetMovementSpeed(), player.GetHorizontalSpeedPercentage());
         }
 
@@ -65,7 +71,13 @@ namespace MovementRework
             facingDirection = transform.forward;
             upwardsDirection = transform.up;
 
-            cameraZTilt = Mathf.Lerp(cameraZTilt, -MovementInput.Instance.GetMovementVector().x * cameraTiltMultiplier, cameraTiltSmoothTime);
+            if(player.IsWallrunning)
+            {
+                cameraZTilt = Mathf.Lerp(cameraZTilt, (player.isWallLeft ? - 1 : 1) * wallrunTiltMultiplier, cameraTiltSmoothTime);
+            } else
+            {
+                cameraZTilt = Mathf.Lerp(cameraZTilt, -MovementInput.Instance.GetMovementVector().x * cameraTiltMultiplier, cameraTiltSmoothTime);
+            }
 
             transform.localRotation = Quaternion.Euler(new Vector3(currentXAngle, currentYAngle, cameraZTilt));
         }
@@ -74,10 +86,11 @@ namespace MovementRework
         {
             if(speed >= 0.5f)
             {
-                cam.fieldOfView = Mathf.Lerp(minFov, maxFov, speedPercentage);
+                float desiredFov = Mathf.Lerp(minFov, maxFov, speedPercentage);
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, desiredFov, fovChangeMultiplier * Time.deltaTime);
             } else
             {
-                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, minFov, Time.deltaTime);
+                cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, minFov, fovChangeMultiplier * Time.deltaTime);
             }
             
         }
@@ -95,7 +108,7 @@ namespace MovementRework
                     return;
                 } else
                 {
-                    cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, startPos, Time.deltaTime);
+                    cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, startPos, 10 * Time.deltaTime);
                 }
             }
             
@@ -104,10 +117,10 @@ namespace MovementRework
 
         private Vector3 FootStepMotion(float newFreq, float speed)
         {
-            time = Time.time - elapsedTime;
+            time = Time.time;
             Vector3 pos = Vector3.zero;
-            pos.y = Mathf.Sin(time * newFreq) * amplitute;
-            pos.x = Mathf.Cos(time * newFreq) * amplitute;
+            pos.y += Mathf.Sin(time * newFreq) * amplitute * 0.4f;
+            pos.x += Mathf.Cos(time * newFreq / 2) * amplitute * 0.6f;
             return pos;
         }
 

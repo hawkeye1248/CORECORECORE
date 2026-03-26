@@ -2221,11 +2221,6 @@ MonoBehaviour:
   orientation: {fileID: 899928996}
   core: {fileID: 1370727680}
   cameraController: {fileID: 1135528636}
-  isGrounded: 0
-  isWallrunning: 0
-  isJumped: 0
-  isCrouching: 0
-  isMantling: 0
   acceleration: 8500
   maxSpeed: 14
   stoppingPower: 45
@@ -2245,7 +2240,7 @@ MonoBehaviour:
   airborneStoppingPower: 3
   airborneSidewayDamping: 0.7
   airborneBackwardStoppingPower: 10
-  slideForce: 3
+  slideForce: 7
   slideStoppingPower: 2
   slideEndSpeed: 3
   tryingToSlide: 0
@@ -2253,7 +2248,7 @@ MonoBehaviour:
   mantleDistance: 1
   mantleLength: 0.5
   mantleJoltPower: 5
-  mantleJumpForce: 5
+  mantleJumpForce: 10
   wallrunAcceleration: 1500
   wallrunMaxSpeed: 14
   wallCheckDistance: 2
@@ -7671,11 +7666,13 @@ MonoBehaviour:
   facingDirection: {x: 0, y: 0, z: 0}
   upwardsDirection: {x: 0, y: 0, z: 0}
   cameraTiltMultiplier: 3
+  wallrunTiltMultiplier: 20
   cameraTiltSmoothTime: 0.03
-  amplitute: 0.1
-  frequency: 10
+  amplitute: 0.02
+  frequency: 15
   minFov: 80
   maxFov: 90
+  fovChangeMultiplier: 5
 --- !u!1001 &1144978461
 PrefabInstance:
   m_ObjectHideFlags: 0

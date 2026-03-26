@@ -14,11 +14,11 @@ namespace MovementRework
         [SerializeField] private CameraController cameraController;
 
         [Header("Status Bools")]
-        [SerializeField] private bool isGrounded = false;
-        [SerializeField] private bool isWallrunning = false;
-        [SerializeField] private bool isJumped = false;
-        [SerializeField] private bool isCrouching = false;
-        [SerializeField] private bool isMantling = false;
+        [SerializeField] public bool IsGrounded {get; private set;} = false;
+        [SerializeField] public bool IsWallrunning {get; private set;} = false;
+        [SerializeField] public bool IsJumped {get; private set;} = false;
+        [SerializeField] public bool IsCrouching {get; private set;} = false;
+        [SerializeField] public bool IsMantling {get; private set;} = false;
 
         [Header("Walking Parameters")]
         [SerializeField] private float acceleration = 2500f;
@@ -68,6 +68,7 @@ namespace MovementRework
         [SerializeField] private float wallCheckDistance = 1f;
         private Vector3 wallForward = Vector3.zero;
         private bool didWallrun = false;
+        public bool isWallLeft {get; private set;} = false;
         [SerializeField] private float wallrunCooldown = 0.25f;
         [SerializeField] private float wallJumpForce = 10f;
         
@@ -120,13 +121,13 @@ namespace MovementRework
 
         private void MovePlayer(Vector2 movementInput)
         {
-            if(isMantling)
+            if(IsMantling)
             {
                 core.linearVelocity = Vector3.zero;
                 return;
             }
 
-            if(isWallrunning)
+            if(IsWallrunning)
             {
                 core.AddForce(wallForward * wallrunAcceleration * Time.deltaTime);
                 core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, maxSpeed);
@@ -144,7 +145,7 @@ namespace MovementRework
             {
                 if(CheckGround())
                 {
-                    isCrouching = true;
+                    IsCrouching = true;
                     tryingToSlide = false;
                     camParent.MoveCamToCrouching();
                     if(core.linearVelocity.magnitude >= 0.1f)
@@ -154,7 +155,7 @@ namespace MovementRework
                 }
             }
 
-            if(isCrouching)
+            if(IsCrouching)
             {
                 CheckGround();
                 if(groundDotValue >= 0.95f)
@@ -164,7 +165,7 @@ namespace MovementRework
 
                 if(core.linearVelocity.magnitude <= slideEndSpeed)
                 {
-                    isCrouching = false;
+                    IsCrouching = false;
                     camParent.MoveCamToStanding(); 
                 }
                 return;
@@ -212,8 +213,9 @@ namespace MovementRework
                 
             } else
             {
-                if(CheckGround())
+                if(CheckGround() && !IsJumped)
                 {
+                    //core.linearVelocity = Vector3.zero;
                     core.AddForce(-core.linearVelocity.normalized * stoppingPower);
                 } else
                 {
@@ -224,11 +226,11 @@ namespace MovementRework
 
         private void OnJumpPerformed(object sender, EventArgs e)
         {   
-            if(isMantling)
+            if(IsMantling)
             {
                 LeaveMantle();
                 MantleJump();
-            } else if(isWallrunning)
+            } else if(IsWallrunning)
             {
                 LeaveWallrunning();
                 WallJump();
@@ -263,7 +265,7 @@ namespace MovementRework
 
         private bool CanJump ()
         {
-            if(isJumped)
+            if(IsJumped)
             {
                 return false;
             }
@@ -272,11 +274,11 @@ namespace MovementRework
 
         private IEnumerator JumpCooldownTimer()
         {
-            isJumped = true;
+            IsJumped = true;
             
             yield return new WaitForSeconds(jumpCooldown);
 
-            isJumped = false;
+            IsJumped = false;
         }
 
         private bool CheckGround()
@@ -284,14 +286,14 @@ namespace MovementRework
             Collider[] colliders = Physics.OverlapBox(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale, transform.rotation, groundLayers);
             bool newGrounded = colliders.Length > 0;
             
-            if(!isGrounded && newGrounded) //Yere iniş yapmış demektir.
+            if(!IsGrounded && newGrounded) //Yere iniş yapmış demektir.
             {
                 camParent.Jolt(core.linearVelocity.y, landingJoltPower);
             }
 
-            isGrounded = newGrounded;
+            IsGrounded = newGrounded;
 
-            if(isGrounded)
+            if(IsGrounded)
             {
                 coyoteTimer = 0;
 
@@ -305,7 +307,7 @@ namespace MovementRework
                 coyoteTimer += Time.deltaTime;
             }
 
-            return isGrounded;
+            return IsGrounded;
         }
 
         private void CheckMantle()
@@ -316,7 +318,7 @@ namespace MovementRework
                 {
                     if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), orientation.forward, 1f, groundLayers))
                     {
-                        isMantling = true;
+                        IsMantling = true;
                         mantleHoldPoint = horizontalHit.point;
                         camParent.Jolt(core.linearVelocity.y, mantleJoltPower);
                         core.useGravity = false;
@@ -329,7 +331,7 @@ namespace MovementRework
 
         private void LeaveMantle()
         {
-            isMantling = false;
+            IsMantling = false;
             core.useGravity = true;
         }
 
@@ -337,7 +339,7 @@ namespace MovementRework
         {
             if(CheckGround())
             {
-                isCrouching = true;
+                IsCrouching = true;
                 camParent.MoveCamToCrouching();
                 if(core.linearVelocity.magnitude >= 0.1f)
                 {
@@ -352,38 +354,39 @@ namespace MovementRework
         private void OnCrouchCanceled(object sender, EventArgs e)
         {
             tryingToSlide = false;
-            if(isCrouching)
+            if(IsCrouching)
             {
-                isCrouching = false;
+                IsCrouching = false;
                 camParent.MoveCamToStanding(); 
             }
         }
 
         private void CheckWallrun()
         {
-            if(!CheckGround() && !isMantling && !didWallrun)
+            if(!CheckGround() && !IsMantling && !didWallrun)
             {
                 bool wallLeft = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(-facingDirection.z, 0, facingDirection.x), out RaycastHit hitLeft, wallCheckDistance, groundLayers);
                 bool wallRight = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(facingDirection.z, 0, -facingDirection.x), out RaycastHit hitRight, wallCheckDistance, groundLayers);
                 
                 if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
                 {
-                    isWallrunning = true;
+                    IsWallrunning = true;
                     core.useGravity = false;
                     core.linearVelocity = new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z);
                     Vector3 wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
+                    isWallLeft = wallLeft;
                     wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
 
                 } else
                 {
-                    if(isWallrunning)
+                    if(IsWallrunning)
                     {
                         LeaveWallrunning();
                     }
                 }
             } else
             {
-                if(isWallrunning)
+                if(IsWallrunning)
                 {
                     LeaveWallrunning();
                 }
@@ -392,7 +395,7 @@ namespace MovementRework
 
         private void LeaveWallrunning()
         {
-            isWallrunning = false;
+            IsWallrunning = false;
             StartCoroutine(WallrunCooldownTimer());
             core.useGravity = true;
         }
