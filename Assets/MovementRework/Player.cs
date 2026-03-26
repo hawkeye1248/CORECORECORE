@@ -39,6 +39,7 @@ namespace MovementRework
         [SerializeField] private float jumpForce;
         private float jumpCooldown = 0.1f;
         [SerializeField] private float fallGravity;
+        [SerializeField] private float landingJoltPower = 2f;
 
         [Header("Airborne Movement Parameters")]
         [SerializeField] private float airborneAcceleration = 1500f;
@@ -57,6 +58,18 @@ namespace MovementRework
         [SerializeField] private Vector3 mantleRaycastPoint = new Vector3(0, 1.3f, 0);
         [SerializeField] private float mantleDistance = 0.7f;
         [SerializeField] private float mantleLength = 1f;
+        [SerializeField] private float mantleJoltPower = 5f;
+        [SerializeField] private float mantleJumpForce = 5f;
+        private Vector3 mantleHoldPoint = Vector3.zero;
+
+        [Header("Wallrunning Parameters")]
+        [SerializeField] private float wallrunAcceleration = 1500f;
+        [SerializeField] private float wallrunMaxSpeed = 25f;
+        private Vector3 wallForward = Vector3.zero;
+        private bool didWallrun = false;
+        [SerializeField] private float wallrunCooldown = 0.25f;
+        [SerializeField] private float wallJumpForce = 10f;
+        
 
         private void Awake() {
             camParent = GetComponentInChildren<CamPositioner>();
@@ -79,7 +92,6 @@ namespace MovementRework
         private void Update()
         {
             SetFacingDirection();
-
             playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
         }
@@ -89,6 +101,10 @@ namespace MovementRework
             MovePlayer(MovementInput.Instance.GetMovementVector());
 
             CheckMantle();
+
+            CheckWallrun();
+            
+
 
             if(core.linearVelocity.y < 0)
             {
@@ -105,8 +121,18 @@ namespace MovementRework
         {
             if(isMantling)
             {
+                core.linearVelocity = Vector3.zero;
                 return;
             }
+
+            if(isWallrunning)
+            {
+                core.AddForce(wallForward * wallrunAcceleration * Time.deltaTime);
+                core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, maxSpeed);
+                return;
+            }
+
+            
 
             if(core.linearVelocity.magnitude <= 0.1f)
             {
@@ -200,9 +226,10 @@ namespace MovementRework
             if(isMantling)
             {
                 LeaveMantle();
-                Jump();
+                MantleJump();
             } else if(isWallrunning)
             {
+                LeaveWallrunning();
                 WallJump();
             } else if(CanJump())
             {
@@ -218,7 +245,19 @@ namespace MovementRework
 
         private void WallJump()
         {
-            
+            core.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            core.AddForce(cameraController.transform.forward * wallJumpForce, ForceMode.Impulse);
+            StartCoroutine(JumpCooldownTimer());
+        }
+
+        private void MantleJump()
+        {
+            core.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            if(Vector3.Dot(new Vector3(core.position.x, 0, core.position.z) - new Vector3(mantleHoldPoint.x, 0, mantleHoldPoint.z), cameraController.transform.forward) >= 0)
+            {
+                core.AddForce(cameraController.transform.forward * mantleJumpForce, ForceMode.Impulse);
+            }
+            StartCoroutine(JumpCooldownTimer());
         }
 
         private bool CanJump ()
@@ -246,7 +285,7 @@ namespace MovementRework
             
             if(!isGrounded && newGrounded) //Yere iniş yapmış demektir.
             {
-                camParent.Jolt(core.linearVelocity.y);
+                camParent.Jolt(core.linearVelocity.y, landingJoltPower);
             }
 
             isGrounded = newGrounded;
@@ -272,13 +311,16 @@ namespace MovementRework
         {
             if(!CheckGround() && core.linearVelocity.y < 0)
             {
-                if(Physics.Raycast(mantleRaycastPoint + core.position + cameraController.transform.forward * mantleDistance, Vector3.down, out RaycastHit verticalHit, mantleLength, groundLayers))
+                if(Physics.Raycast(mantleRaycastPoint + core.position + facingDirection * mantleDistance, Vector3.down, out RaycastHit verticalHit, mantleLength, groundLayers))
                 {
-                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, groundLayers))
+                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), orientation.forward, 1f, groundLayers))
                     {
                         isMantling = true;
+                        mantleHoldPoint = horizontalHit.point;
+                        camParent.Jolt(core.linearVelocity.y, mantleJoltPower);
                         core.useGravity = false;
                         core.linearVelocity = Vector3.zero;
+                        
                     }
                 }
             }
@@ -316,6 +358,53 @@ namespace MovementRework
             }
         }
 
+        private void CheckWallrun()
+        {
+            if(!CheckGround() && !isMantling && !didWallrun)
+            {
+                bool wallLeft = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(-facingDirection.z, 0, facingDirection.x), out RaycastHit hitLeft, 2f, groundLayers);
+                bool wallRight = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(facingDirection.z, 0, -facingDirection.x), out RaycastHit hitRight, 2f, groundLayers);
+                
+                if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
+                {
+                    isWallrunning = true;
+                    core.useGravity = false;
+                    core.linearVelocity = new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z);
+                    Vector3 wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
+                    wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
+
+                } else
+                {
+                    if(isWallrunning)
+                    {
+                        LeaveWallrunning();
+                    }
+                }
+            } else
+            {
+                if(isWallrunning)
+                {
+                    LeaveWallrunning();
+                }
+            }
+        }
+
+        private void LeaveWallrunning()
+        {
+            isWallrunning = false;
+            StartCoroutine(WallrunCooldownTimer());
+            core.useGravity = true;
+        }
+
+        private IEnumerator WallrunCooldownTimer()
+        {
+            didWallrun = true;
+            
+            yield return new WaitForSeconds(wallrunCooldown);
+
+            didWallrun = false;
+        }
+
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
@@ -323,7 +412,7 @@ namespace MovementRework
             Gizmos.DrawWireCube(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), groundCheckScale);
         
             Gizmos.color = Color.red;
-            Vector3 vStart = mantleRaycastPoint + core.position + cameraController.transform.forward * mantleDistance;
+            Vector3 vStart = mantleRaycastPoint + core.position + facingDirection * mantleDistance;
             Vector3 vDirection = Vector3.down * mantleLength;
             Gizmos.DrawLine(vStart, vStart + vDirection);
 

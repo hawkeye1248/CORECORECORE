@@ -42,25 +42,25 @@ namespace MovementRework {
             }
         }
 
-        public void Jolt(float verticalSpeed)
+        public void Jolt(float verticalSpeed, float power)
         {
             if(-verticalSpeed >= crashForceLimit)
             {
-                StartCoroutine(JoltCoroutine());
+                StartCoroutine(JoltCoroutine(power));
             }
         }
 
-        private IEnumerator JoltCoroutine()
+        private IEnumerator JoltCoroutine(float power)
         {
             for (float f = 0; f < joltLength / 2; f += Time.deltaTime)
             {
-                cam.localEulerAngles = new Vector3(Mathf.Lerp(0, joltAmplitute, joltCurve.Evaluate(f / joltLength / 2)), cam.localEulerAngles.y, cam.localEulerAngles.z);
+                cam.localEulerAngles = new Vector3(Mathf.Lerp(0, joltAmplitute * power, joltCurve.Evaluate(f / joltLength / 2)), cam.localEulerAngles.y, cam.localEulerAngles.z);
                 yield return null;
             }
 
             for (float f = joltLength / 2; f > 0; f -= Time.deltaTime)
             {
-                cam.localEulerAngles = new Vector3(Mathf.Lerp(0, joltAmplitute, joltCurve.Evaluate(f / joltLength / 2)), cam.localEulerAngles.y, cam.localEulerAngles.z);
+                cam.localEulerAngles = new Vector3(Mathf.Lerp(0, joltAmplitute * power, joltCurve.Evaluate(f / joltLength / 2)), cam.localEulerAngles.y, cam.localEulerAngles.z);
                 yield return null;
             }
 
