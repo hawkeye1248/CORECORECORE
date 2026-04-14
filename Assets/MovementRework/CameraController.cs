@@ -68,7 +68,7 @@ namespace MovementRework
 
             transform.localRotation = Quaternion.Euler(new Vector3(0, currentYAngle ,0));
 
-            if(!player.IsWallrunning)
+            if(!player.IsWallrunning && !player.IsMantling)
             {
                 facingDirection = transform.forward;
             }
@@ -101,38 +101,58 @@ namespace MovementRework
 
         public void Headbob(float speed, float speedPercentage)
         {
-            if(speed >= 0.5f)
-            {
-                cam.transform.localPosition += FootStepMotion(speedPercentage * frequency, speed);
-            } else
-            {
-                elapsedTime = Time.time;
-                if(cam.transform.localPosition == startPos)
-                {
-                    return;
-                } else
-                {
-                    cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, startPos, 10 * Time.deltaTime);
-                }
-            }
             
-            //cam.transform.LookAt(FocusTarget());
         }
 
-        private Vector3 FootStepMotion(float newFreq, float speed)
-        {
-            time = Time.time;
-            Vector3 pos = Vector3.zero;
-            pos.y += Mathf.Sin(time * newFreq) * amplitute * 0.4f;
-            pos.x += Mathf.Cos(time * newFreq / 2) * amplitute * 0.6f;
-            return pos;
-        }
+        // void BobOffset(){
+        //     speedCurve += Time.deltaTime * (mover.isGrounded ? (Input.GetAxis("Horizontal") + Input.GetAxis("Vertical"))*bobExaggeration : 1f) + 0.01f;
 
-        private Vector3 FocusTarget()
-        {
-            Vector3 pos = new Vector3(transform.position.x, transform.position.y + startPos.y, transform.position.z);
-            pos += transform.forward * 15f;
-            return pos;
-        }
+        //     bobPosition.x = (curveCos*bobLimit.x*(mover.isGrounded ? 1:0))-(walkInput.x * travelLimit.x);
+        //     bobPosition.y = (curveSin*bobLimit.y)-(Input.GetAxis("Vertical") * travelLimit.y);
+        //     bobPosition.z = -(walkInput.y * travelLimit.z);
+        // }
+
+        // void BobRotation(){
+        //     bobEulerRotation.x = (walkInput != Vector2.zero ? multiplier.x * (Mathf.Sin(2*speedCurve)) : multiplier.x * (Mathf.Sin(2*speedCurve) / 2));
+        //     bobEulerRotation.y = (walkInput != Vector2.zero ? multiplier.y * curveCos : 0);
+        //     bobEulerRotation.z = (walkInput != Vector2.zero ? multiplier.z * curveCos * walkInput.x : 0);
+        // }
+
+
+        // public void Headbob(float speed, float speedPercentage)
+        // {
+        //     if(speed >= 0.5f)
+        //     {
+        //         cam.transform.localPosition += FootStepMotion(speedPercentage * frequency, speed);
+        //     } else
+        //     {
+        //         elapsedTime = Time.time;
+        //         if(cam.transform.localPosition == startPos)
+        //         {
+        //             return;
+        //         } else
+        //         {
+        //             cam.transform.localPosition = Vector3.Lerp(cam.transform.localPosition, startPos, 10 * Time.deltaTime);
+        //         }
+        //     }
+            
+        //     //cam.transform.LookAt(FocusTarget());
+        // }
+
+        // private Vector3 FootStepMotion(float newFreq, float speed)
+        // {
+        //     time = Time.time;
+        //     Vector3 pos = Vector3.zero;
+        //     pos.y = Mathf.Sin(time * newFreq) * amplitute * 0.4f;
+        //     pos.x = Mathf.Cos(time * newFreq / 2) * amplitute * 0.6f;
+        //     return pos;
+        // }
+
+        // private Vector3 FocusTarget()
+        // {
+        //     Vector3 pos = new Vector3(transform.position.x, transform.position.y + startPos.y, transform.position.z);
+        //     pos += transform.forward * 15f;
+        //     return pos;
+        // }
     } 
 }

@@ -24,9 +24,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Fire",
+                    "name": "LMB",
                     "type": "Button",
                     "id": "8d69a383-598e-43f2-8b43-ab9175cda3df",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RMB",
+                    "type": "Button",
+                    "id": "45c5ae4a-8fd4-4925-bfd6-1a3947bba738",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -36,15 +45,6 @@
                     "name": "Slide",
                     "type": "Button",
                     "id": "2cb71d24-cf83-4a88-a816-5c9eddfd857f",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Reload",
-                    "type": "Button",
-                    "id": "45c5ae4a-8fd4-4925-bfd6-1a3947bba738",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -145,7 +145,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Fire",
+                    "action": "LMB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -163,11 +163,11 @@
                 {
                     "name": "",
                     "id": "bece6faa-4cac-4462-9c20-8fc476dd8871",
-                    "path": "<Keyboard>/r",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Reload",
+                    "action": "RMB",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

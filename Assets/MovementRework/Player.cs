@@ -6,12 +6,13 @@ namespace MovementRework
 {
     public class Player : MonoBehaviour
     {
+        public static Player Instance {get; private set;}
         [Header("Objects and Components")]
-        private PlayerModel playerModel;
+        public PlayerModel playerModel {get; private set;}
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
-        [SerializeField] private Rigidbody core;
-        [SerializeField] private CameraController cameraController;
+        [SerializeField] public Rigidbody core;
+        public CameraController cameraController;
 
         [Header("Data")]
         [SerializeField] private PlayerMovementData movementData;
@@ -26,7 +27,7 @@ namespace MovementRework
         private float coyoteTimer = 0f;
         private float groundDotValue = 0f;
         private float jumpCooldown = 0.1f;
-        private Vector3 facingDirection = Vector3.zero;
+        public Vector3 facingDirection {get; private set;} = Vector3.zero;
 
         [Header("Slide State")]
         [SerializeField] private bool tryingToSlide = false;
@@ -38,8 +39,11 @@ namespace MovementRework
 
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
+        private bool didMantle = false;
 
         private void Awake() {
+            Instance = this;
+
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
 
@@ -92,6 +96,7 @@ namespace MovementRework
             if(IsWallrunning)
             {
                 core.AddForce(wallForward * movementData.wallrunAcceleration * Time.deltaTime);
+                core.AddForce(Vector3.up * movementData.wallrunUpwardForce);
                 core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
                 return;
             }
@@ -163,12 +168,13 @@ namespace MovementRework
                     localVelocity = orientation.transform.TransformVector(localVelocity);
                     core.linearVelocity = localVelocity;
 
-                    if(Vector3.Dot(orientation.forward, core.linearVelocity.normalized) < 0)
+                    if(Vector3.Dot(orientation.forward, new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized) < 0)
                     {
-                        core.AddForce(-core.linearVelocity.normalized * movementData.airborneBackwardStoppingPower);
+                        core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneBackwardStoppingPower);
                     }
 
-                    core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.airborneMaxSpeed);
+                    Vector3 clampedVelocity = Vector3.ClampMagnitude(new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z), movementData.airborneMaxSpeed);
+                    core.linearVelocity = new Vector3(clampedVelocity.x, core.linearVelocity.y, clampedVelocity.z);
                 }
                 
             } else
@@ -178,7 +184,7 @@ namespace MovementRework
                     core.AddForce(-core.linearVelocity.normalized * movementData.stoppingPower);
                 } else
                 {
-                    core.AddForce(-core.linearVelocity.normalized * movementData.airborneStoppingPower);
+                    core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneStoppingPower);
                 }
             }
         }
@@ -271,7 +277,7 @@ namespace MovementRework
 
         private void CheckMantle()
         {
-            if(!CheckGround() && core.linearVelocity.y < 0)
+            if(!CheckGround() && core.linearVelocity.y < 0 && !didMantle)
             {
                 if(Physics.Raycast(movementData.mantleRaycastPoint + core.position + facingDirection * movementData.mantleDistance, Vector3.down, out RaycastHit verticalHit, movementData.mantleLength, movementData.groundLayers))
                 {
@@ -292,11 +298,24 @@ namespace MovementRework
         {
             IsMantling = false;
             core.useGravity = true;
+            StartCoroutine(MantleCooldownTimer());
+        }
+
+        private IEnumerator MantleCooldownTimer()
+        {
+            didMantle = true;
+            
+            yield return new WaitForSeconds(movementData.mantleCooldown);
+
+            didMantle = false;
         }
 
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
-            if(CheckGround())
+            if(IsMantling)
+            {
+                LeaveMantle();
+            } else if(CheckGround())
             {
                 IsCrouching = true;
                 camParent.MoveCamToCrouching();
@@ -330,8 +349,7 @@ namespace MovementRework
                 if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
                 {
                     IsWallrunning = true;
-                    core.useGravity = false;
-                    core.linearVelocity = new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z);
+                    //core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.9f, core.linearVelocity.z);
                     Vector3 wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
                     isWallLeft = wallLeft;
                     wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
@@ -356,7 +374,6 @@ namespace MovementRework
         {
             IsWallrunning = false;
             StartCoroutine(WallrunCooldownTimer());
-            core.useGravity = true;
         }
 
         private IEnumerator WallrunCooldownTimer()
@@ -415,6 +432,11 @@ namespace MovementRework
         public float GetHorizontalSpeedPercentage()
         {
             return new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).magnitude / movementData.maxSpeed;
+        }
+
+        public Transform GetCamera()
+        {
+            return cameraController.transform;
         }
     }
 }

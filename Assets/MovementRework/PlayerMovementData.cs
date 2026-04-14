@@ -40,6 +40,7 @@ namespace MovementRework
         public float mantleLength = 1f;
         public float mantleJoltPower = 5f;
         public float mantleJumpForce = 5f;
+        public float mantleCooldown = 0.25f;
 
         [Header("Wallrunning Parameters")]
         public float wallrunAcceleration = 1500f;
@@ -47,5 +48,6 @@ namespace MovementRework
         public float wallCheckDistance = 1f;
         public float wallrunCooldown = 0.25f;
         public float wallJumpForce = 10f;
+        public float wallrunUpwardForce = 25f;
     }
 }

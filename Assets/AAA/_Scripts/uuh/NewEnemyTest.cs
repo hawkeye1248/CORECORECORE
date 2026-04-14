@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using MovementRework;
 
 public class NewEnemyTest : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class NewEnemyTest : MonoBehaviour
 
     void Start()
     {
-        player = PlayerWeaponController.instance.transform;
+        player = MovementRework.Player.Instance.transform;
     }
 
     void Update()

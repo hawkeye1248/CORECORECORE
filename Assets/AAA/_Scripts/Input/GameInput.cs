@@ -25,9 +25,9 @@ public class GameInput : MonoBehaviour
         inputActions.Gameplay.Enable();
 
         inputActions.Gameplay.Jump.performed += on_jump_performed;
-        inputActions.Gameplay.Fire.performed += on_fire_performed;
-        inputActions.Gameplay.Fire.canceled += on_fire_canceled;
-        inputActions.Gameplay.Reload.performed += on_reload_performed;
+        inputActions.Gameplay.LMB.performed += on_fire_performed;
+        inputActions.Gameplay.LMB.canceled += on_fire_canceled;
+        inputActions.Gameplay.RMB.performed += on_reload_performed;
         inputActions.Gameplay.Slide.performed += on_slide_performed;
         inputActions.Gameplay.Slide.canceled += on_slide_canceled;
     }
