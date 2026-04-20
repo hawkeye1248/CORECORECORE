@@ -49,5 +49,7 @@ namespace MovementRework
         public float wallrunCooldown = 0.25f;
         public float wallJumpForce = 10f;
         public float wallrunUpwardForce = 25f;
+        [Header("Lunge Parameters")]
+        public float lungeForce = 10f;
     }
 }

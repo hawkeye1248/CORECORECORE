@@ -385,6 +385,11 @@ namespace MovementRework
             didWallrun = false;
         }
 
+        public void LungeForward()
+        {
+            core.AddForce(facingDirection * movementData.lungeForce, ForceMode.Impulse);
+        }
+
         private void OnDrawGizmos()
         {
             if (movementData == null)

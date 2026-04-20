@@ -177,6 +177,14 @@ public class NewEnemyTest : MonoBehaviour
         {
             return;
         }
+
+        if(isUsingPipe)
+        {
+            GameEvents.OnEnemyDeathWithWeapon?.Invoke();
+        } else
+        {
+            GameEvents.OnEnemyDeathWithoutWeapon?.Invoke();
+        }
         enemyAnim.enabled = false;
         agent.enabled = false;
         weaponHand.gameObject.SetActive(false);

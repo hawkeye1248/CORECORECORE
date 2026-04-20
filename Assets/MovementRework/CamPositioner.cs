@@ -18,7 +18,7 @@ namespace MovementRework {
 
         public void SimplePosition(Vector3 position)
         {
-            transform.position = new Vector3(position.x, position.y - camVerticalOffset, position.z);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(position.x, position.y - camVerticalOffset, position.z), Time.deltaTime * 10f);
         }
 
         public void MoveCamToCrouching()

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using DG.Tweening;
-using peterkcodes.AdvancedMovement;
+using MovementRework;
 
 public class WeaponScript : MonoBehaviour
 {
@@ -32,7 +32,7 @@ public class WeaponScript : MonoBehaviour
     }
 
     private void Start() {
-        mainCam = PlayerWeaponController.instance.GetComponent<peterkcodes.AdvancedMovement.Demo.CameraController>().cameraTransform;
+        mainCam = MovementRework.Player.Instance.cameraController.transform;
     }
 
     private void ChangeSettings()
@@ -105,7 +105,7 @@ public class WeaponScript : MonoBehaviour
             bp.Die(rb.linearVelocity,  Mathf.Lerp(minKnockbackForce, maxKnockbackForce, rb.linearVelocity.magnitude/40));
 
             rb.AddForce((mainCam.position - transform.position).normalized, ForceMode.Impulse);
-            //rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
         }
     }
 }

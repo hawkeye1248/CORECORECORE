@@ -38,9 +38,11 @@ MonoBehaviour:
   mantleLength: 0.5
   mantleJoltPower: 5
   mantleJumpForce: 10
+  mantleCooldown: 0.25
   wallrunAcceleration: 1500
   wallrunMaxSpeed: 14
   wallCheckDistance: 2
   wallrunCooldown: 0.25
-  wallJumpForce: 10
+  wallJumpForce: 7
   wallrunUpwardForce: 28
+  lungeForce: 5

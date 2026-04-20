@@ -25,12 +25,13 @@ public class PlayerWeaponManager : MonoBehaviour
     private EnemyBodyPartScript closestEnemyPart = null;
     private Animator anim;
     [SerializeField] private float hitstopTime = 0.1f;
-    [SerializeField] private float prehitstopTime = 0.1f;
     [SerializeField] private float hitstopAmount = 0.1f;
-
+    [SerializeField] private float prehitstopTime = 0.1f;
 
     [SerializeField] private float minKnockbackForce;
     [SerializeField] private float maxKnockbackForce;
+    
+
 
     private void Start() {
         mainCam = playerScript.GetCamera();
@@ -38,6 +39,8 @@ public class PlayerWeaponManager : MonoBehaviour
         MovementInput.Instance.OnRMBPerformed += on_RMB_performed;
         MovementInput.Instance.OnLMBPerformed += on_LMB_performed;
 
+        //GameEvents.OnEnemyDeathWithoutWeapon += on_EnemyDeathWithoutWeapon;
+        //GameEvents.OnEnemyDeathWithWeapon += on_EnemyDeathWithWeapon;
     }
 
     private void Update()
@@ -145,7 +148,8 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             closestEnemyPart.Die(Vector3.Normalize(closestEnemyPart.transform.position - transform.position), 
             Mathf.Lerp(minKnockbackForce, maxKnockbackForce, playerScript.core.linearVelocity.magnitude / 20));
-            //!StartCoroutine(HitStop());
+            StartCoroutine(playerScript.playerModel.WeaponHitStop(hitstopTime, hitstopAmount));
+            //StartCoroutine(HitStop());
         }
         
 
@@ -182,6 +186,24 @@ public class PlayerWeaponManager : MonoBehaviour
             Gizmos.matrix = cubeMatrix;
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(boxWidth, boxHeight, range));
         }
+    }
+
+    public IEnumerator HitStop()
+    {
+        yield return new WaitForSecondsRealtime(prehitstopTime);
+        Time.timeScale = 0.25f;
+        yield return new WaitForSecondsRealtime(hitstopTime);
+        Time.timeScale = 1f;
+    }
+
+    private void on_EnemyDeathWithWeapon()
+    {
+        StartCoroutine(HitStop());
+    }
+
+    private void on_EnemyDeathWithoutWeapon()
+    {
+        StartCoroutine(playerScript.playerModel.WeaponHitStop(hitstopTime, hitstopAmount));
     }
 
 }

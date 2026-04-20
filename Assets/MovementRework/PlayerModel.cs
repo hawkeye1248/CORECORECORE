@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace MovementRework {
@@ -22,7 +23,11 @@ namespace MovementRework {
 
         public void SimplePosition(Vector3 position)
         {
-            transform.position = new Vector3(position.x, position.y - 0.5f, position.z);
+            if(playerScript.IsCrouching)
+            {
+                position.y -= 0.5f;
+            }
+            transform.position = Vector3.Lerp(transform.position, new Vector3(position.x, position.y - 0.5f, position.z), Time.deltaTime * 10f);
             handModel.forward = Vector3.Lerp(handModel.forward, playerScript.cameraController.transform.forward, Time.deltaTime * turningSpeed);
         }
 
@@ -100,6 +105,13 @@ namespace MovementRework {
         public void PunchLeftTrigger()
         {
             animator.SetTrigger("PunchLeft");
+        }
+
+        public IEnumerator WeaponHitStop(float duration, float slowDownAmount)
+        {
+            animator.speed = slowDownAmount;
+            yield return new WaitForSeconds(duration);
+            animator.speed = 1;
         }
     }
 }

@@ -16,7 +16,7 @@ public class AnimationEventStateBehaviour : StateMachineBehaviour
     {
         float currentTime = stateInfo.normalizedTime % 1f;
 
-        if(!isFired && triggerTime >= currentTime)
+        if(!isFired && triggerTime <= currentTime)
         {
             isFired = true;
             NotifyReceiver(animator);
