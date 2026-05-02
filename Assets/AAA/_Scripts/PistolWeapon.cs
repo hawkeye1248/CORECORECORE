@@ -18,6 +18,7 @@ public class PistolWeapon : WeaponScript
         }
 
         GameObject bullet = Instantiate(bulletPrefab, pos, rot);
+        bulletAmount--;
 
         if (GetComponentInChildren<ParticleSystem>() != null)
         {

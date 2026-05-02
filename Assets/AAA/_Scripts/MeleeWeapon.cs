@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using MovementRework;
 
 public class MeleeWeapon : WeaponScript
 {
@@ -30,10 +31,10 @@ public class MeleeWeapon : WeaponScript
         for (int i = 0; i < numberOfCasts; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
-            Quaternion rotation = transform.rotation * Quaternion.Euler(0, currentAngle, 0);
+            Quaternion rotation = mainCam.rotation * Quaternion.Euler(0, currentAngle, 0);
             
             Vector3 centerOffset = rotation * Vector3.forward * (range / 2f);
-            Vector3 boxCenter = transform.position + centerOffset;
+            Vector3 boxCenter = mainCam.position + centerOffset;
             Vector3 halfExtents = new Vector3(boxWidth / 2f, boxHeight / 2f, range / 2f);
 
             Collider[] hitColliders = Physics.OverlapBox(boxCenter, halfExtents, rotation, targetLayer);
@@ -44,7 +45,7 @@ public class MeleeWeapon : WeaponScript
                 {
                     if (!hitEnemies.Contains(enemyPart.enemy))
                     {
-                        enemyPart.Die(Vector3.Normalize(enemyPart.transform.position - transform.position),  Mathf.Lerp(minKnockbackForce, maxKnockbackForce, GetComponentInParent<CharacterController>().velocity.magnitude / 20));
+                        enemyPart.Die(mainCam.forward, Mathf.Lerp(minKnockbackForce, maxKnockbackForce, Player.Instance.core.linearVelocity.magnitude / 20));
                         bulletAmount--;
                         hitEnemies.Add(enemyPart.enemy);
                     }
@@ -65,15 +66,16 @@ public class MeleeWeapon : WeaponScript
 
     void OnDrawGizmos()
     {
-        // Önceki görselleştirme kodunun aynısı
+        if (mainCam == null) return;
+
         Gizmos.color = Color.red;
         float startAngle = -totalAngle / 2f;
         float angleStep = totalAngle / (numberOfCasts - 1);
         for (int i = 0; i < numberOfCasts; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
-            Quaternion rotation = transform.rotation * Quaternion.Euler(0, currentAngle, 0);
-            Vector3 boxCenter = transform.position + (rotation * Vector3.forward * (range / 2f));
+            Quaternion rotation = mainCam.rotation * Quaternion.Euler(0, currentAngle, 0);
+            Vector3 boxCenter = mainCam.position + (rotation * Vector3.forward * (range / 2f));
             Matrix4x4 cubeMatrix = Matrix4x4.TRS(boxCenter, rotation, Vector3.one);
             Gizmos.matrix = cubeMatrix;
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(boxWidth, boxHeight, range));

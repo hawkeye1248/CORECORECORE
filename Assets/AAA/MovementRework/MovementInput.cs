@@ -14,6 +14,7 @@ namespace MovementRework {
         public event EventHandler OnRMBCanceled;
         public event EventHandler OnCrouchPerformed;
         public event EventHandler OnCrouchCanceled;
+        public event EventHandler OnInteractPerformed;
 
         private void Awake()
         {
@@ -33,6 +34,7 @@ namespace MovementRework {
             inputActions.Gameplay.RMB.canceled += on_RMB_canceled;
             inputActions.Gameplay.Slide.performed += on_slide_performed;
             inputActions.Gameplay.Slide.canceled += on_slide_canceled;
+            inputActions.Gameplay.Interact.performed += on_interact_performed;
         }
 
         private void on_RMB_performed(InputAction.CallbackContext context)
@@ -67,6 +69,11 @@ namespace MovementRework {
         private void on_jump_performed(InputAction.CallbackContext context)
         {
             OnJumpPerformed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void on_interact_performed(InputAction.CallbackContext context)
+        {
+            OnInteractPerformed?.Invoke(this, EventArgs.Empty);
         }
 
         public Vector2 GetMovementVector()

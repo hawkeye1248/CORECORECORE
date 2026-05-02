@@ -8,7 +8,7 @@ public class WeaponScript : MonoBehaviour
     [Header("Components")]
     private Rigidbody rb;
     private Collider weaponCollider;
-    private Transform mainCam;
+    protected Transform mainCam;
     public Outline outline;
 
     [Header("Weapon Properties")]

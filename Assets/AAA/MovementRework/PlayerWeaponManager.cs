@@ -30,14 +30,23 @@ public class PlayerWeaponManager : MonoBehaviour
 
     [SerializeField] private float minKnockbackForce;
     [SerializeField] private float maxKnockbackForce;
-    
 
+    [Header("Weapon Pickup")]
+    [SerializeField] private Transform weaponHolder;
+    [SerializeField] private LayerMask weaponLayer;
+    private GameObject lastWeaponLooked;
 
     private void Start() {
         mainCam = playerScript.GetCamera();
 
         MovementInput.Instance.OnRMBPerformed += on_RMB_performed;
         MovementInput.Instance.OnLMBPerformed += on_LMB_performed;
+        MovementInput.Instance.OnInteractPerformed += OnInteractPerformed;
+
+        if (weaponHolder != null && weaponHolder.GetComponentInChildren<WeaponScript>() != null)
+        {
+            currentWeapon = weaponHolder.GetComponentInChildren<WeaponScript>();
+        }
 
         //GameEvents.OnEnemyDeathWithoutWeapon += on_EnemyDeathWithoutWeapon;
         //GameEvents.OnEnemyDeathWithWeapon += on_EnemyDeathWithWeapon;
@@ -45,7 +54,44 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void Update()
     {
-        
+        UpdateWeaponPickupRaycast();
+    }
+
+    private void UpdateWeaponPickupRaycast()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(mainCam.position, mainCam.forward, out hit, 3f, weaponLayer))
+        {
+            if (hit.collider.gameObject != lastWeaponLooked)
+            {
+                if (lastWeaponLooked != null)
+                {
+                    lastWeaponLooked.GetComponent<Outline>().enabled = false;
+                }
+                hit.collider.gameObject.GetComponent<Outline>().enabled = true;
+                lastWeaponLooked = hit.collider.gameObject;
+            }
+        }
+        else
+        {
+            if (lastWeaponLooked != null)
+            {
+                lastWeaponLooked.GetComponent<Outline>().enabled = false;
+                lastWeaponLooked = null;
+            }
+        }
+    }
+
+    private void OnInteractPerformed(object sender, EventArgs e)
+    {
+        if (currentWeapon != null) return;
+
+        RaycastHit hit;
+        if (Physics.Raycast(mainCam.position, mainCam.forward, out hit, 3f, weaponLayer))
+        {
+            hit.transform.GetComponent<WeaponScript>().Pickup(weaponHolder);
+            currentWeapon = hit.transform.GetComponent<WeaponScript>();
+        }
     }
 
     private void on_LMB_performed(object sender, EventArgs e)

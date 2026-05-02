@@ -99,12 +99,14 @@ namespace MovementRework {
 
         public void PunchRightTrigger()
         {
-            animator.SetTrigger("PunchRight");
+            var trigger = Random.value > 0.5f ? "PunchRight" : "PunchRightAlt";
+            animator.SetTrigger(trigger);
         }
 
         public void PunchLeftTrigger()
         {
-            animator.SetTrigger("PunchLeft");
+            var trigger = Random.value > 0.5f ? "PunchLeft" : "PunchLeftAlt";
+            animator.SetTrigger(trigger);
         }
 
         public IEnumerator WeaponHitStop(float duration, float slowDownAmount)
