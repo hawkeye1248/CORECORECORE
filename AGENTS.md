@@ -13,10 +13,6 @@
 Assets/
 ├── AAA/
 │   ├── _Scripts/                  # Core game scripts
-│   │   ├── Input/                 # GameInput, CoreInputActions
-│   │   ├── AnimationEvents/       # Animation event handlers
-│   │   ├── Enemy/                 # Enemy AI and behavior
-│   │   └── EnvironmentalScripts/  # Environment AI (e.g. FishRoam)
 │   ├── MovementRework/            # Custom movement (namespace: MovementRework)
 │   ├── Animations/                # Animation controllers & clips
 │   ├── Materials/                 # Materials
@@ -25,7 +21,7 @@ Assets/
 │   ├── Scenes/                    # Game scenes
 │   ├── Scriptable/                # ScriptableObjects
 │   └── Settings/                  # URP/render settings
-├── VolFx/                         # Third-party VFX toolkit (has .asmdef)
+├── VolFx/                         # Third-party VFX toolkit
 ├── Lightweight Advanced Controller/  # Third-party movement (peterkcodes)
 ├── Retro FPS Kit/                 # Retro FPS kit asset
 ├── Shaders/                       # Toony Colors Pro, Quibli, ProPixelizer
@@ -79,20 +75,16 @@ Assets/
 // Using statements (ordered as above)
 using System.Collections;
 using UnityEngine;
-using DG.Tweening;
 using MovementRework;
 
-// Class (global namespace for game scripts; explicit namespace for systems)
+// Class structure example
 public class Example : MonoBehaviour
 {
-    // [Header] + [SerializeField] private fields
     [Header("Settings")]
     [SerializeField] private float damage;
 
-    // Public properties / singletons
     public static Example Instance { get; private set; }
 
-    // Unity lifecycle: Awake -> Start -> OnEnable/OnDisable -> Update/FixedUpdate
     private void Awake() { }
     private void Start() { }
 }
@@ -106,55 +98,21 @@ public class Example : MonoBehaviour
 
 ### Common Patterns
 
-**Singleton**:
-```csharp
-public static GameManager Instance { get; private set; }
-
-private void Awake()
-{
-    if (Instance != null) { Destroy(gameObject); return; }
-    Instance = this;
-}
-```
-
-**Event-based communication**:
-```csharp
-public event EventHandler OnPlayerDeath;
-OnPlayerDeath?.Invoke(this, EventArgs.Empty);
-```
-
-**SerializeField for Inspector** (never `[SerializeField] public`):
-```csharp
-[Header("Weapon Settings")]
-[SerializeField] private float damage;
-[SerializeField] private LayerMask weaponLayer;
-```
-
-**Early returns**:
-```csharp
-private void OnTriggerEnter(Collider other)
-{
-    if (other == null) return;
-    // ...
-}
-```
-
-**Coroutines**:
-```csharp
-public IEnumerator FireInterval()
-{
-    isFireInterval = true;
-    yield return new WaitForSeconds(fireInterval);
-    isFireInterval = false;
-}
-StartCoroutine(FireInterval());
-```
+**Singleton**: `public static GameManager Instance { get; private set; }` in `Awake()`.
+**Event-based communication**: `public event EventHandler OnPlayerDeath; OnPlayerDeath?.Invoke(this, EventArgs.Empty);`
+**SerializeField for Inspector**: Use `[SerializeField] private` (never `public`).
+**Early returns**: `if (condition) return;`
+**Coroutines**: Use `StartCoroutine(MyCoroutine());` for timed operations.
 
 ### Type Usage
-- Prefer `var` when type is obvious from the right-hand side
-- Generic collections (`List<T>`, `HashSet<T>`) over non-generic
-- Use `readonly` for fields that should not change after initialization
-- LINQ acceptable for queries
+- Prefer `var` when type is obvious.
+- Generic collections (`List<T>`, `HashSet<T>`) over non-generic.
+- Use `readonly` for fields that should not change after initialization.
+- LINQ acceptable for queries.
+
+### Error Handling
+- Use null checks (`if (obj == null) return;` or `obj?.Method()`) to prevent `NullReferenceException`.
+- Employ `try-catch` blocks for operations that might throw specific exceptions (e.g., file I/O, network requests).
 
 ### Physics API
 Use `rigidbody.linearVelocity` (not `rigidbody.velocity`) — Unity 6+ API.
@@ -162,26 +120,18 @@ Use `rigidbody.linearVelocity` (not `rigidbody.velocity`) — Unity 6+ API.
 ### Third-Party Libraries
 - **DG.Tweening**: `DOTween.Sequence()`, `transform.DOMove()`, `transform.DOLocalMove()`
 - **peterkcodes.AdvancedMovement**: Player movement controller
-- **VolFx**: Screen effects (editor scripts in `.../Editor/` folders)
-
-## Assembly Definitions
-
-All `.asmdef` files are in **third-party assets only**. Main game code (`Assets/AAA/_Scripts/`, `Assets/AAA/MovementRework/`) compiles into the default assembly — **do not add .asmdef files to AAA/ unless there is a clear need**.
-
-Existing assemblies: `VolFx.Runtime`, `VolFx.Editor`, `Tools.Runtime`, `Tools.Editor`, `ScreenFx.Runtime`, `ScreenFx.Editor`, `ToonyColorsPro.Runtime`, `ProPixelizer`, and others under third-party folders.
+- **VolFx**: Screen effects
 
 ## Performance Tips
 
-- Cache component references in `Awake()` or via field initialization
-- Avoid `GetComponent` in `Update` loops
-- Use object pooling for frequently spawned objects
-- Consider URP render pipeline optimizations
+- Cache component references in `Awake()` or via field initialization.
+- Avoid `GetComponent` in `Update` loops.
+- Use object pooling for frequently spawned objects.
 
 ## Testing
 
 - Framework: Unity Test Framework (`com.unity.test-framework` v1.4.6)
 - Test location: `Assets/Tests/` (PlayMode and EditMode)
-- Run via Test Runner window only (no CLI)
 - Existing integration test scripts: `Assets/AAA/_Scripts/Enemy/NewEnemyTest.cs`, `Assets/AAA/_Scripts/MeleeTest.cs`
 
 ## Quick Reference
@@ -194,3 +144,7 @@ Existing assemblies: `VolFx.Runtime`, `VolFx.Editor`, `Tools.Runtime`, `Tools.Ed
 | Packages config | `Packages/manifest.json` |
 | VS Code config | `.vscode/settings.json` |
 | Solution file | `CORECORECORE.sln` |
+
+## Agent-Specific Rules
+- No Cursor rules (`.cursor/rules/` or `.cursorrules`) found.
+- No Copilot rules (`.github/copilot-instructions.md`) found.

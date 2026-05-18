@@ -31,7 +31,7 @@ public class NewEnemyTest : MonoBehaviour
     [SerializeField] private float boxWidth = 1f;
     [SerializeField] private float boxHeight = 1f;
     public LayerMask targetLayer;
-    private HashSet<PlayerWeaponController> hitEnemies = new HashSet<PlayerWeaponController>();
+    private HashSet<Player> hitEnemies = new HashSet<Player>();
 
     void Awake()
     {
@@ -44,7 +44,7 @@ public class NewEnemyTest : MonoBehaviour
 
     void Start()
     {
-        player = MovementRework.Player.Instance.transform;
+        player = MovementRework.Player.Instance.core.transform;
     }
 
     void Update()
@@ -156,7 +156,7 @@ public class NewEnemyTest : MonoBehaviour
 
             foreach (var col in hitColliders)
             {
-                if(col.TryGetComponent<PlayerWeaponController>(out PlayerWeaponController player))
+                if(col.TryGetComponent<Player>(out Player player))
                 {
                     if(!hitEnemies.Contains(player))
                     {
