@@ -57,7 +57,7 @@ public class Health : MonoBehaviour
                 OnPlayerDeath?.Invoke(this, EventArgs.Empty);
                 death?.Invoke();
                 GetComponent<CharacterController>().enabled = false;
-                GetComponent<PlayerWeaponController>().enabled = false;
+                //GetComponent<PlayerWeaponController>().enabled = false;
             }
         }
     }

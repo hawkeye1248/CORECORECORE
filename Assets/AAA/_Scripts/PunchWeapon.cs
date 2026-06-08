@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using peterkcodes.AdvancedMovement;
+using MovementRework;
 
 public class PunchWeapon : MonoBehaviour
 {
@@ -111,7 +111,7 @@ public class PunchWeapon : MonoBehaviour
         if(closestEnemyPart != null)
         {
             closestEnemyPart.Die(Vector3.Normalize(closestEnemyPart.transform.position - transform.position), 
-            Mathf.Lerp(minKnockbackForce, maxKnockbackForce, GetComponentInParent<PlayerMovement>().velocity.magnitude / 20));
+            Mathf.Lerp(minKnockbackForce, maxKnockbackForce, GetComponentInParent<Player>().core.linearVelocity.magnitude / 20));
             StartCoroutine(HitStop());
         }
         
