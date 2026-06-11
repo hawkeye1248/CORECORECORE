@@ -11,14 +11,11 @@ public class PlayerWeaponManager : MonoBehaviour
     private WeaponScript currentWeapon;
 
     [Header("Punch Properties")]
+    [SerializeField] private MeleeShapeData punchShape;
+    [SerializeField] private float punchDamage = 30f;
     public float fireInterval = 0.2f;
-    [SerializeField] private float range = 3f;
-    [SerializeField] private float totalAngle = 90f;
-    private int numberOfCasts = 10;
-    [SerializeField] private float boxWidth = 1f;
-    [SerializeField] private float boxHeight = 1f;
     public LayerMask targetLayer;
-    
+
     [SerializeField] public bool isFireInterval = false;
     private HashSet<NewEnemyTest> hitEnemies = new HashSet<NewEnemyTest>();
     private float closestEnemyDistance = int.MaxValue;
@@ -36,7 +33,8 @@ public class PlayerWeaponManager : MonoBehaviour
     [SerializeField] private LayerMask weaponLayer;
     private GameObject lastWeaponLooked;
 
-    private void Start() {
+    private void Start()
+    {
         mainCam = playerScript.GetCamera();
 
         MovementInput.Instance.OnRMBPerformed += on_RMB_performed;
@@ -47,9 +45,6 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             currentWeapon = weaponHolder.GetComponentInChildren<WeaponScript>();
         }
-
-        //GameEvents.OnEnemyDeathWithoutWeapon += on_EnemyDeathWithoutWeapon;
-        //GameEvents.OnEnemyDeathWithWeapon += on_EnemyDeathWithWeapon;
     }
 
     private void Update()
@@ -96,10 +91,11 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void on_LMB_performed(object sender, EventArgs e)
     {
-        if(currentWeapon != null)
+        if (currentWeapon != null)
         {
             currentWeapon.Shoot(SpawnPos(), mainCam.rotation, false);
-        } else
+        }
+        else
         {
             TryPunchLeft();
         }
@@ -107,21 +103,23 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void on_RMB_performed(object sender, EventArgs e)
     {
-        if(currentWeapon != null)
+        if (currentWeapon != null)
         {
             RaycastHit castHit;
-                if(Physics.Raycast(mainCam.position, mainCam.forward, out castHit, 100))
-                {
-                    currentWeapon.isEquippedByPlayer = false;
-                    currentWeapon.Throw(castHit.point);
-                    currentWeapon = null;
-                } else
-                {
-                    currentWeapon.isEquippedByPlayer = false;
-                    currentWeapon.Throw(mainCam.position + (mainCam.forward * 100));
-                    currentWeapon = null;
-                }
-        } else
+            if (Physics.Raycast(mainCam.position, mainCam.forward, out castHit, 100))
+            {
+                currentWeapon.isEquippedByPlayer = false;
+                currentWeapon.Throw(castHit.point);
+                currentWeapon = null;
+            }
+            else
+            {
+                currentWeapon.isEquippedByPlayer = false;
+                currentWeapon.Throw(mainCam.position + (mainCam.forward * 100));
+                currentWeapon = null;
+            }
+        }
+        else
         {
             TryPunchRight();
         }
@@ -129,25 +127,23 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void TryPunchRight()
     {
-        if(isFireInterval)
+        if (isFireInterval)
         {
             return;
         }
 
         playerScript.playerModel.PunchRightTrigger();
-
         StartCoroutine(FireInterval());
     }
 
     private void TryPunchLeft()
     {
-        if(isFireInterval)
+        if (isFireInterval)
         {
             return;
-        }   
+        }
 
         playerScript.playerModel.PunchLeftTrigger();
-
         StartCoroutine(FireInterval());
     }
 
@@ -156,17 +152,17 @@ public class PlayerWeaponManager : MonoBehaviour
         hitEnemies.Clear();
         closestEnemyDistance = int.MaxValue;
         closestEnemyPart = null;
-        float startAngle = -totalAngle / 2f;
-        float angleStep = totalAngle / (numberOfCasts - 1);
+        float startAngle = -punchShape.totalAngle / 2f;
+        float angleStep = punchShape.totalAngle / (punchShape.castCount - 1);
 
-        for (int i = 0; i < numberOfCasts; i++)
+        for (int i = 0; i < punchShape.castCount; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
             Quaternion rotation = playerScript.cameraController.transform.rotation * Quaternion.Euler(0, currentAngle, 0);
-            
-            Vector3 centerOffset = rotation * Vector3.forward * (range / 2f);
+
+            Vector3 centerOffset = rotation * Vector3.forward * (punchShape.range / 2f);
             Vector3 boxCenter = playerScript.cameraController.transform.position + centerOffset;
-            Vector3 halfExtents = new Vector3(boxWidth / 2f, boxHeight / 2f, range / 2f);
+            Vector3 halfExtents = new Vector3(punchShape.boxWidth / 2f, punchShape.boxHeight / 2f, punchShape.range / 2f);
 
             Collider[] hitColliders = Physics.OverlapBox(boxCenter, halfExtents, rotation, targetLayer);
 
@@ -176,28 +172,24 @@ public class PlayerWeaponManager : MonoBehaviour
                 {
                     if (!hitEnemies.Contains(enemyPart.enemy))
                     {
-                        if((enemyPart.enemy.transform.position - transform.position).magnitude < closestEnemyDistance)
+                        if ((enemyPart.enemy.transform.position - transform.position).magnitude < closestEnemyDistance)
                         {
                             closestEnemyDistance = (enemyPart.enemy.transform.position - transform.position).magnitude;
                             closestEnemyPart = enemyPart;
                         }
-                        
-                        
+
                         hitEnemies.Add(enemyPart.enemy);
                     }
-                } //TODO duvarlara vurma ekle
+                }
             }
-            
         }
 
-        if(closestEnemyPart != null)
+        if (closestEnemyPart != null)
         {
-            closestEnemyPart.Die(Vector3.Normalize(closestEnemyPart.transform.position - transform.position), 
-            Mathf.Lerp(minKnockbackForce, maxKnockbackForce, playerScript.core.linearVelocity.magnitude / 20));
+            closestEnemyPart.ApplyDamage(punchDamage, Vector3.Normalize(closestEnemyPart.transform.position - transform.position),
+                Mathf.Lerp(minKnockbackForce, maxKnockbackForce, playerScript.core.linearVelocity.magnitude / 20));
             StartCoroutine(playerScript.playerModel.WeaponHitStop(hitstopTime, hitstopAmount));
-            //StartCoroutine(HitStop());
         }
-        
 
         if (GetComponentInChildren<ParticleSystem>() != null)
         {
@@ -219,18 +211,18 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        // Önceki görselleştirme kodunun aynısı
+        if (punchShape == null) return;
         Gizmos.color = Color.red;
-        float startAngle = -totalAngle / 2f;
-        float angleStep = totalAngle / (numberOfCasts - 1);
-        for (int i = 0; i < numberOfCasts; i++)
+        float startAngle = -punchShape.totalAngle / 2f;
+        float angleStep = punchShape.totalAngle / (punchShape.castCount - 1);
+        for (int i = 0; i < punchShape.castCount; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
             Quaternion rotation = playerScript.cameraController.transform.rotation * Quaternion.Euler(0, currentAngle, 0);
-            Vector3 boxCenter = playerScript.cameraController.transform.position + (rotation * Vector3.forward * (range / 2f));
+            Vector3 boxCenter = playerScript.cameraController.transform.position + (rotation * Vector3.forward * (punchShape.range / 2f));
             Matrix4x4 cubeMatrix = Matrix4x4.TRS(boxCenter, rotation, Vector3.one);
             Gizmos.matrix = cubeMatrix;
-            Gizmos.DrawWireCube(Vector3.zero, new Vector3(boxWidth, boxHeight, range));
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(punchShape.boxWidth, punchShape.boxHeight, punchShape.range));
         }
     }
 
@@ -241,15 +233,4 @@ public class PlayerWeaponManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(hitstopTime);
         Time.timeScale = 1f;
     }
-
-    private void on_EnemyDeathWithWeapon()
-    {
-        StartCoroutine(HitStop());
-    }
-
-    private void on_EnemyDeathWithoutWeapon()
-    {
-        StartCoroutine(playerScript.playerModel.WeaponHitStop(hitstopTime, hitstopAmount));
-    }
-
 }

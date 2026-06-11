@@ -1,25 +1,21 @@
-using System.Collections;
 using UnityEngine;
 
 public class EnemyBodyPartScript : MonoBehaviour
 {
     public Rigidbody rb;
     public NewEnemyTest enemy;
+    private Health health;
 
-    private void Awake() {
+    private void Awake()
+    {
         rb = GetComponent<Rigidbody>();
-        enemy = GetComponentInParent<NewEnemyTest>();  
+        enemy = GetComponentInParent<NewEnemyTest>();
+        health = GetComponentInParent<Health>();
     }
 
-    void Start()
+    public void ApplyDamage(float damage, Vector3 hitDirection, float knockbackForce)
     {
-          
-    }
-
-    public void Die(Vector3 pos, float forceFactor)
-    {
-        enemy.Ragdoll();
-        rb.AddForce(pos.normalized * 25f * forceFactor, ForceMode.Impulse);
-        
+        health.DamageHealth(damage);
+        rb.AddForce(hitDirection.normalized * 25f * knockbackForce, ForceMode.Impulse);
     }
 }

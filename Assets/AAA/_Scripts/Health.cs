@@ -4,43 +4,49 @@ using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
-    [Header("Health")]
-    [SerializeField] private float currentHealth;
-    [SerializeField] private float maxHealth = 100;
+    [Header("Data")]
+    [SerializeField] private HealthData healthData;
 
-    [Header("Health Drain")]
-    
-    [SerializeField] private bool doesDrainHealth = false;
+    [Header("State")]
+    [SerializeField] private float currentHealth;
+
+    public void SetHealthData(HealthData data)
+    {
+        healthData = data;
+    }
+
+    public HealthData GetHealthData()
+    {
+        return healthData;
+    }
+
     private float healthTimer;
-    [SerializeField] private float healthDrainTickTime = 0.25f;
-    [SerializeField] private float healthDrainPerTick;
-    
     private bool isInvulnearable = false;
     private bool isDead = false;
 
-    public event EventHandler OnPlayerHealthUpdated;
-    public event EventHandler OnPlayerDeath;
+    public event EventHandler OnHealthUpdated;
+    public event EventHandler OnDeath;
 
     public UnityEvent damaged;
     public UnityEvent heal;
     public UnityEvent death;
-    
+
     void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = healthData.maxHealth;
     }
 
     void Update()
     {
-        if (doesDrainHealth)
+        if (healthData is PlayerHealthData pd && pd.doesDrainHealth)
         {
-            DrainHealth();   
+            DrainHealth(pd);
         }
     }
 
     public float GetHealthPercentage()
     {
-        return currentHealth / maxHealth;
+        return currentHealth / healthData.maxHealth;
     }
 
     public void DamageHealth(float damage)
@@ -48,16 +54,18 @@ public class Health : MonoBehaviour
         if (!isInvulnearable)
         {
             currentHealth -= damage;
-            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            currentHealth = Mathf.Clamp(currentHealth, 0, healthData.maxHealth);
             damaged?.Invoke();
-            OnPlayerHealthUpdated?.Invoke(this, EventArgs.Empty);
-            if (currentHealth <= 0)
+            OnHealthUpdated?.Invoke(this, EventArgs.Empty);
+            if (currentHealth <= 0 && !isDead)
             {
                 isDead = true;
-                OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+                OnDeath?.Invoke(this, EventArgs.Empty);
                 death?.Invoke();
-                GetComponent<CharacterController>().enabled = false;
-                //GetComponent<PlayerWeaponController>().enabled = false;
+                if (TryGetComponent<CharacterController>(out var cc))
+                {
+                    cc.enabled = false;
+                }
             }
         }
     }
@@ -65,33 +73,33 @@ public class Health : MonoBehaviour
     public void HealHealth(float healAmount)
     {
         currentHealth += healAmount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0, healthData.maxHealth);
         heal?.Invoke();
-        OnPlayerHealthUpdated?.Invoke(this, EventArgs.Empty);
+        OnHealthUpdated?.Invoke(this, EventArgs.Empty);
     }
 
     public void KillCharacter()
     {
         damaged?.Invoke();
-        OnPlayerHealthUpdated?.Invoke(this, EventArgs.Empty);
+        OnHealthUpdated?.Invoke(this, EventArgs.Empty);
         currentHealth = 0;
         isDead = true;
-        OnPlayerDeath?.Invoke(this, EventArgs.Empty);
+        OnDeath?.Invoke(this, EventArgs.Empty);
         death?.Invoke();
     }
 
     public void ResetCharacter()
     {
         isDead = false;
-        currentHealth = maxHealth;
+        currentHealth = healthData.maxHealth;
     }
 
-    private void DrainHealth()
+    private void DrainHealth(PlayerHealthData pd)
     {
         healthTimer += Time.deltaTime;
-        if (healthTimer >= healthDrainTickTime)
+        if (healthTimer >= pd.healthDrainTickTime)
         {
-            DamageHealth(healthDrainPerTick);
+            DamageHealth(pd.healthDrainPerTick);
             healthTimer = 0;
         }
     }

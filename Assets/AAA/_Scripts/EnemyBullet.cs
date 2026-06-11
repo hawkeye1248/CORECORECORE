@@ -20,7 +20,11 @@ public class EnemyBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Health>().DamageHealth(50);
+            Health h = collision.gameObject.GetComponentInParent<Health>();
+            if (h != null)
+            {
+                h.DamageHealth(50);
+            }
         }
         Destroy(gameObject);
     }

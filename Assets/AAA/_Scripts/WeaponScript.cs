@@ -5,39 +5,37 @@ using MovementRework;
 
 public class WeaponScript : MonoBehaviour
 {
+    [Header("Data")]
+    [SerializeField] protected WeaponDataSO weaponData;
+
     [Header("Components")]
     private Rigidbody rb;
     private Collider weaponCollider;
     protected Transform mainCam;
     public Outline outline;
 
-    [Header("Weapon Properties")]
-    public float fireInterval = 0.3f;
-    public int bulletAmount = 3;
-
-
-    [Header("Bools")]
+    [Header("State")]
     public bool isEquippedByPlayer = false;
     [SerializeField] public bool isFireInterval = false;
+    protected int currentAmmo;
 
-    [SerializeField] protected float minKnockbackForce;
-    [SerializeField] protected float maxKnockbackForce;
-
-    private void Awake() {
+    private void Awake()
+    {
         rb = GetComponent<Rigidbody>();
         weaponCollider = GetComponent<Collider>();
         outline = GetComponent<Outline>();
-
+        currentAmmo = weaponData != null ? weaponData.maxAmmo : 3;
         ChangeSettings();
     }
 
-    private void Start() {
+    private void Start()
+    {
         mainCam = MovementRework.Player.Instance.cameraController.transform;
     }
 
     private void ChangeSettings()
     {
-        if(transform.parent != null)
+        if (transform.parent != null)
         {
             return;
         }
@@ -49,7 +47,7 @@ public class WeaponScript : MonoBehaviour
 
     public virtual void Shoot(Vector3 pos, Quaternion rot, bool isEnemy)
     {
-        
+
     }
 
     public void Throw(Vector3 hitpoint)
@@ -57,11 +55,10 @@ public class WeaponScript : MonoBehaviour
         Sequence s = DOTween.Sequence();
         s.Append(transform.DOMove(transform.position + transform.forward, .01f)).SetUpdate(true);
         s.AppendCallback(() => transform.parent = null);
-        //s.AppendCallback(() => transform.position = mainCam.position + (mainCam.right * .1f) + (mainCam.forward * 3f));
         s.AppendCallback(() => ChangeSettings());
         s.AppendCallback(() => rb.AddForce((hitpoint - transform.position).normalized * 25, ForceMode.Impulse));
         s.AppendCallback(() => rb.AddForce(Vector3.up * 2, ForceMode.Impulse));
-        s.AppendCallback(() => rb.AddTorque( transform.transform.up * 20, ForceMode.Impulse));
+        s.AppendCallback(() => rb.AddTorque(transform.transform.up * 20, ForceMode.Impulse));
     }
 
     public void Pickup(Transform weaponHolder)
@@ -89,7 +86,7 @@ public class WeaponScript : MonoBehaviour
     public IEnumerator FireInterval()
     {
         isFireInterval = true;
-        yield return new WaitForSeconds(fireInterval);
+        yield return new WaitForSeconds(weaponData.fireInterval);
         isFireInterval = false;
     }
 
@@ -98,11 +95,7 @@ public class WeaponScript : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyBodyPartScript bp = collision.gameObject.GetComponent<EnemyBodyPartScript>();
-
-            //if (!bp.enemy.isDead)
-                //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
-
-            bp.Die(rb.linearVelocity,  Mathf.Lerp(minKnockbackForce, maxKnockbackForce, rb.linearVelocity.magnitude/40));
+            bp.ApplyDamage(weaponData.damage, rb.linearVelocity, Mathf.Lerp(weaponData.minKnockbackForce, weaponData.maxKnockbackForce, rb.linearVelocity.magnitude / 40));
 
             rb.AddForce((mainCam.position - transform.position).normalized, ForceMode.Impulse);
             rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);

@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class BulletMovement : MonoBehaviour
 {
+    [Header("Properties")]
     public float speed;
     public float knockbackForce;
+    public float damage = 25f;
     private Rigidbody rb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();       
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -21,11 +23,7 @@ public class BulletMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyBodyPartScript bp = collision.gameObject.GetComponent<EnemyBodyPartScript>();
-
-            //if (!bp.enemy.dead)
-                //Instantiate(SuperHotScript.instance.hitParticlePrefab, transform.position, transform.rotation);
-
-            bp.Die(transform.forward, knockbackForce);
+            bp.ApplyDamage(damage, transform.forward, knockbackForce);
         }
         Destroy(gameObject);
     }
