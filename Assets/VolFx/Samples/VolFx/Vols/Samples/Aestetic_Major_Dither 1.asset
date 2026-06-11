@@ -15,33 +15,33 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 0.912
+    m_Value: 0.688
   m_Power:
     m_OverrideState: 1
-    m_Value: 0.79
+    m_Value: 0.898
   m_Scale:
     m_OverrideState: 1
-    m_Value: 0.743
+    m_Value: 0.614
   m_Pixelate:
     m_OverrideState: 1
     m_Value: 1
   m_Fps:
     m_OverrideState: 1
-    m_Value: 20
+    m_Value: 103
   m_Palette:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: 32e8946a8a4d5f5429c5fc9aa1f8cadb, type: 3}
   m_Pattern:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {fileID: 2800000, guid: 36348e7ac6392e74ea7fa8473ba7bca2, type: 3}
   m_Mode:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   m_NoiseScale:
-    m_OverrideState: 1
-    m_Value: 5.35
+    m_OverrideState: 0
+    m_Value: 6.19
   m_Noise:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {fileID: 2800000, guid: 740b841d649449f428b57372f4eb05f2, type: 3}
 --- !u!114 &-4875953380953873917
 MonoBehaviour:
@@ -81,6 +81,111 @@ MonoBehaviour:
   m_Mode:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-2448416812810204396
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58b92b6b40be8f645b8b9775076b7fb3, type: 3}
+  m_Name: JpegVol
+  m_EditorClassIdentifier: 
+  active: 1
+  _intensity:
+    m_OverrideState: 1
+    m_Value: 1.33
+  _blockSize:
+    m_OverrideState: 1
+    m_Value: 5
+  _quantization:
+    m_OverrideState: 1
+    m_Value: 5.2
+  _distortionScale:
+    m_OverrideState: 1
+    m_Value: 1.38
+  _applyToY:
+    m_OverrideState: 1
+    m_Value: 0
+  _applyToChroma:
+    m_OverrideState: 1
+    m_Value: 0
+  _applyToGlitch:
+    m_OverrideState: 1
+    m_Value: 0
+  _fps:
+    m_OverrideState: 1
+    m_Value: 0
+  _fpsBreak:
+    m_OverrideState: 1
+    m_Value: 0
+  _fpsLag:
+    m_OverrideState: 0
+    m_Value:
+      _curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+  _fpsBlending:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  _quantSpread:
+    m_OverrideState: 0
+    m_Value: 0
+  _scanlineDrift:
+    m_OverrideState: 0
+    m_Value: 0
+  _scanlineRes:
+    m_OverrideState: 0
+    m_Value: 720
+  _scanlinesFps:
+    m_OverrideState: 0
+    m_Value: 120
+  _channelShiftPow:
+    m_OverrideState: 0
+    m_Value: 0
+  _channelShiftX:
+    m_OverrideState: 0
+    m_Value: 0
+  _channelShiftY:
+    m_OverrideState: 0
+    m_Value: 0
+  _channelShiftSpread:
+    m_OverrideState: 0
+    m_Value: 0
+  _noise:
+    m_OverrideState: 0
+    m_Value: 0
+  _noiseBilinear:
+    m_OverrideState: 0
+    m_Value: 0
+  _distortionTex:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,6 +201,7 @@ MonoBehaviour:
   components:
   - {fileID: -5444665002287462775}
   - {fileID: 1351742759289794538}
+  - {fileID: -2448416812810204396}
 --- !u!114 &1351742759289794538
 MonoBehaviour:
   m_ObjectHideFlags: 3
