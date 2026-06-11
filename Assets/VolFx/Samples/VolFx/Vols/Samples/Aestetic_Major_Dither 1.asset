@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 0.688
+    m_Value: 0.438
   m_Power:
     m_OverrideState: 1
     m_Value: 0.898
