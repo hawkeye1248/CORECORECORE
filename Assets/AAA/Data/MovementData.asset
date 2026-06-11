@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 8500
   maxSpeed: 14
-  stoppingPower: 25
+  stoppingPower: 12
   sidewayDamping: 0.999
   backwardStoppingPower: 45
   groundCheckScale: {x: 0.4, y: 0.2, z: 0.4}

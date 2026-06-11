@@ -183,7 +183,7 @@ namespace MovementRework
             {
                 if(CheckGround() && !IsJumped)
                 {
-                    core.AddForce(-core.linearVelocity.normalized * movementData.stoppingPower);
+                    core.AddForce(-core.linearVelocity * movementData.stoppingPower);
                 } else
                 {
                     core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneStoppingPower);
