@@ -22,7 +22,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   coyoteTime: 0.25
-  jumpForce: 16
+  jumpForce: 10
   fallGravity: 5
   landingJoltPower: 2
   airborneAcceleration: 500
@@ -37,7 +37,7 @@ MonoBehaviour:
   mantleDistance: 1
   mantleLength: 0.5
   mantleJoltPower: 5
-  mantleJumpForce: 10
+  mantleJumpForce: 20
   mantleCooldown: 0.25
   wallrunAcceleration: 1500
   wallrunMaxSpeed: 14
