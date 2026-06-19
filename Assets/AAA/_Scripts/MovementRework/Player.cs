@@ -42,11 +42,20 @@ namespace MovementRework
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
 
+        /// <summary>
+        /// For compability reasons
+        /// </summary>
+        private bool _isPlayerModelNull;
+
         private void Awake() {
             Instance = this;
 
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
+            if (!playerModel)
+            {
+                _isPlayerModelNull = true;
+            }
             Health = GetComponent<Health>();
 
             jumpCooldown += movementData.coyoteTime;
@@ -64,7 +73,7 @@ namespace MovementRework
         private void Update()
         {
             SetFacingDirection();
-            playerModel.SimplePosition(core.position);
+            if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
         }
 

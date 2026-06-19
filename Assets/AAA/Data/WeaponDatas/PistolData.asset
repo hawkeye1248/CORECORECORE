@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed15030d9e5bd04e8390ed09e09cc8a, type: 3}
   m_Name: PistolData
   m_EditorClassIdentifier: 
+  weaponType: 2
   damage: 25
   fireInterval: 0.3
   maxAmmo: 3
   minKnockbackForce: 5
   maxKnockbackForce: 20
-  meleeRange: 3
-  meleeTotalAngle: 90
-  meleeCastCount: 10
-  meleeBoxWidth: 1
-  meleeBoxHeight: 1
+  meleeShape: {fileID: 0}

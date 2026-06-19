@@ -6,7 +6,7 @@ using MovementRework;
 public class WeaponScript : MonoBehaviour
 {
     [Header("Data")]
-    [SerializeField] protected WeaponDataSO weaponData;
+    [SerializeField] public WeaponDataSO weaponData { get; protected set; }
 
     [Header("Components")]
     private Rigidbody rb;
