@@ -25,8 +25,8 @@ MonoBehaviour:
   jumpForce: 10
   fallGravity: 5
   landingJoltPower: 2
-  airborneAcceleration: 500
-  airborneMaxSpeed: 50
+  airborneAcceleration: 2000
+  airborneMaxSpeed: 18
   airborneStoppingPower: 3
   airborneSidewayDamping: 0.7
   airborneBackwardStoppingPower: 10

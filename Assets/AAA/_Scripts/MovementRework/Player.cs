@@ -36,6 +36,7 @@ namespace MovementRework
 
         [Header("Wallrun State")]
         private Vector3 wallForward = Vector3.zero;
+        private Vector3 wallNormal = Vector3.zero;
         private bool didWallrun = false;
         public bool isWallLeft {get; private set;} = false;
 
@@ -112,6 +113,7 @@ namespace MovementRework
             {
                 core.AddForce(wallForward * movementData.wallrunAcceleration * Time.deltaTime);
                 core.AddForce(Vector3.up * movementData.wallrunUpwardForce);
+                core.AddForce(-wallNormal * 10);
                 core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
                 return;
             }
@@ -364,8 +366,8 @@ namespace MovementRework
                 if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
                 {
                     IsWallrunning = true;
-                    //core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.9f, core.linearVelocity.z);
-                    Vector3 wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
+                    core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.7f, core.linearVelocity.z);
+                    wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
                     isWallLeft = wallLeft;
                     wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
 
