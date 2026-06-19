@@ -16,9 +16,9 @@ MonoBehaviour:
   lowerVerticalLimit: 85
   camSmoothingFactor: 30
   camSpeed: 200
-  cameraTiltMultiplier: 5
-  lookTiltMultiplier: 5
-  maxLookTilt: 5
+  cameraTiltMultiplier: 1
+  lookTiltMultiplier: 1
+  maxLookTilt: 1
   wallrunTiltMultiplier: 15
   cameraTiltSmoothTime: 0.1
   minFov: 60

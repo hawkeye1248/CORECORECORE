@@ -22,11 +22,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   coyoteTime: 0.25
-  jumpForce: 10
+  jumpForce: 12
   fallGravity: 5
   landingJoltPower: 2
   airborneAcceleration: 2000
-  airborneMaxSpeed: 18
+  airborneMaxSpeed: 14
   airborneStoppingPower: 3
   airborneSidewayDamping: 0.7
   airborneBackwardStoppingPower: 10
@@ -43,6 +43,6 @@ MonoBehaviour:
   wallrunMaxSpeed: 14
   wallCheckDistance: 2
   wallrunCooldown: 0.25
-  wallJumpForce: 7
-  wallrunUpwardForce: 28
+  wallJumpForce: 10
+  wallrunUpwardForce: 35
   lungeForce: 5
