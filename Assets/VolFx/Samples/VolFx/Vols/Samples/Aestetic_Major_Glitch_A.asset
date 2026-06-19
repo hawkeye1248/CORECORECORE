@@ -18,16 +18,16 @@ MonoBehaviour:
     m_Value: 1
   _power:
     m_OverrideState: 1
-    m_Value: 0.178
+    m_Value: 0.315
   _scale:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 0.005
   _dispersion:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.994
   _period:
     m_OverrideState: 1
-    m_Value: 0.817
+    m_Value: 1
   _color:
     m_OverrideState: 1
     m_Value:
@@ -96,19 +96,19 @@ MonoBehaviour:
       - {r: 0, g: 0.98, b: 1, a: 1}
   _chaotic:
     m_OverrideState: 1
-    m_Value: 0.33
+    m_Value: 1
   _noLockNoise:
     m_OverrideState: 0
     m_Value: 0
   _density:
     m_OverrideState: 1
-    m_Value: 0.423
+    m_Value: 0.683
   _lock:
     m_OverrideState: 1
-    m_Value: 0.715
+    m_Value: 0.854
   _sharpen:
     m_OverrideState: 1
-    m_Value: 0.168
+    m_Value: 0.191
   _crush:
     m_OverrideState: 1
     m_Value: 0

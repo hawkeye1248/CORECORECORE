@@ -15,5 +15,5 @@ MonoBehaviour:
   maxHealth: 100
   sightRange: 10
   fireInterval: 3
-  damage: 30
+  damage: 20
   meleeShape: {fileID: 11400000, guid: 17ee88013162cfc468e9ca1c3692f862, type: 2}
