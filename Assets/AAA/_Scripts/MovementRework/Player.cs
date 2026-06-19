@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MovementRework
 {
@@ -42,6 +43,10 @@ namespace MovementRework
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
 
+        [Header("Respawn State")]
+        private Vector3 startPosition = Vector3.zero;
+        private Quaternion startRotation = Quaternion.identity;
+
         private void Awake() {
             Instance = this;
 
@@ -50,6 +55,9 @@ namespace MovementRework
             Health = GetComponent<Health>();
 
             jumpCooldown += movementData.coyoteTime;
+
+            startPosition = core.position;
+            startRotation = core.rotation;
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -63,6 +71,11 @@ namespace MovementRework
 
         private void Update()
         {
+            if(Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
+            {
+                RespawnAtStart();
+            }
+
             SetFacingDirection();
             playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
@@ -385,6 +398,14 @@ namespace MovementRework
             yield return new WaitForSeconds(movementData.wallrunCooldown);
 
             didWallrun = false;
+        }
+
+        public void RespawnAtStart()
+        {
+            core.position = startPosition;
+            core.rotation = startRotation;
+            core.linearVelocity = Vector3.zero;
+            core.angularVelocity = Vector3.zero;
         }
 
         public void LungeForward()

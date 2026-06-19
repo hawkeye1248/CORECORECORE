@@ -39,6 +39,8 @@ Shader "Hidden/Vol/Glitch"
 
 			float4  _Sobel;
 			float2  _Grid;
+			float   _VigInner;
+			float   _VigOuter;
 			
 			//--------------------------------------------------------------
             struct appdata
@@ -126,7 +128,9 @@ Shader "Hidden/Vol/Glitch"
 				fixed4 result = lerp(initial + sob, pix + screen, cell);
 				result = lerp(result, shot, mask) + bleed;
 				
-				return lerp(initial, result, _Weight);
+				float2 vigCoord = i.uv * 2.0 - 1.0;
+				float vignette = smoothstep(_VigInner, _VigOuter, dot(vigCoord, vigCoord));
+				return lerp(initial, result, _Weight * vignette);
 			}
 			ENDCG
 		}
