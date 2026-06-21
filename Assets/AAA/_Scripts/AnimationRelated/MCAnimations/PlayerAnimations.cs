@@ -25,6 +25,7 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
         private static readonly int pistolThrow = Animator.StringToHash("PistolThrow");
         private static readonly int pistolShoot = Animator.StringToHash("PistolShoot");
         private static readonly int idle =  Animator.StringToHash("Idle");
+        private static readonly int setPistol = Animator.StringToHash("SetPistol");
 
         #endregion
 
@@ -46,7 +47,9 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
                         _animator.CrossFade(pipeIdle, .1f);
                         break;
                     case Weapon.Pistol:
-                        _animator.CrossFade(hookPunchL, .1f);
+                        //_animator.Play(hookPunchL);
+                        _animator.SetTrigger(setPistol);
+                        Debug.Log("PistolPickup");
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(CurrentPlayerWeapon));

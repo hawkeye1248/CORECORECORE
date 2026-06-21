@@ -1,9 +1,19 @@
+using System;
+using AAA._Scripts.Enums;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PistolWeapon : WeaponScript
 {
     [Header("Prefabs")]
     [SerializeField] public GameObject bulletPrefab;
+    
+    private void Awake()
+    {
+        WeaponData.weaponType = Weapon.Pistol;
+        rb = GetComponent<Rigidbody>();
+        weaponCollider = GetComponent<Collider>();
+    }
 
     public override void Shoot(Vector3 pos, Quaternion rot, bool isEnemy)
     {
@@ -19,7 +29,7 @@ public class PistolWeapon : WeaponScript
         GameObject bullet = Instantiate(bulletPrefab, pos, rot);
         if (bullet.TryGetComponent<BulletMovement>(out var bm))
         {
-            bm.damage = weaponData.damage;
+            bm.damage = WeaponData.damage;
         }
         currentAmmo--;
 

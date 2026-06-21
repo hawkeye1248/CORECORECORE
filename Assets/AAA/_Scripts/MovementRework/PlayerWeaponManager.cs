@@ -88,7 +88,7 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             hit.transform.GetComponent<WeaponScript>().Pickup(weaponHolder);
             currentWeapon = hit.transform.GetComponent<WeaponScript>();
-            playerAnimScript.CurrentPlayerWeapon = currentWeapon.weaponData.weaponType;
+            playerAnimScript.CurrentPlayerWeapon = currentWeapon.WeaponData.weaponType;
         }
     }
 

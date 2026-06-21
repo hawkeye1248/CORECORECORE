@@ -8,6 +8,12 @@ public class MeleeWeapon : WeaponScript
     public LayerMask targetLayer;
     private HashSet<NewEnemyTest> hitEnemies = new HashSet<NewEnemyTest>();
 
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        weaponCollider = GetComponent<Collider>();
+    }
     public override void Shoot(Vector3 pos, Quaternion rot, bool isEnemy)
     {
         if (isFireInterval)
@@ -21,16 +27,16 @@ public class MeleeWeapon : WeaponScript
         }
 
         hitEnemies.Clear();
-        float startAngle = -weaponData.meleeShape.totalAngle / 2f;
-        float angleStep = weaponData.meleeShape.totalAngle / (weaponData.meleeShape.castCount - 1);
-        for (int i = 0; i < weaponData.meleeShape.castCount; i++)
+        float startAngle = -WeaponData.meleeShape.totalAngle / 2f;
+        float angleStep = WeaponData.meleeShape.totalAngle / (WeaponData.meleeShape.castCount - 1);
+        for (int i = 0; i < WeaponData.meleeShape.castCount; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
             Quaternion rotation = mainCam.rotation * Quaternion.Euler(0, currentAngle, 0);
 
-            Vector3 centerOffset = rotation * Vector3.forward * (weaponData.meleeShape.range / 2f);
+            Vector3 centerOffset = rotation * Vector3.forward * (WeaponData.meleeShape.range / 2f);
             Vector3 boxCenter = mainCam.position + centerOffset;
-            Vector3 halfExtents = new Vector3(weaponData.meleeShape.boxWidth / 2f, weaponData.meleeShape.boxHeight / 2f, weaponData.meleeShape.range / 2f);
+            Vector3 halfExtents = new Vector3(WeaponData.meleeShape.boxWidth / 2f, WeaponData.meleeShape.boxHeight / 2f, WeaponData.meleeShape.range / 2f);
 
             Collider[] hitColliders = Physics.OverlapBox(boxCenter, halfExtents, rotation, targetLayer);
 
@@ -40,7 +46,7 @@ public class MeleeWeapon : WeaponScript
                 {
                     if (!hitEnemies.Contains(enemyPart.enemy))
                     {
-                        enemyPart.ApplyDamage(weaponData.damage, mainCam.forward, Mathf.Lerp(weaponData.minKnockbackForce, weaponData.maxKnockbackForce, Player.Instance.core.linearVelocity.magnitude / 20));
+                        enemyPart.ApplyDamage(WeaponData.damage, mainCam.forward, Mathf.Lerp(WeaponData.minKnockbackForce, WeaponData.maxKnockbackForce, Player.Instance.core.linearVelocity.magnitude / 20));
                         currentAmmo--;
                         hitEnemies.Add(enemyPart.enemy);
                     }
@@ -61,19 +67,19 @@ public class MeleeWeapon : WeaponScript
 
     void OnDrawGizmos()
     {
-        if (mainCam == null || weaponData == null || weaponData.meleeShape == null) return;
+        if (mainCam == null || WeaponData == null || WeaponData.meleeShape == null) return;
 
         Gizmos.color = Color.red;
-        float startAngle = -weaponData.meleeShape.totalAngle / 2f;
-        float angleStep = weaponData.meleeShape.totalAngle / (weaponData.meleeShape.castCount - 1);
-        for (int i = 0; i < weaponData.meleeShape.castCount; i++)
+        float startAngle = -WeaponData.meleeShape.totalAngle / 2f;
+        float angleStep = WeaponData.meleeShape.totalAngle / (WeaponData.meleeShape.castCount - 1);
+        for (int i = 0; i < WeaponData.meleeShape.castCount; i++)
         {
             float currentAngle = startAngle + (i * angleStep);
             Quaternion rotation = mainCam.rotation * Quaternion.Euler(0, currentAngle, 0);
-            Vector3 boxCenter = mainCam.position + (rotation * Vector3.forward * (weaponData.meleeShape.range / 2f));
+            Vector3 boxCenter = mainCam.position + (rotation * Vector3.forward * (WeaponData.meleeShape.range / 2f));
             Matrix4x4 cubeMatrix = Matrix4x4.TRS(boxCenter, rotation, Vector3.one);
             Gizmos.matrix = cubeMatrix;
-            Gizmos.DrawWireCube(Vector3.zero, new Vector3(weaponData.meleeShape.boxWidth, weaponData.meleeShape.boxHeight, weaponData.meleeShape.range));
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(WeaponData.meleeShape.boxWidth, WeaponData.meleeShape.boxHeight, WeaponData.meleeShape.range));
         }
     }
 }
