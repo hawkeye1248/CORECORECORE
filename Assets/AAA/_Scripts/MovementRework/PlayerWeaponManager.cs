@@ -102,6 +102,7 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             TryPunchLeft();
         }
+        playerAnimScript.Lmb();
     }
 
     private void on_RMB_performed(object sender, EventArgs e)
@@ -114,6 +115,7 @@ public class PlayerWeaponManager : MonoBehaviour
                 currentWeapon.isEquippedByPlayer = false;
                 currentWeapon.Throw(castHit.point);
                 currentWeapon = null;
+                playerAnimScript.CurrentPlayerWeapon = Weapon.None;
             }
             else
             {
@@ -127,6 +129,7 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             TryPunchRight();
         }
+        playerAnimScript.Rmb();
     }
 
     private void TryPunchRight()
@@ -137,7 +140,6 @@ public class PlayerWeaponManager : MonoBehaviour
         }
 
         //playerScript.playerModel.PunchRightTrigger();
-        playerAnimScript.Rmb();
         StartCoroutine(FireInterval());
     }
 
@@ -149,7 +151,6 @@ public class PlayerWeaponManager : MonoBehaviour
         }
 
         //playerScript.playerModel.PunchLeftTrigger();
-        playerAnimScript.Lmb();
         StartCoroutine(FireInterval());
     }
 

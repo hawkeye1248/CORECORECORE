@@ -25,7 +25,6 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
         private static readonly int pistolThrow = Animator.StringToHash("PistolThrow");
         private static readonly int pistolShoot = Animator.StringToHash("PistolShoot");
         private static readonly int idle =  Animator.StringToHash("Idle");
-        private static readonly int setPistol = Animator.StringToHash("SetPistol");
 
         #endregion
 
@@ -47,9 +46,7 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
                         _animator.CrossFade(pipeIdle, .1f);
                         break;
                     case Weapon.Pistol:
-                        //_animator.Play(hookPunchL);
-                        _animator.SetTrigger(setPistol);
-                        Debug.Log("PistolPickup");
+                        _animator.CrossFade(pistolIdle, .1f);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(CurrentPlayerWeapon));
@@ -69,13 +66,13 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
             switch (CurrentPlayerWeapon)
             {
                 case Weapon.None:
-                    _animator.CrossFade(Random.Range(0, 2) == 0 ? punchL : hookPunchL, .1f);
+                    _animator.Play(Random.Range(0, 2) == 0 ? punchL : hookPunchL, 0, 0f);
                     break;
                 case Weapon.Pipe:
-                    _animator.CrossFade(pipeHit, .1f);
+                    _animator.Play(pipeHit, 0, 0f);
                     break;
                 case Weapon.Pistol:
-                    _animator.CrossFade(pistolShoot, .1f);
+                    _animator.Play(pistolShoot, 0, 0f);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(CurrentPlayerWeapon));
@@ -87,13 +84,13 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
             switch (CurrentPlayerWeapon)
             {
                 case Weapon.None:
-                    _animator.CrossFade(Random.Range(0, 2) == 0 ? punchR : hookPunchR, .1f);
+                    _animator.Play(Random.Range(0, 2) == 0 ? punchR : hookPunchR, 0, 0f);
                     break;
                 case Weapon.Pipe:
-                    _animator.CrossFade(pipeThrow, .1f);
+                    _animator.Play(pipeThrow, 0, 0f);
                     break;
                 case Weapon.Pistol:
-                    _animator.CrossFade(pistolThrow, .1f);
+                    _animator.Play(pistolThrow, 0, 0f);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(CurrentPlayerWeapon));
