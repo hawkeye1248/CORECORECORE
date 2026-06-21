@@ -13,6 +13,8 @@ namespace VolFx
     [ShaderName("Hidden/Vol/Glitch")]
     public class GlitchPass : VolFx.Pass
     {
+		private static readonly int   s_VigInner   = Shader.PropertyToID("_VigInner");
+		private static readonly int   s_VigOuter   = Shader.PropertyToID("_VigOuter");
 		private static readonly int   s_Grid       = Shader.PropertyToID("_Grid");
 		private static readonly int   s_GridMad    = Shader.PropertyToID("_GridMad");
 		private static readonly int   s_Sobel      = Shader.PropertyToID("_Sobel");
@@ -27,6 +29,11 @@ namespace VolFx
 		private static readonly int   s_ShotTex    = Shader.PropertyToID("_ShotTex");
 		
 		public override string ShaderName => string.Empty;
+
+		[Tooltip("Glitch-free zone size (UV² distance from center — 0.2 keeps ~45% of the screen clean)")]
+		public float _vigInner = 0.2f;
+		[Tooltip("Distance at which the glitch reaches full strength (UV² from center — corners are at ~2.0)")]
+		public float _vigOuter = 0.9f;
 
 		[Tooltip("Reference crush resolution")]
 		[HideInInspector]
@@ -194,6 +201,8 @@ namespace VolFx
 			var delta  = Time.unscaledDeltaTime;
             var aspect = Screen.width / (float)Screen.height;
 				
+			mat.SetFloat(s_VigInner, _vigInner);
+			mat.SetFloat(s_VigOuter, _vigOuter);
 			mat.SetTexture(s_NoiseTex, _noiseTex);
 			
 			if (_shotTime <= Time.unscaledTime)

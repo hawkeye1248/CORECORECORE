@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,11 +12,12 @@ public class GlitchVolumeController : MonoBehaviour
     private Health playerHealth;
     private Volume glitchVolume;
 
-    private void Start()
+    private IEnumerator Start()
     {
         playerHealth = GetComponent<Health>();
         glitchVolume = GetComponent<Volume>();
         playerHealth.OnHealthUpdated += OnHealthUpdated;
+        yield return null; // wait one frame so Health.Start() sets currentHealth first
         UpdateVolumeWeight();
     }
 
