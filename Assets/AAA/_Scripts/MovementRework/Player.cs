@@ -39,6 +39,7 @@ namespace MovementRework
         private Vector3 wallNormal = Vector3.zero;
         private bool didWallrun = false;
         public bool isWallLeft {get; private set;} = false;
+        private float wallrunTimer = 0f;
 
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
@@ -72,7 +73,7 @@ namespace MovementRework
 
         private void Update()
         {
-            if(Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
+            if(Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
             {
                 RespawnAtStart();
             }
@@ -111,8 +112,10 @@ namespace MovementRework
 
             if(IsWallrunning)
             {
-                core.AddForce(wallForward * movementData.wallrunAcceleration * Time.deltaTime);
-                core.AddForce(Vector3.up * movementData.wallrunUpwardForce);
+                wallrunTimer += Time.deltaTime;
+                float wallrunDecay = Mathf.Clamp01(1f - wallrunTimer / movementData.wallrunDecayTime);
+                core.AddForce(wallForward * movementData.wallrunAcceleration * wallrunDecay * Time.deltaTime);
+                core.AddForce(Vector3.up * movementData.wallrunUpwardForce * wallrunDecay);
                 core.AddForce(-wallNormal * 10);
                 core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
                 return;
@@ -370,7 +373,7 @@ namespace MovementRework
                     wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
                     isWallLeft = wallLeft;
                     wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
-
+                    core.AddForce(wallForward * movementData.wallrunBurstForce);
                 } else
                 {
                     if(IsWallrunning)
@@ -390,6 +393,7 @@ namespace MovementRework
         private void LeaveWallrunning()
         {
             IsWallrunning = false;
+            wallrunTimer = 0f;
             StartCoroutine(WallrunCooldownTimer());
         }
 

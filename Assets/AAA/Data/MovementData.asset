@@ -45,4 +45,6 @@ MonoBehaviour:
   wallrunCooldown: 0.25
   wallJumpForce: 10
   wallrunUpwardForce: 35
+  wallrunDecayTime: 2
+  wallrunBurstForce: 0
   lungeForce: 5
