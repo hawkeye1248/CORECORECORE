@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed15030d9e5bd04e8390ed09e09cc8a, type: 3}
   m_Name: MeleeWeaponData
   m_EditorClassIdentifier: 
+  weaponType: 1
   damage: 25
   fireInterval: 0.3
   maxAmmo: 3

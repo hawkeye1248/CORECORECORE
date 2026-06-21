@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MovementRework {
+    [Obsolete]
     public class PlayerModel : MonoBehaviour
     {
         private Player playerScript;

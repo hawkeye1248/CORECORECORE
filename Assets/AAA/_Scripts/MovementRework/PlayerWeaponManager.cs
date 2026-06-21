@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AAA._Scripts.AnimationRelated.MCAnimations;
+using AAA._Scripts.Enums;
 using MovementRework;
 using UnityEngine;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
     public MovementRework.Player playerScript;
+    private PlayerAnimations playerAnimScript;
     private Transform mainCam;
     private WeaponScript currentWeapon;
 
@@ -36,7 +39,7 @@ public class PlayerWeaponManager : MonoBehaviour
     private void Start()
     {
         mainCam = playerScript.GetCamera();
-
+        playerAnimScript = GetComponentInChildren<PlayerAnimations>();
         MovementInput.Instance.OnRMBPerformed += on_RMB_performed;
         MovementInput.Instance.OnLMBPerformed += on_LMB_performed;
         MovementInput.Instance.OnInteractPerformed += OnInteractPerformed;
@@ -81,11 +84,11 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (currentWeapon != null) return;
 
-        RaycastHit hit;
-        if (Physics.Raycast(mainCam.position, mainCam.forward, out hit, 3f, weaponLayer))
+        if (Physics.Raycast(mainCam.position, mainCam.forward, out RaycastHit hit, 3f, weaponLayer))
         {
             hit.transform.GetComponent<WeaponScript>().Pickup(weaponHolder);
             currentWeapon = hit.transform.GetComponent<WeaponScript>();
+            playerAnimScript.CurrentPlayerWeapon = currentWeapon.WeaponData.weaponType;
         }
     }
 
@@ -99,6 +102,7 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             TryPunchLeft();
         }
+        playerAnimScript.Lmb();
     }
 
     private void on_RMB_performed(object sender, EventArgs e)
@@ -111,18 +115,21 @@ public class PlayerWeaponManager : MonoBehaviour
                 currentWeapon.isEquippedByPlayer = false;
                 currentWeapon.Throw(castHit.point);
                 currentWeapon = null;
+                playerAnimScript.CurrentPlayerWeapon = Weapon.None;
             }
             else
             {
                 currentWeapon.isEquippedByPlayer = false;
                 currentWeapon.Throw(mainCam.position + (mainCam.forward * 100));
                 currentWeapon = null;
+                playerAnimScript.CurrentPlayerWeapon = Weapon.None;
             }
         }
         else
         {
             TryPunchRight();
         }
+        playerAnimScript.Rmb();
     }
 
     private void TryPunchRight()
@@ -132,7 +139,7 @@ public class PlayerWeaponManager : MonoBehaviour
             return;
         }
 
-        playerScript.playerModel.PunchRightTrigger();
+        //playerScript.playerModel.PunchRightTrigger();
         StartCoroutine(FireInterval());
     }
 
@@ -143,7 +150,7 @@ public class PlayerWeaponManager : MonoBehaviour
             return;
         }
 
-        playerScript.playerModel.PunchLeftTrigger();
+        //playerScript.playerModel.PunchLeftTrigger();
         StartCoroutine(FireInterval());
     }
 

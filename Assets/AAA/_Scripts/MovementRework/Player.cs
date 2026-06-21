@@ -45,6 +45,10 @@ namespace MovementRework
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
 
+        /// <summary>
+        /// For compability reasons
+        /// </summary>
+        private bool _isPlayerModelNull;
         [Header("Respawn State")]
         private Vector3 startPosition = Vector3.zero;
         private Quaternion startRotation = Quaternion.identity;
@@ -54,6 +58,10 @@ namespace MovementRework
 
             camParent = GetComponentInChildren<CamPositioner>();
             playerModel = GetComponentInChildren<PlayerModel>();
+            if (!playerModel)
+            {
+                _isPlayerModelNull = true;
+            }
             Health = GetComponent<Health>();
 
             jumpCooldown += movementData.coyoteTime;
@@ -79,7 +87,7 @@ namespace MovementRework
             }
 
             SetFacingDirection();
-            playerModel.SimplePosition(core.position);
+            if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
         }
 

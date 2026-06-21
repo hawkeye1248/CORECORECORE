@@ -1,16 +1,17 @@
 using System.Collections;
+using AAA._Scripts.Enums;
 using UnityEngine;
 using DG.Tweening;
 using MovementRework;
 
 public class WeaponScript : MonoBehaviour
 {
-    [Header("Data")]
-    [SerializeField] protected WeaponDataSO weaponData;
+    [Header("Data")] 
+    [SerializeField] public WeaponDataSO WeaponData;
 
     [Header("Components")]
-    private Rigidbody rb;
-    private Collider weaponCollider;
+    protected Rigidbody rb;
+    protected Collider weaponCollider;
     protected Transform mainCam;
     public Outline outline;
 
@@ -21,10 +22,9 @@ public class WeaponScript : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        weaponCollider = GetComponent<Collider>();
+        WeaponData.weaponType = Weapon.None;
         outline = GetComponent<Outline>();
-        currentAmmo = weaponData != null ? weaponData.maxAmmo : 3;
+        currentAmmo = WeaponData != null ? WeaponData.maxAmmo : 3;
         ChangeSettings();
     }
 
@@ -86,7 +86,7 @@ public class WeaponScript : MonoBehaviour
     public IEnumerator FireInterval()
     {
         isFireInterval = true;
-        yield return new WaitForSeconds(weaponData.fireInterval);
+        yield return new WaitForSeconds(WeaponData.fireInterval);
         isFireInterval = false;
     }
 
@@ -95,7 +95,7 @@ public class WeaponScript : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             EnemyBodyPartScript bp = collision.gameObject.GetComponent<EnemyBodyPartScript>();
-            bp.ApplyDamage(weaponData.damage, rb.linearVelocity, Mathf.Lerp(weaponData.minKnockbackForce, weaponData.maxKnockbackForce, rb.linearVelocity.magnitude / 40));
+            bp.ApplyDamage(WeaponData.damage, rb.linearVelocity, Mathf.Lerp(WeaponData.minKnockbackForce, WeaponData.maxKnockbackForce, rb.linearVelocity.magnitude / 40));
 
             rb.AddForce((mainCam.position - transform.position).normalized, ForceMode.Impulse);
             rb.AddForce(Vector3.up * 0.5f, ForceMode.Impulse);
