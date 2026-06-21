@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PlayerHealthData
   m_EditorClassIdentifier: 
   maxHealth: 100
-  doesDrainHealth: 1
+  doesDrainHealth: 0
   healthDrainTickTime: 0.25
   healthDrainPerTick: 1
+  healOnKill: 50

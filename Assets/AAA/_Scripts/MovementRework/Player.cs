@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MovementRework
 {
@@ -35,12 +36,18 @@ namespace MovementRework
 
         [Header("Wallrun State")]
         private Vector3 wallForward = Vector3.zero;
+        private Vector3 wallNormal = Vector3.zero;
         private bool didWallrun = false;
         public bool isWallLeft {get; private set;} = false;
+        private float wallrunTimer = 0f;
 
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
+
+        [Header("Respawn State")]
+        private Vector3 startPosition = Vector3.zero;
+        private Quaternion startRotation = Quaternion.identity;
 
         private void Awake() {
             Instance = this;
@@ -50,6 +57,9 @@ namespace MovementRework
             Health = GetComponent<Health>();
 
             jumpCooldown += movementData.coyoteTime;
+
+            startPosition = core.position;
+            startRotation = core.rotation;
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -63,6 +73,11 @@ namespace MovementRework
 
         private void Update()
         {
+            if(Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+            {
+                RespawnAtStart();
+            }
+
             SetFacingDirection();
             playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
@@ -97,8 +112,11 @@ namespace MovementRework
 
             if(IsWallrunning)
             {
-                core.AddForce(wallForward * movementData.wallrunAcceleration * Time.deltaTime);
-                core.AddForce(Vector3.up * movementData.wallrunUpwardForce);
+                wallrunTimer += Time.deltaTime;
+                float wallrunDecay = Mathf.Clamp01(1f - wallrunTimer / movementData.wallrunDecayTime);
+                core.AddForce(wallForward * movementData.wallrunAcceleration * wallrunDecay * Time.deltaTime);
+                core.AddForce(Vector3.up * movementData.wallrunUpwardForce * wallrunDecay);
+                core.AddForce(-wallNormal * 10);
                 core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
                 return;
             }
@@ -351,11 +369,11 @@ namespace MovementRework
                 if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
                 {
                     IsWallrunning = true;
-                    //core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.9f, core.linearVelocity.z);
-                    Vector3 wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
+                    core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.7f, core.linearVelocity.z);
+                    wallNormal = wallLeft ? hitLeft.normal : hitRight.normal;
                     isWallLeft = wallLeft;
                     wallForward = wallLeft ? Vector3.Cross(wallNormal, Vector3.up) : -Vector3.Cross(wallNormal, Vector3.up) ;
-
+                    core.AddForce(wallForward * movementData.wallrunBurstForce);
                 } else
                 {
                     if(IsWallrunning)
@@ -375,6 +393,7 @@ namespace MovementRework
         private void LeaveWallrunning()
         {
             IsWallrunning = false;
+            wallrunTimer = 0f;
             StartCoroutine(WallrunCooldownTimer());
         }
 
@@ -385,6 +404,14 @@ namespace MovementRework
             yield return new WaitForSeconds(movementData.wallrunCooldown);
 
             didWallrun = false;
+        }
+
+        public void RespawnAtStart()
+        {
+            core.position = startPosition;
+            core.rotation = startRotation;
+            core.linearVelocity = Vector3.zero;
+            core.angularVelocity = Vector3.zero;
         }
 
         public void LungeForward()

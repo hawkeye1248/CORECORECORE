@@ -1243,6 +1243,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _active: 1
   _shader: {fileID: 4800000, guid: 6e12feb5d935b5d4592800a7747a4083, type: 3}
+  _vigInner: 0.2
+  _vigOuter: 0.9
   _crushPix: 720
   _clipSpeed: 15
   _chaoticPeriod:
