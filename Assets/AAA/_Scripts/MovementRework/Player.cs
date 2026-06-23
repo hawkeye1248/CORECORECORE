@@ -74,9 +74,9 @@ namespace MovementRework
         }
 
         private void Start() {
-            MovementInput.Instance.OnJumpPerformed += OnJumpPerformed;
-            MovementInput.Instance.OnCrouchPerformed += OnCrouchPerformed;
-            MovementInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
+            GameInput.Instance.OnJumpPerformed += OnJumpPerformed;
+            GameInput.Instance.OnCrouchPerformed += OnCrouchPerformed;
+            GameInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
         }
 
         private void Update()
@@ -93,7 +93,7 @@ namespace MovementRework
 
         private void FixedUpdate()
         {
-            MovePlayer(MovementInput.Instance.GetMovementVector());
+            MovePlayer(GameInput.Instance.GetMovementVector());
 
             CheckMantle();
 
@@ -374,7 +374,7 @@ namespace MovementRework
                 bool wallLeft = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(-facingDirection.z, 0, facingDirection.x), out RaycastHit hitLeft, movementData.wallCheckDistance, movementData.groundLayers);
                 bool wallRight = Physics.Raycast(core.position + Vector3.up * 0.5f, new Vector3(facingDirection.z, 0, -facingDirection.x), out RaycastHit hitRight, movementData.wallCheckDistance, movementData.groundLayers);
                 
-                if((wallLeft || wallRight) &&  MovementInput.Instance.GetMovementVector().y > 0)
+                if((wallLeft || wallRight) &&  GameInput.Instance.GetMovementVector().y > 0)
                 {
                     IsWallrunning = true;
                     core.linearVelocity = new Vector3(core.linearVelocity.x, core.linearVelocity.y * 0.7f, core.linearVelocity.z);

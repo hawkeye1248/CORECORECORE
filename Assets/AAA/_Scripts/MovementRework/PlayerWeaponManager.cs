@@ -40,9 +40,9 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         mainCam = playerScript.GetCamera();
         playerAnimScript = GetComponentInChildren<PlayerAnimations>();
-        MovementInput.Instance.OnRMBPerformed += on_RMB_performed;
-        MovementInput.Instance.OnLMBPerformed += on_LMB_performed;
-        MovementInput.Instance.OnInteractPerformed += OnInteractPerformed;
+        GameInput.Instance.OnRMBPerformed += on_RMB_performed;
+        GameInput.Instance.OnLMBPerformed += on_LMB_performed;
+        GameInput.Instance.OnInteractPerformed += OnInteractPerformed;
 
         if (weaponHolder != null && weaponHolder.GetComponentInChildren<WeaponScript>() != null)
         {

@@ -170,7 +170,7 @@ namespace MirzaBeig.VolumetricFogLite
             // When empty this render pass will render to the active camera render target.
             // You should never call CommandBuffer.SetRenderTarget. Instead call <c>ConfigureTarget</c> and <c>ConfigureClear</c>.
             // The render pipeline will ensure target setup and clearing happens in a performant manner.
-
+            [Obsolete]
             public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
             {
 

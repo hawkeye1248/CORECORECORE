@@ -15,7 +15,7 @@ MonoBehaviour:
   upperVerticalLimit: 85
   lowerVerticalLimit: 85
   camSmoothingFactor: 30
-  camSpeed: 200
+  camSpeed: 100
   cameraTiltMultiplier: 1
   lookTiltMultiplier: 1
   maxLookTilt: 1

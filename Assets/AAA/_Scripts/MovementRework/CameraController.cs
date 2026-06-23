@@ -27,7 +27,7 @@ namespace MovementRework
         }
 
         private void Update() {
-            RotateCam(MovementInput.Instance.GetLookVector().x, MovementInput.Instance.GetLookVector().y);
+            RotateCam(GameInput.Instance.GetLookVector().x, GameInput.Instance.GetLookVector().y);
 
             SetFOV(player.GetMovementSpeed(), player.GetHorizontalSpeedPercentage());
         }
@@ -56,7 +56,7 @@ namespace MovementRework
                 cameraZTilt = Mathf.Lerp(cameraZTilt, (player.isWallLeft ? - 1 : 1) * cameraData.wallrunTiltMultiplier, cameraData.cameraTiltSmoothTime);
             } else
             {
-                float strafeTilt = -MovementInput.Instance.GetMovementVector().x * cameraData.cameraTiltMultiplier;
+                float strafeTilt = -GameInput.Instance.GetMovementVector().x * cameraData.cameraTiltMultiplier;
                 float lookTilt = Mathf.Clamp(-oldHorizontalInput * cameraData.lookTiltMultiplier, -cameraData.maxLookTilt, cameraData.maxLookTilt);
                 cameraZTilt = Mathf.Lerp(cameraZTilt, strafeTilt + lookTilt, cameraData.cameraTiltSmoothTime);
             }

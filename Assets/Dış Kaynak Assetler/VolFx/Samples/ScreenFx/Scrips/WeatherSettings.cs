@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 //  ScreenFx © NullTale - https://twitter.com/NullTale/
 namespace ScreenFx
 {
-    [VolumeComponentMenuForRenderPipeline("Weather (ScreenFxSample)", typeof(UniversalRenderPipeline))]
+    [VolumeComponentMenu("Weather (ScreenFxSample)")]
     internal class WeatherSettings : VolumeComponent
     {
         public ClampedFloatParameter _snow   = new ClampedFloatParameter(0, 0, 1);

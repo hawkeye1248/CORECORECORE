@@ -130,6 +130,11 @@ public class NewEnemyTest : MonoBehaviour
         Vector3 bulletDirection = (new Vector3(player.position.x, player.position.y - 1, player.position.z) - transform.position).normalized;
         Quaternion rotation = Quaternion.LookRotation(bulletDirection);
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, rotation);
+        if (bullet.TryGetComponent<Bullet>(out var b))
+        {
+            b.source = Bullet.BulletSource.Enemy;
+            b.damage = enemyData.damage;
+        }
         yield return new WaitForSeconds(enemyData.fireInterval);
         isFireCooldown = false;
     }

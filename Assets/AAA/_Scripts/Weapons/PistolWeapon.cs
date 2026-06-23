@@ -27,7 +27,7 @@ public class PistolWeapon : WeaponScript
         }
 
         GameObject bullet = Instantiate(bulletPrefab, pos, rot);
-        if (bullet.TryGetComponent<BulletMovement>(out var bm))
+        if (bullet.TryGetComponent<Bullet>(out var bm))
         {
             bm.damage = WeaponData.damage;
         }
