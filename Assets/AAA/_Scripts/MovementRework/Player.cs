@@ -52,6 +52,8 @@ namespace MovementRework
         [Header("Respawn State")]
         private Vector3 startPosition = Vector3.zero;
         private Quaternion startRotation = Quaternion.identity;
+        private Vector3 lastPlatformPosition = Vector3.zero;
+        private Quaternion lastPlatformRotation = Quaternion.identity;
 
         private void Awake() {
             Instance = this;
@@ -68,6 +70,8 @@ namespace MovementRework
 
             startPosition = core.position;
             startRotation = core.rotation;
+            lastPlatformPosition = core.position;
+            lastPlatformRotation = core.rotation;
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -292,6 +296,9 @@ namespace MovementRework
             {
                 coyoteTimer = 0;
 
+                lastPlatformPosition = core.position;
+                lastPlatformRotation = core.rotation;
+
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
                     groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
@@ -418,8 +425,8 @@ namespace MovementRework
 
         public void RespawnAtStart()
         {
-            core.position = startPosition;
-            core.rotation = startRotation;
+            core.position = lastPlatformPosition;
+            core.rotation = lastPlatformRotation;
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
         }
