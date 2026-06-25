@@ -30,7 +30,7 @@ MonoBehaviour:
   airborneStoppingPower: 3
   airborneSidewayDamping: 0.7
   airborneBackwardStoppingPower: 10
-  slideForce: 7
+  slideForce: 10
   slideStoppingPower: 2
   slideEndSpeed: 3
   mantleRaycastPoint: {x: 0, y: 1.3, z: 0}
