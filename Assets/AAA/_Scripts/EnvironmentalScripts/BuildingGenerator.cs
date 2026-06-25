@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BuildingGenerator : MonoBehaviour
 {
-    private const float StepHeight = 20f;
+    [SerializeField] private float StepHeight = 20f;
 
     [Header("Grid")]
     [SerializeField] private float unitSize = 10f;
@@ -25,6 +25,10 @@ public class BuildingGenerator : MonoBehaviour
     [SerializeField] private int minOffsetUnits = 1;
     [SerializeField] private int maxOffsetUnits = 3;
 
+    [Header("Complexity")]
+    [Range(0.1f, 4f)]
+    [SerializeField] private float complexityBias = 2f;
+
     [Header("Wings")]
     [SerializeField] private bool allowWings = true;
     [SerializeField] private int maxWings = 2;
@@ -35,7 +39,9 @@ public class BuildingGenerator : MonoBehaviour
 
     [Header("Appearance")]
     [SerializeField] private bool extrudeToGround = true;
+    [SerializeField] private float embeddingDepth = 2f;
     [SerializeField] private Material buildingMaterial;
+    [SerializeField] private string pieceLayerName = "Default";
     [SerializeField] public bool generateOnStart = true;
 
     private struct TierData
@@ -96,7 +102,7 @@ public class BuildingGenerator : MonoBehaviour
         };
         bottomY += baseH;
 
-        int tiers = Random.Range(minTiers, maxTiers + 1);
+        int tiers = BiasedRange(minTiers, maxTiers, complexityBias);
         for (int i = 0; i < tiers; i++)
         {
             if (w <= unitSize && d <= unitSize) break;
@@ -118,6 +124,13 @@ public class BuildingGenerator : MonoBehaviour
 
                 centerX += oxSteps * unitSize;
                 centerZ += ozSteps * unitSize;
+
+                // Clamp so the new tier always overlaps the tier below by at least unitSize
+                TierData below = placedTiers[placedTiers.Count - 1];
+                float maxDX = (below.Width + w) * 0.5f - unitSize;
+                float maxDZ = (below.Depth + d) * 0.5f - unitSize;
+                centerX = Mathf.Clamp(centerX, below.CenterX - maxDX, below.CenterX + maxDX);
+                centerZ = Mathf.Clamp(centerZ, below.CenterZ - maxDZ, below.CenterZ + maxDZ);
             }
             else
             {
@@ -135,13 +148,23 @@ public class BuildingGenerator : MonoBehaviour
         {
             // Only tiers tall enough to place a wing one full step below their ceiling
             List<TierData> wingCandidates = placedTiers.FindAll(t => t.BottomY + t.Height > StepHeight);
-            int wingCount = Random.Range(0, maxWings + 1);
-            for (int i = 0; i < wingCount; i++)
+            int wingCount = BiasedRange(0, maxWings, complexityBias);
+
+            // Build all (tier, side) slots, shuffle, then take wingCount unique ones
+            var slots = new List<(TierData tier, int side)>();
+            foreach (TierData t in wingCandidates)
+                for (int s = 0; s < 4; s++)
+                    slots.Add((t, s));
+
+            for (int i = slots.Count - 1; i > 0; i--)
             {
-                if (wingCandidates.Count == 0) break;
-                TierData tier = wingCandidates[Random.Range(0, wingCandidates.Count)];
-                SpawnWing(tier);
+                int j = Random.Range(0, i + 1);
+                (slots[i], slots[j]) = (slots[j], slots[i]);
             }
+
+            int toSpawn = Mathf.Min(wingCount, slots.Count);
+            for (int i = 0; i < toSpawn; i++)
+                SpawnWing(slots[i].tier, slots[i].side);
         }
 
         if (extrudeToGround)
@@ -150,18 +173,18 @@ public class BuildingGenerator : MonoBehaviour
 
     private void ExtrudeToGround()
     {
+        const float groundY = -20f;
         foreach (GameObject piece in _pieces)
         {
             Transform t = piece.transform;
             float top = t.localPosition.y + t.localScale.y * 0.5f;
-            t.localScale = new Vector3(t.localScale.x, top, t.localScale.z);
-            t.localPosition = new Vector3(t.localPosition.x, top * 0.5f, t.localPosition.z);
+            float newHeight = top - groundY;
+            t.localScale = new Vector3(t.localScale.x, newHeight, t.localScale.z);
+            t.localPosition = new Vector3(t.localPosition.x, groundY + newHeight * 0.5f, t.localPosition.z);
         }
     }
 
-    private void SpawnWing(TierData tier)
-    {
-        int side = Random.Range(0, 4); // 0=+X, 1=-X, 2=+Z, 3=-Z
+    private void SpawnWing(TierData tier, int side) {
 
         float span   = Random.Range(minWingSpanUnits,   maxWingSpanUnits   + 1) * unitSize;
         float length = Random.Range(minWingLengthUnits, maxWingLengthUnits + 1) * unitSize;
@@ -196,9 +219,19 @@ public class BuildingGenerator : MonoBehaviour
                 break;
         }
 
-        // Wing top sits one step below the tier's ceiling
-        float wingTopY = tier.BottomY + tier.Height - StepHeight;
-        SpawnCube(wingX, wingTopY - StepHeight * 0.5f, wingZ, wingW, StepHeight, wingD);
+        // Embed the inner face into the building to prevent coplanar z-fighting
+        switch (side)
+        {
+            case 0: wingX -= embeddingDepth * 0.5f; wingW += embeddingDepth; break;
+            case 1: wingX += embeddingDepth * 0.5f; wingW += embeddingDepth; break;
+            case 2: wingZ -= embeddingDepth * 0.5f; wingD += embeddingDepth; break;
+            default: wingZ += embeddingDepth * 0.5f; wingD += embeddingDepth; break;
+        }
+
+        // Sink the wing top by embeddingDepth so it doesn't share a face with the tier below
+        float wingTopY = tier.BottomY + tier.Height - StepHeight - embeddingDepth;
+        float wingH    = StepHeight - embeddingDepth;
+        SpawnCube(wingX, wingTopY - wingH * 0.5f, wingZ, wingW, wingH, wingD);
     }
 
     private void SpawnCube(float x, float y, float z, float w, float h, float d)
@@ -211,7 +244,16 @@ public class BuildingGenerator : MonoBehaviour
         if (buildingMaterial != null)
             cube.GetComponent<MeshRenderer>().sharedMaterial = buildingMaterial;
 
+        int layer = LayerMask.NameToLayer(pieceLayerName);
+        cube.layer = layer >= 0 ? layer : 0;
         _pieces.Add(cube);
+    }
+
+    // bias > 1 favors min, bias < 1 favors max, bias = 1 is uniform
+    private static int BiasedRange(int min, int max, float bias)
+    {
+        float t = Mathf.Pow(Random.value, bias);
+        return Mathf.Clamp(min + Mathf.FloorToInt(t * (max - min + 1)), min, max);
     }
 
     [ContextMenu("Clear")]

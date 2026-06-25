@@ -1651,25 +1651,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 192503728401392545, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542056338996386346, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: weight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2878699618083870359, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3628749718785951392, guid: b6462469dd6a8d7489709eade0bdab14,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 64.3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3628749718785951392, guid: b6462469dd6a8d7489709eade0bdab14,
         type: 3}
@@ -1679,7 +1664,7 @@ PrefabInstance:
     - target: {fileID: 3628749718785951392, guid: b6462469dd6a8d7489709eade0bdab14,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3628749718785951392, guid: b6462469dd6a8d7489709eade0bdab14,
         type: 3}
@@ -1721,32 +1706,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5878480864964704385, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: cameraData
-      value: 
-      objectReference: {fileID: 11400000, guid: df0863bab3c9ea143a8b60bdf0b9e379,
-        type: 2}
-    - target: {fileID: 6577291109546709632, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: cameraData
-      value: 
-      objectReference: {fileID: 11400000, guid: df0863bab3c9ea143a8b60bdf0b9e379,
-        type: 2}
-    - target: {fileID: 7686654902230902577, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: cameraData
-      value: 
-      objectReference: {fileID: 11400000, guid: df0863bab3c9ea143a8b60bdf0b9e379,
-        type: 2}
-    - target: {fileID: 7813346961107825281, guid: b6462469dd6a8d7489709eade0bdab14,
-        type: 3}
-      propertyPath: punchShape
-      value: 
-      objectReference: {fileID: 11400000, guid: 17ee88013162cfc468e9ca1c3692f862,
-        type: 2}
-    m_RemovedComponents:
-    - {fileID: 7813346961107825281, guid: b6462469dd6a8d7489709eade0bdab14, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

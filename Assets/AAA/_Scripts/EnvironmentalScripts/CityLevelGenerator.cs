@@ -7,7 +7,6 @@ public class CityLevelGenerator : MonoBehaviour
     [Header("Buildings")]
     [SerializeField] private BuildingGenerator buildingPrefab;
     [SerializeField] private int buildingCount = 5;
-    [SerializeField] private int maxGenerationAttempts = 5;
 
     [Header("Connection")]
     [SerializeField] private float gapSize = 30f;
@@ -34,7 +33,6 @@ public class CityLevelGenerator : MonoBehaviour
             return;
         }
 
-        // First building at origin
         BuildingGenerator first = SpawnBuilding(Vector3.zero);
         _buildings.Add(first);
 
@@ -42,30 +40,15 @@ public class CityLevelGenerator : MonoBehaviour
         {
             BuildingGenerator prev = _buildings[i - 1];
             BuildingGenerator.PieceInfo exitSurf = PickExitSurface(prev);
-            float targetY = exitSurf.TopY;
 
-            // Spawn at origin, try to find a height match
             BuildingGenerator next = SpawnBuilding(Vector3.zero);
-            BuildingGenerator.PieceInfo entrySurf = default;
-            bool matched = false;
+            BuildingGenerator.PieceInfo entrySurf = PickEntrySurface(next);
 
-            for (int attempt = 0; attempt < maxGenerationAttempts; attempt++)
-            {
-                if (attempt > 0)
-                {
-                    next.Generate();
-                }
-
-                entrySurf = FindEntrySurface(next, targetY, out matched);
-                if (matched) break;
-            }
-
-            if (!matched)
-                entrySurf = FindClosestEntrySurface(next, targetY);
-
-            // Position next so its entry face is gapSize away from exit face
+            // Align X so the gap between the two facing surfaces equals gapSize
             float xOffset = exitSurf.RightFaceX + gapSize - entrySurf.LeftFaceX;
-            next.transform.position = new Vector3(xOffset, 0f, 0f);
+            // Align Y so the entry cuboid's top matches the exit cuboid's top
+            float yOffset = exitSurf.TopY - entrySurf.TopY;
+            next.transform.position = new Vector3(xOffset, yOffset, 0f);
 
             ResolveOverlap(prev, next);
 
@@ -89,35 +72,19 @@ public class CityLevelGenerator : MonoBehaviour
         return b;
     }
 
-    // The rightmost-facing piece of a placed building — defines the connection height
+    // Rightmost cuboid of the previous building — its top defines the target connection height
     private static BuildingGenerator.PieceInfo PickExitSurface(BuildingGenerator b)
     {
         return b.GetPieceInfos().OrderByDescending(p => p.RightFaceX).First();
     }
 
-    // Piece in b whose TopY matches targetY exactly, preferring the leftmost face
-    private static BuildingGenerator.PieceInfo FindEntrySurface(
-        BuildingGenerator b, float targetY, out bool matched)
+    // Leftmost cuboid of the next building — the face that will point toward the previous building
+    private static BuildingGenerator.PieceInfo PickEntrySurface(BuildingGenerator b)
     {
-        var candidates = b.GetPieceInfos().Where(p => Mathf.Approximately(p.TopY, targetY)).ToList();
-        matched = candidates.Count > 0;
-        if (matched)
-            return candidates.OrderBy(p => p.LeftFaceX).First();
-
-        return default;
+        return b.GetPieceInfos().OrderBy(p => p.LeftFaceX).First();
     }
 
-    // Fallback: piece with TopY closest to targetY, leftmost face
-    private static BuildingGenerator.PieceInfo FindClosestEntrySurface(
-        BuildingGenerator b, float targetY)
-    {
-        return b.GetPieceInfos()
-            .OrderBy(p => Mathf.Abs(p.TopY - targetY))
-            .ThenBy(p => p.LeftFaceX)
-            .First();
-    }
-
-    // Push next further right if it overlaps prev in X
+    // Push next further right if its pieces still overlap prev in X after placement
     private static void ResolveOverlap(BuildingGenerator prev, BuildingGenerator next)
     {
         float prevMaxX = prev.GetPieceInfos().Max(p => p.RightFaceX);

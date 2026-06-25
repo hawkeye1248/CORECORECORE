@@ -22,7 +22,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   coyoteTime: 0.25
-  jumpForce: 12
+  jumpForce: 15
   fallGravity: 5
   landingJoltPower: 2
   airborneAcceleration: 2000

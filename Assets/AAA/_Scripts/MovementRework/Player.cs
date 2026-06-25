@@ -89,6 +89,8 @@ namespace MovementRework
             SetFacingDirection();
             if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
+            //orientation.transform.position = Vector3.Lerp(orientation.transform.position, new Vector3(core.position.x, core.position.y + 1, core.position.z), Time.deltaTime * 10f);
+            
         }
 
         private void FixedUpdate()
@@ -309,7 +311,7 @@ namespace MovementRework
             {
                 if(Physics.Raycast(movementData.mantleRaycastPoint + core.position + facingDirection * movementData.mantleDistance, Vector3.down, out RaycastHit verticalHit, movementData.mantleLength, movementData.groundLayers))
                 {
-                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, movementData.groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), orientation.forward, 1f, movementData.groundLayers))
+                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), facingDirection, out RaycastHit horizontalHit, 1f, movementData.groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), facingDirection, 1f, movementData.groundLayers))
                     {
                         IsMantling = true;
                         mantleHoldPoint = horizontalHit.point;
