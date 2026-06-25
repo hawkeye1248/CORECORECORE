@@ -44,6 +44,7 @@ MonoBehaviour:
   wallCheckDistance: 2
   wallrunCooldown: 0.25
   wallJumpForce: 10
+  wallJumpNormalForce: 15
   wallrunUpwardForce: 35
   wallrunDecayTime: 2
   wallrunBurstForce: 0

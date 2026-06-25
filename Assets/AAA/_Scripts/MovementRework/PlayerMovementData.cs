@@ -55,6 +55,7 @@ namespace MovementRework
         public float wallCheckDistance = 1f;
         public float wallrunCooldown = 0.25f;
         public float wallJumpForce = 10f;
+        public float wallJumpNormalForce = 8f;
         public float wallrunUpwardForce = 25f;
         public float wallrunDecayTime = 2f;
         public float wallrunBurstForce = 10f;

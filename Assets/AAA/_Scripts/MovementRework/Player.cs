@@ -89,7 +89,6 @@ namespace MovementRework
             SetFacingDirection();
             if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
-            //orientation.transform.position = Vector3.Lerp(orientation.transform.position, new Vector3(core.position.x, core.position.y + 1, core.position.z), Time.deltaTime * 10f);
             
         }
 
@@ -174,7 +173,7 @@ namespace MovementRework
                 {
                     core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
 
-                    orientation.LookAt(inputDir);
+                    orientation.LookAt(core.position + inputDir);
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.sidewayDamping * Time.deltaTime);
@@ -191,7 +190,7 @@ namespace MovementRework
                 {
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
 
-                    orientation.LookAt(inputDir);
+                    orientation.LookAt(core.position + inputDir);
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.airborneSidewayDamping * Time.deltaTime);
@@ -245,6 +244,7 @@ namespace MovementRework
         {
             core.AddForce(Vector3.up * movementData.jumpForce, ForceMode.Impulse);
             core.AddForce(cameraController.transform.forward * movementData.wallJumpForce, ForceMode.Impulse);
+            core.AddForce(wallNormal * movementData.wallJumpNormalForce, ForceMode.Impulse);
             StartCoroutine(JumpCooldownTimer());
         }
 
