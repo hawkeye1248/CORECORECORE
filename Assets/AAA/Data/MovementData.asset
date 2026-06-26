@@ -15,6 +15,7 @@ MonoBehaviour:
   acceleration: 8500
   maxSpeed: 14
   stoppingPower: 12
+  overspeedDecay: 25
   sidewayDamping: 0.999
   backwardStoppingPower: 45
   groundCheckScale: {x: 0.4, y: 0.2, z: 0.4}
@@ -25,9 +26,9 @@ MonoBehaviour:
   jumpForce: 15
   fallGravity: 5
   landingJoltPower: 2
-  airborneAcceleration: 2000
+  airborneAcceleration: 4000
   airborneMaxSpeed: 14
-  airborneStoppingPower: 3
+  airborneStoppingPower: 10
   airborneSidewayDamping: 0.7
   airborneBackwardStoppingPower: 10
   slideForce: 10

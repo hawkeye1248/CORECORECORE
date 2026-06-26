@@ -194,7 +194,15 @@ namespace MovementRework
 
                 if(CheckGround())
                 {
-                    core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
+                    // Only accelerate while under the speed cap. Above it (e.g. momentum
+                    // carried in from a slide) we coast and let SoftCapSpeed bleed the
+                    // excess off, so input can never push past maxSpeed. This keeps the
+                    // cap uniform across all directions instead of letting forward/strafe
+                    // settle at different equilibrium speeds.
+                    if(core.linearVelocity.magnitude < movementData.maxSpeed)
+                    {
+                        core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
+                    }
 
                     orientation.LookAt(core.position + inputDir);
 
@@ -208,7 +216,7 @@ namespace MovementRework
                         core.AddForce(-core.linearVelocity.normalized * movementData.backwardStoppingPower);
                     }
 
-                    core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
+                    SoftCapSpeed(movementData.maxSpeed);
                 } else
                 {
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
@@ -225,8 +233,7 @@ namespace MovementRework
                         core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneBackwardStoppingPower);
                     }
 
-                    Vector3 clampedVelocity = Vector3.ClampMagnitude(new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z), movementData.airborneMaxSpeed);
-                    core.linearVelocity = new Vector3(clampedVelocity.x, core.linearVelocity.y, clampedVelocity.z);
+                    SoftCapHorizontalSpeed(movementData.airborneMaxSpeed);
                 }
                 
             } else
@@ -239,6 +246,37 @@ namespace MovementRework
                     core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneStoppingPower);
                 }
             }
+        }
+
+        // Eases speed down toward the cap instead of snapping to it, so momentum built up
+        // (e.g. sliding down a slope) bleeds off gradually instead of vanishing in one frame.
+        // Below the cap this is a no-op, matching the old ClampMagnitude behavior.
+        private void SoftCapSpeed(float cap)
+        {
+            float speed = core.linearVelocity.magnitude;
+            if (speed <= cap)
+            {
+                return;
+            }
+
+            float newSpeed = Mathf.MoveTowards(speed, cap, movementData.overspeedDecay * Time.deltaTime);
+            core.linearVelocity = core.linearVelocity.normalized * newSpeed;
+        }
+
+        // Same gradual ease-down as SoftCapSpeed, but only on the horizontal (x/z) plane so
+        // jump/fall (y) velocity is left untouched. Used for the airborne speed cap.
+        private void SoftCapHorizontalSpeed(float cap)
+        {
+            Vector3 horizontal = new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z);
+            float speed = horizontal.magnitude;
+            if (speed <= cap)
+            {
+                return;
+            }
+
+            float newSpeed = Mathf.MoveTowards(speed, cap, movementData.overspeedDecay * Time.deltaTime);
+            horizontal = horizontal.normalized * newSpeed;
+            core.linearVelocity = new Vector3(horizontal.x, core.linearVelocity.y, horizontal.z);
         }
 
         private void OnJumpPerformed(object sender, EventArgs e)
