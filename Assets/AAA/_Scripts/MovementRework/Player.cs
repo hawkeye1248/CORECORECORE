@@ -104,6 +104,11 @@ namespace MovementRework
                 RespawnAtStart();
             }
 
+            if(Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                RespawnAtMapStart();
+            }
+
             SetFacingDirection();
             if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
@@ -505,23 +510,35 @@ namespace MovementRework
             didWallrun = false;
         }
 
+        // Respawn at the last platform the player stood on.
         public void RespawnAtStart()
+        {
+            Respawn(lastPlatformPosition, lastPlatformRotation);
+        }
+
+        // Respawn back at the very start of the map.
+        public void RespawnAtMapStart()
+        {
+            Respawn(startPosition, startRotation);
+        }
+
+        private void Respawn(Vector3 position, Quaternion rotation)
         {
             if(ScreenFader.Instance != null)
             {
-                ScreenFader.Instance.FlashBlack(DoRespawn);
+                ScreenFader.Instance.FlashBlack(() => DoRespawn(position, rotation));
             }
             else
             {
-                DoRespawn();
+                DoRespawn(position, rotation);
             }
         }
 
-        private void DoRespawn()
+        private void DoRespawn(Vector3 position, Quaternion rotation)
         {
             Health.ResetCharacter();
-            core.position = lastPlatformPosition;
-            core.rotation = lastPlatformRotation;
+            core.position = position;
+            core.rotation = rotation;
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
 
