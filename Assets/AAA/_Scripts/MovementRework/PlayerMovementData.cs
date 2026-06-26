@@ -14,8 +14,11 @@ namespace MovementRework
         /// As declared in <see cref="Player"/>
         /// <code>core.AddForce(-core.linearVelocity * movementData.stoppingPower);</code>
         /// </summary>
-        [Tooltip("Shouldn't be above maxSpeed attribute. See documentation.")] 
+        [Tooltip("Shouldn't be above maxSpeed attribute. See documentation.")]
         public float stoppingPower = 5f;
+        [Tooltip("How fast (units/sec) speed above maxSpeed eases back down to maxSpeed, " +
+                 "e.g. after sliding. Lower = built-up momentum is preserved longer.")]
+        public float overspeedDecay = 10f;
         public float sidewayDamping = 0.999f;
         public float backwardStoppingPower = 45f;
 
