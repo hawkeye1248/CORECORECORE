@@ -81,6 +81,20 @@ namespace MovementRework
             GameInput.Instance.OnJumpPerformed += OnJumpPerformed;
             GameInput.Instance.OnCrouchPerformed += OnCrouchPerformed;
             GameInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
+
+            Health.OnDeath += (object sender, EventArgs args) => {
+                RespawnAtStart();
+            };
+        }
+
+        private void OnDisable() {
+            GameInput.Instance.OnJumpPerformed -= OnJumpPerformed;
+            GameInput.Instance.OnCrouchPerformed -= OnCrouchPerformed;
+            GameInput.Instance.OnCrouchCanceled -= OnCrouchCanceled;
+
+            Health.OnDeath -= (object sender, EventArgs args) => {
+                RespawnAtStart();
+            };
         }
 
         private void Update()
@@ -296,8 +310,11 @@ namespace MovementRework
             {
                 coyoteTimer = 0;
 
-                lastPlatformPosition = core.position;
-                lastPlatformRotation = core.rotation;
+                if(IsStableGround())
+                {
+                    lastPlatformPosition = core.position;
+                    lastPlatformRotation = core.rotation;
+                }
 
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
@@ -310,6 +327,33 @@ namespace MovementRework
             }
 
             return IsGrounded;
+        }
+
+        // How far around the player ground must exist for a respawn point to count as "safe".
+        private const float respawnGroundCheckRadius = 0.75f;
+        private const float respawnGroundCheckLength = 1.5f;
+
+        // Returns true only when there is ground beneath the player on all sides,
+        // so respawn points are never recorded right at the edge of a platform.
+        private bool IsStableGround()
+        {
+            Vector3 origin = new Vector3(core.position.x, core.position.y - 0.4f, core.position.z);
+            Vector3[] offsets = {
+                Vector3.forward * respawnGroundCheckRadius,
+                Vector3.back * respawnGroundCheckRadius,
+                Vector3.left * respawnGroundCheckRadius,
+                Vector3.right * respawnGroundCheckRadius,
+            };
+
+            foreach(Vector3 offset in offsets)
+            {
+                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, movementData.groundLayers))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void CheckMantle()
@@ -425,10 +469,27 @@ namespace MovementRework
 
         public void RespawnAtStart()
         {
+            if(ScreenFader.Instance != null)
+            {
+                ScreenFader.Instance.FlashBlack(DoRespawn);
+            }
+            else
+            {
+                DoRespawn();
+            }
+        }
+
+        private void DoRespawn()
+        {
+            Health.ResetCharacter();
             core.position = lastPlatformPosition;
             core.rotation = lastPlatformRotation;
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
+
+            // Snap visuals so the camera/model don't smoothly slide to the new position.
+            camParent.SnapPosition(core.position);
+            if(!_isPlayerModelNull) playerModel.SnapPosition(core.position);
         }
 
         public void LungeForward()

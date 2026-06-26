@@ -14,6 +14,12 @@ namespace MovementRework {
             transform.position = Vector3.Lerp(transform.position, new Vector3(position.x, position.y - camVerticalOffset, position.z), Time.deltaTime * 10f);
         }
 
+        // Instantly snaps to the target instead of lerping, so teleports aren't shown as a smooth slide.
+        public void SnapPosition(Vector3 position)
+        {
+            transform.position = new Vector3(position.x, position.y - camVerticalOffset, position.z);
+        }
+
         public void MoveCamToCrouching()
         {
             if(moveRoutine != null) StopCoroutine(moveRoutine);
