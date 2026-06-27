@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   m_Impact:
     m_OverrideState: 1
-    m_Value: 0.419
+    m_Value: 0.189
   m_Power:
     m_OverrideState: 1
     m_Value: 0.898
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58b92b6b40be8f645b8b9775076b7fb3, type: 3}
   m_Name: JpegVol
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   _intensity:
     m_OverrideState: 1
     m_Value: 0.9
