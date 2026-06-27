@@ -28,6 +28,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1764679f4a49ac8448ccd6db9f1cac82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _active: 1
   _shader: {fileID: 4800000, guid: 4cb56832a6ce9ec4399036e1c9b5077b, type: 3}
   _scaleRange: {x: 1, y: 100}
   _noiseResolution: 512
@@ -88,10 +89,7 @@ MonoBehaviour:
       type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  - {fileID: -1445766100282694915}
-  - {fileID: -4935144721845319073}
-  - {fileID: 5966597632725606625}
-  m_RendererFeatureMap: ad6b866f10d7b46cfd22594c649befeb5f0a44e305d882bbe1e04b40ef9ccd52
+  m_RendererFeatureMap: ad6b866f10d7b46c
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -129,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1764679f4a49ac8448ccd6db9f1cac82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _active: 1
   _shader: {fileID: 4800000, guid: 4cb56832a6ce9ec4399036e1c9b5077b, type: 3}
   _scaleRange: {x: 1, y: 100}
   _noiseResolution: 512
@@ -150,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1764679f4a49ac8448ccd6db9f1cac82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _active: 1
   _shader: {fileID: 4800000, guid: 4cb56832a6ce9ec4399036e1c9b5077b, type: 3}
   _scaleRange: {x: 1, y: 100}
   _noiseResolution: 512
