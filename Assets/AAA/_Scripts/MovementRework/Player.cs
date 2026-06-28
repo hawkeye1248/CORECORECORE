@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace MovementRework
 {
@@ -10,6 +11,8 @@ namespace MovementRework
         public static Player Instance {get; private set;}
         [Header("Objects and Components")]
         public PlayerModel playerModel {get; private set;}
+
+        [SerializeField] private GameObject overlayCamera;
         public Health Health {get; private set;}
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
@@ -54,10 +57,11 @@ namespace MovementRework
         private Quaternion startRotation = Quaternion.identity;
 
         private void Awake() {
+            OverlayCamInitialize();
             Instance = this;
 
             camParent = GetComponentInChildren<CamPositioner>();
-            playerModel = GetComponentInChildren<PlayerModel>();
+            //! playerModel = GetComponentInChildren<PlayerModel>(); // Obsolete, PlayerModel class isn't used since we switched to 2D Player
             if (!playerModel)
             {
                 _isPlayerModelNull = true;
@@ -71,6 +75,19 @@ namespace MovementRework
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+            return;
+
+
+            void OverlayCamInitialize()
+            {
+                if (!overlayCamera)
+                {
+                    overlayCamera = Resources.Load<GameObject>("PlayerArmsOverlayCam");
+                }
+
+                GameObject instantiatedOverlayCamera = Instantiate(overlayCamera);
+                cameraController.AddOverlayCamera(instantiatedOverlayCamera.GetComponent<Camera>());
+            }
         }
 
         private void Start() {

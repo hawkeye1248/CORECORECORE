@@ -12,6 +12,7 @@ TagManager:
   - AmmoShotgunBonus
   - Ground
   - MapBorder
+  - OverlayCamera
   layers:
   - Default
   - TransparentFX

@@ -39,7 +39,7 @@ public class PlayerWeaponManager : MonoBehaviour
     private void Start()
     {
         mainCam = playerScript.GetCamera();
-        playerAnimScript = GetComponentInChildren<PlayerAnimations>();
+        playerAnimScript = GameObject.FindGameObjectWithTag("OverlayCamera").GetComponentInChildren<PlayerAnimations>();
         GameInput.Instance.OnRMBPerformed += on_RMB_performed;
         GameInput.Instance.OnLMBPerformed += on_LMB_performed;
         GameInput.Instance.OnInteractPerformed += OnInteractPerformed;

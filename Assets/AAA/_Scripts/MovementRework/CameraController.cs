@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace MovementRework
 {
@@ -74,6 +75,12 @@ namespace MovementRework
             {
                 cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, cameraData.minFov, cameraData.fovChangeMultiplier * Time.deltaTime);
             }
+        }
+
+        public void AddOverlayCamera(Camera overlayCam)
+        {
+            UniversalAdditionalCameraData universalCameraData = cam.GetUniversalAdditionalCameraData();
+            universalCameraData.cameraStack.Add(overlayCam);
         }
     }
 }
