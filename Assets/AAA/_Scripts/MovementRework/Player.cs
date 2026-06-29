@@ -83,7 +83,7 @@ namespace MovementRework
             GameInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
 
             Health.OnDeath += (object sender, EventArgs args) => {
-                RespawnAtStart();
+                RespawnAtMapStart();
             };
         }
 
@@ -93,7 +93,7 @@ namespace MovementRework
             GameInput.Instance.OnCrouchCanceled -= OnCrouchCanceled;
 
             Health.OnDeath -= (object sender, EventArgs args) => {
-                RespawnAtStart();
+                RespawnAtMapStart();
             };
         }
 
@@ -516,9 +516,11 @@ namespace MovementRework
             Respawn(lastPlatformPosition, lastPlatformRotation);
         }
 
-        // Respawn back at the very start of the map.
+        // Respawn back at the very start of the map. T key and death are full level resets:
+        // clear every player-placed building and restore building counts.
         public void RespawnAtMapStart()
         {
+            Building.BuildingSystem.Instance?.ResetBuildings();
             Respawn(startPosition, startRotation);
         }
 

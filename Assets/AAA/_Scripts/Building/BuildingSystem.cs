@@ -311,6 +311,22 @@ namespace Building
             }
         }
 
+        /// <summary>
+        /// Full level reset: destroy every building the player placed and restore each building's
+        /// stock to its configured <see cref="BuildableItem.maxCount"/>. Called on death / map-start.
+        /// </summary>
+        public void ResetBuildings()
+        {
+            foreach (PlaceableBlock placed in FindObjectsByType<PlaceableBlock>(FindObjectsSortMode.None))
+                if (placed != null) Destroy(placed.gameObject);
+
+            for (int i = 0; i < buildables.Count; i++)
+            {
+                if (buildables[i] != null) buildables[i].Remaining = buildables[i].maxCount;
+                OnCountChanged?.Invoke(i); // refresh the hotbar "xN" badges
+            }
+        }
+
         private void RebuildGhost()
         {
             DestroyGhost();
