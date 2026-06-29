@@ -18,5 +18,16 @@ namespace Building
 
         [Tooltip("Icon shown in the bottom-of-screen hotbar.")]
         public Sprite icon;
+
+        [Tooltip("How many of this building the player may place. Set to a negative number for " +
+                 "unlimited (the hotbar then shows no count).")]
+        public int maxCount = 5;
+
+        /// <summary>Runtime stock left to place. Initialised from <see cref="maxCount"/> by
+        /// BuildingSystem; not serialised. Unlimited when <see cref="maxCount"/> is negative.</summary>
+        [System.NonSerialized] public int Remaining;
+
+        public bool Unlimited => maxCount < 0;
+        public bool HasStock => Unlimited || Remaining > 0;
     }
 }

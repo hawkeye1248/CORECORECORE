@@ -21,8 +21,11 @@ public class BuildHotbarUI : MonoBehaviour
     [SerializeField] private Color slotColor = new Color(0f, 0f, 0f, 0.5f);
     [SerializeField] private Color selectedColor = new Color(0.2f, 0.8f, 1f, 0.85f);
     [SerializeField] private Color numberColor = Color.white;
+    [SerializeField] private Color countColor = Color.white;
+    [SerializeField] private Color emptyColor = new Color(1f, 0.3f, 0.3f, 1f);
 
     private readonly List<Image> _slotBackgrounds = new List<Image>();
+    private readonly List<Text> _countLabels = new List<Text>();
     private GameObject _root;
     private Font _font;
 
@@ -36,6 +39,7 @@ public class BuildHotbarUI : MonoBehaviour
         {
             BuildingSystem.Instance.OnBuildModeChanged += OnBuildModeChanged;
             BuildingSystem.Instance.OnSelectionChanged += Highlight;
+            BuildingSystem.Instance.OnCountChanged += UpdateCountLabel;
         }
     }
 
@@ -45,6 +49,7 @@ public class BuildHotbarUI : MonoBehaviour
         {
             BuildingSystem.Instance.OnBuildModeChanged -= OnBuildModeChanged;
             BuildingSystem.Instance.OnSelectionChanged -= Highlight;
+            BuildingSystem.Instance.OnCountChanged -= UpdateCountLabel;
         }
     }
 
@@ -52,7 +57,10 @@ public class BuildHotbarUI : MonoBehaviour
     {
         SetVisible(active);
         if (active && BuildingSystem.Instance != null)
+        {
             Highlight(BuildingSystem.Instance.SelectedIndex);
+            for (int i = 0; i < _countLabels.Count; i++) UpdateCountLabel(i);
+        }
     }
 
     private void SetVisible(bool visible)
@@ -137,6 +145,46 @@ public class BuildHotbarUI : MonoBehaviour
         label.fontSize = 20;
         label.color = numberColor;
         label.raycastTarget = false;
+
+        // Remaining-count badge ("x5") in the bottom-right corner.
+        var countGo = new GameObject("Count", typeof(RectTransform), typeof(Text));
+        var countRt = countGo.GetComponent<RectTransform>();
+        countRt.SetParent(slotRt, false);
+        countRt.anchorMin = Vector2.zero;
+        countRt.anchorMax = Vector2.one;
+        countRt.offsetMin = new Vector2(4f, 2f);
+        countRt.offsetMax = new Vector2(-4f, -2f);
+
+        var countLabel = countGo.GetComponent<Text>();
+        countLabel.font = _font;
+        countLabel.alignment = TextAnchor.LowerRight;
+        countLabel.fontSize = 22;
+        countLabel.fontStyle = FontStyle.Bold;
+        countLabel.color = countColor;
+        countLabel.raycastTarget = false;
+        _countLabels.Add(countLabel);
+        UpdateCountLabel(index);
+    }
+
+    /// <summary>Refresh the "xN" badge for one slot from the building's remaining stock.</summary>
+    private void UpdateCountLabel(int index)
+    {
+        if (index < 0 || index >= _countLabels.Count) return;
+
+        IReadOnlyList<BuildableItem> items = BuildingSystem.Instance != null
+            ? BuildingSystem.Instance.Buildables
+            : null;
+        BuildableItem item = (items != null && index < items.Count) ? items[index] : null;
+
+        Text label = _countLabels[index];
+        if (item == null || item.Unlimited)
+        {
+            label.text = string.Empty; // unlimited buildings show no badge
+            return;
+        }
+
+        label.text = "x" + item.Remaining;
+        label.color = item.Remaining > 0 ? countColor : emptyColor;
     }
 
     private void Highlight(int index)
