@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/AAA/Scenes/puzzle level demo.unity
+    guid: 59882bd9387b2bd47b3a7faca1048556
+  - enabled: 1
     path: Assets/AAA/Scenes/Japan_Test.unity
     guid: 8aee5cb312387e3499bff0c1a1f3629a
   m_configObjects: {}

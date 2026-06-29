@@ -48,6 +48,7 @@ namespace Building
         public event Action<int> OnSelectionChanged;
 
         private GameObject _ghost;
+        private Quaternion _baseRotation = Quaternion.identity;
         private float _distance;
         private float _yaw;
         private Transform _cam;
@@ -166,7 +167,8 @@ namespace Building
             if (cam == null) return;
 
             Vector3 pos = cam.position + cam.forward * _distance;
-            _ghost.transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, _yaw, 0f));
+            // Apply the player's yaw (around world up) on top of the prefab's authored rotation.
+            _ghost.transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, _yaw, 0f) * _baseRotation);
         }
 
         private void HandlePlacementInput()
@@ -202,6 +204,10 @@ namespace Building
         {
             GameObject g = Instantiate(prefab);
             g.name = $"[Ghost] {prefab.name}";
+
+            // Remember the prefab's authored orientation so the player's yaw is applied on top of
+            // it instead of replacing it (otherwise a "vertical" prefab would flatten to identity).
+            _baseRotation = g.transform.rotation;
 
             foreach (Collider c in g.GetComponentsInChildren<Collider>(true))
                 c.enabled = false;
