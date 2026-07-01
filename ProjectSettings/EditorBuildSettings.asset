@@ -11,5 +11,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/AAA/Scenes/Japan_Test.unity
     guid: 8aee5cb312387e3499bff0c1a1f3629a
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Alparslan_1.unity
+    guid: 520d4e9cc1c95604fb7f120f05451c3e
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Alparslan_2.unity
+    guid: 7eb23faec4194c74d979245438b048fa
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
