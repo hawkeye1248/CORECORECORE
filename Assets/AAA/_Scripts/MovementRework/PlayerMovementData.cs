@@ -21,6 +21,10 @@ namespace MovementRework
         public float overspeedDecay = 10f;
         public float sidewayDamping = 0.999f;
         public float backwardStoppingPower = 45f;
+        [Tooltip("Slopes up to this angle (degrees) are walkable: grounded acceleration is " +
+                 "redirected along the surface so the player climbs them. Steeper faces get no " +
+                 "up-slope assist, so they behave like walls.")]
+        public float maxWalkableSlopeAngle = 50f;
 
         [Header("Ground Check Parameters")]
         public Vector3 groundCheckScale = new Vector3(0.4f, 0.3f, 0.4f);

@@ -28,6 +28,7 @@ namespace MovementRework
 
         private float coyoteTimer = 0f;
         private float groundDotValue = 0f;
+        private Vector3 groundNormal = Vector3.up;
         private float jumpCooldown = 0.1f;
         public Vector3 facingDirection {get; private set;} = Vector3.zero;
 
@@ -194,6 +195,21 @@ namespace MovementRework
 
                 if(CheckGround())
                 {
+                    // Redirect the (horizontal) input along the slope surface so the player
+                    // walks *up* an incline instead of pushing straight into it. Skipped on
+                    // slopes steeper than the walkable limit, so steep faces act like walls
+                    // and give no climbing assist. Magnitude is preserved so analog input
+                    // and flat-ground behavior are unchanged.
+                    Vector3 accelDir = inputDir;
+                    if(Vector3.Angle(Vector3.up, groundNormal) <= movementData.maxWalkableSlopeAngle)
+                    {
+                        Vector3 projected = Vector3.ProjectOnPlane(inputDir, groundNormal);
+                        if(projected.sqrMagnitude > 0.0001f)
+                        {
+                            accelDir = projected.normalized * inputDir.magnitude;
+                        }
+                    }
+
                     // Only accelerate while under the speed cap. Above it (e.g. momentum
                     // carried in from a slide) we coast and let SoftCapSpeed bleed the
                     // excess off, so input can never push past maxSpeed. This keeps the
@@ -201,7 +217,7 @@ namespace MovementRework
                     // settle at different equilibrium speeds.
                     if(core.linearVelocity.magnitude < movementData.maxSpeed)
                     {
-                        core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
+                        core.AddForce(accelDir * movementData.acceleration * Time.deltaTime);
                     }
 
                     orientation.LookAt(core.position + inputDir);
@@ -362,6 +378,7 @@ namespace MovementRework
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
                     groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
+                    groundNormal = hit.normal;
                 }
 
             } else

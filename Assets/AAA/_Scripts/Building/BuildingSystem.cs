@@ -177,6 +177,12 @@ namespace Building
         private void UpdateGhost()
         {
             if (_ghost == null) return;
+
+            // Hide the preview entirely when the selected building is out of stock.
+            bool hasStock = SelectedHasStock();
+            if (_ghost.activeSelf != hasStock) _ghost.SetActive(hasStock);
+            if (!hasStock) return;
+
             Transform cam = GetCamera();
             if (cam == null) return;
 
@@ -287,6 +293,14 @@ namespace Building
             if (Mouse.current == null) return;
             if (Mouse.current.leftButton.wasPressedThisFrame)
                 Place();
+        }
+
+        /// <summary>True when the currently selected building still has stock to place.</summary>
+        private bool SelectedHasStock()
+        {
+            if (SelectedIndex < 0 || SelectedIndex >= buildables.Count) return false;
+            BuildableItem item = buildables[SelectedIndex];
+            return item != null && item.HasStock;
         }
 
         private void Place()
