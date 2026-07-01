@@ -45,6 +45,11 @@ namespace MovementRework
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
+        private Vector3 mantleTopPoint = Vector3.zero;
+        private bool isClimbing = false;
+        private Vector3 climbStart = Vector3.zero;
+        private Vector3 climbTarget = Vector3.zero;
+        private float climbTimer = 0f;
 
         /// <summary>
         /// For compability reasons
@@ -84,7 +89,7 @@ namespace MovementRework
             GameInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
 
             Health.OnDeath += (object sender, EventArgs args) => {
-                RespawnAtMapStart();
+                RespawnAtStart();
             };
         }
 
@@ -139,7 +144,19 @@ namespace MovementRework
         {
             if(IsMantling)
             {
-                core.linearVelocity = Vector3.zero;
+                if(isClimbing)
+                {
+                    ClimbStep();
+                }
+                else
+                {
+                    core.linearVelocity = Vector3.zero;
+                    // Hold forward from the mantle hold to pull up onto the ledge.
+                    if(movementInput.y > 0.1f)
+                    {
+                        StartClimb();
+                    }
+                }
                 return;
             }
 
@@ -296,7 +313,8 @@ namespace MovementRework
         }
 
         private void OnJumpPerformed(object sender, EventArgs e)
-        {   
+        {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
@@ -426,6 +444,7 @@ namespace MovementRework
                     {
                         IsMantling = true;
                         mantleHoldPoint = horizontalHit.point;
+                        mantleTopPoint = verticalHit.point;
                         camParent.Jolt(core.linearVelocity.y, movementData.mantleJoltPower);
                         core.useGravity = false;
                         core.linearVelocity = Vector3.zero;
@@ -442,6 +461,54 @@ namespace MovementRework
             StartCoroutine(MantleCooldownTimer());
         }
 
+        // Begin the scripted pull-up from a mantle hold. Position is captured now; the
+        // player is frozen (gravity off, zero velocity) while mantling so it stays valid.
+        private void StartClimb()
+        {
+            isClimbing = true;
+            climbTimer = 0f;
+            climbStart = core.position;
+            climbTarget = mantleTopPoint + Vector3.up * movementData.mantleClimbHeightOffset;
+            core.linearVelocity = Vector3.zero;
+        }
+
+        // Drives the climb each physics step. Two-phase so we clear the lip: rise straight
+        // up first, then move forward onto the top surface. Position is set directly so the
+        // ledge collider can't block the sweep; gravity is still off until FinishClimb.
+        private void ClimbStep()
+        {
+            climbTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(climbTimer / movementData.mantleClimbDuration);
+
+            Vector3 next;
+            if(t < 0.5f)
+            {
+                float phase = t / 0.5f;
+                next = new Vector3(climbStart.x, Mathf.Lerp(climbStart.y, climbTarget.y, phase), climbStart.z);
+            }
+            else
+            {
+                float phase = (t - 0.5f) / 0.5f;
+                next = new Vector3(Mathf.Lerp(climbStart.x, climbTarget.x, phase), climbTarget.y, Mathf.Lerp(climbStart.z, climbTarget.z, phase));
+            }
+
+            core.position = next;
+            core.linearVelocity = Vector3.zero;
+
+            if(t >= 1f)
+            {
+                FinishClimb();
+            }
+        }
+
+        private void FinishClimb()
+        {
+            core.position = climbTarget;
+            core.linearVelocity = Vector3.zero;
+            isClimbing = false;
+            LeaveMantle();
+        }
+
         private IEnumerator MantleCooldownTimer()
         {
             didMantle = true;
@@ -453,6 +520,7 @@ namespace MovementRework
 
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
@@ -560,6 +628,11 @@ namespace MovementRework
             core.rotation = rotation;
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
+
+            // Clear any in-progress mantle/climb so we don't respawn frozen or without gravity.
+            isClimbing = false;
+            IsMantling = false;
+            core.useGravity = true;
 
             // Snap visuals so the camera/model don't smoothly slide to the new position.
             camParent.SnapPosition(core.position);

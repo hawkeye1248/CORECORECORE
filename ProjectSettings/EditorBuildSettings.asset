@@ -17,5 +17,17 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/AAA/Scenes/Oriental Levels/Alparslan_2.unity
     guid: 7eb23faec4194c74d979245438b048fa
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa1u.unity
+    guid: fe35ca76aa782b749b3fc002dc616469
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa2u.unity
+    guid: a5099279ec3653942ba9fd619196c9c5
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa3.unity
+    guid: f48c4da3f60d79549b88d16905154f77
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa4.unity
+    guid: f050523e4af7cb5439261621903f838a
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

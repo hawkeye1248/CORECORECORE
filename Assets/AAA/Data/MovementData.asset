@@ -18,6 +18,7 @@ MonoBehaviour:
   overspeedDecay: 25
   sidewayDamping: 0.999
   backwardStoppingPower: 45
+  maxWalkableSlopeAngle: 50
   groundCheckScale: {x: 0.4, y: 0.2, z: 0.4}
   groundLayers:
     serializedVersion: 2
@@ -40,9 +41,11 @@ MonoBehaviour:
   mantleJoltPower: 5
   mantleJumpForce: 20
   mantleCooldown: 0.25
+  mantleClimbDuration: 0.5
+  mantleClimbHeightOffset: 1
   wallrunAcceleration: 1500
   wallrunMaxSpeed: 14
-  wallCheckDistance: 2
+  wallCheckDistance: 1
   wallrunCooldown: 0.25
   wallJumpForce: 10
   wallJumpNormalForce: 15
