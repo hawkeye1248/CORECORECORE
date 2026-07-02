@@ -317,6 +317,10 @@ namespace Building
             if (placed.GetComponent<PlaceableBlock>() == null)
                 placed.AddComponent<PlaceableBlock>();
 
+            // Let placement-aware components react (e.g. a TemporaryBlock starts its decay timer).
+            foreach (IPlacedBuilding cb in placed.GetComponentsInChildren<IPlacedBuilding>())
+                cb.OnPlaced();
+
             // Spend one from the limited stock and let the hotbar update its count.
             if (!item.Unlimited)
             {

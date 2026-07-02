@@ -14168,8 +14168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene:
-    asset: {fileID: 102900000, guid: 8aee5cb312387e3499bff0c1a1f3629a, type: 3}
-    guid: 8aee5cb312387e3499bff0c1a1f3629a
+    asset: {fileID: 102900000, guid: 520d4e9cc1c95604fb7f120f05451c3e, type: 3}
+    guid: 520d4e9cc1c95604fb7f120f05451c3e
   fadeTime: 0.5
 --- !u!1001 &940476791
 PrefabInstance:
@@ -22331,89 +22331,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c3ae96295f880a4dabf4394d582766f, type: 3}
---- !u!1001 &1490771812
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 128.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 128.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 128.87
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 77.61
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 60.76494
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.14
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5000008
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.50000066
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.4999994
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.49999923
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2309958544226094362, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3117985875045767072, guid: 5969e07ccb800794691b65fd00e9e991,
-        type: 3}
-      propertyPath: m_Name
-      value: 4x4 rock door
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5969e07ccb800794691b65fd00e9e991, type: 3}
 --- !u!1001 &1493835121
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32497,7 +32414,6 @@ SceneRoots:
   - {fileID: 39504831}
   - {fileID: 683048806}
   - {fileID: 146917749}
-  - {fileID: 1490771812}
   - {fileID: 665685527}
   - {fileID: 963775147}
   - {fileID: 1751254473}
