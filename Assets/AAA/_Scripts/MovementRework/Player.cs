@@ -644,6 +644,17 @@ namespace MovementRework
             core.AddForce(facingDirection * movementData.lungeForce, ForceMode.Impulse);
         }
 
+        // Bounce the player straight up (e.g. off a jump pad), keeping horizontal momentum.
+        // Setting the vertical velocity gives a consistent launch height regardless of fall speed;
+        // flagging IsJumped (via the jump cooldown) stops the grounded "stopping power" from damping it.
+        public void JumpPadLaunch(float upwardVelocity)
+        {
+            Vector3 v = core.linearVelocity;
+            v.y = upwardVelocity;
+            core.linearVelocity = v;
+            StartCoroutine(JumpCooldownTimer());
+        }
+
         private void OnDrawGizmos()
         {
             if (movementData == null)
