@@ -18120,19 +18120,19 @@ MonoBehaviour:
   - displayName: Square
     prefab: {fileID: 1111507397379436, guid: 6f65ac07335e65648b9ae3d6a6d2687a, type: 3}
     icon: {fileID: 0}
-    maxCount: 5
+    maxCount: 1
   - displayName: Ramp
     prefab: {fileID: 1221749348728380, guid: 3eda83f34bb97a24280930bd9bd03046, type: 3}
     icon: {fileID: 0}
-    maxCount: 5
+    maxCount: 0
   - displayName: Wall
     prefab: {fileID: 1940510765785018, guid: 571dfae7a4678a541a3ba56a1e7e2480, type: 3}
     icon: {fileID: 0}
-    maxCount: 5
+    maxCount: 2
   - displayName: Wall
     prefab: {fileID: 1940510765785018, guid: a44c4c46314fe6f42b758c4f6de6f657, type: 3}
     icon: {fileID: 0}
-    maxCount: 5
+    maxCount: 2
   blueprintMaterial: {fileID: 2100000, guid: e9fcf7bdee76dca4bb41baf3a9e96faf, type: 2}
   minDistance: 5
   maxDistance: 60
