@@ -1250,8 +1250,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene:
-    asset: {fileID: 102900000, guid: 59882bd9387b2bd47b3a7faca1048556, type: 3}
-    guid: 59882bd9387b2bd47b3a7faca1048556
+    asset: {fileID: 102900000, guid: 11bf0f80b7580274c949a25ae5673674, type: 3}
+    guid: 11bf0f80b7580274c949a25ae5673674
   fadeTime: 0.5
 --- !u!1 &1135422790
 GameObject:
