@@ -28,6 +28,7 @@ namespace MovementRework
 
         private float coyoteTimer = 0f;
         private float groundDotValue = 0f;
+        private Vector3 groundNormal = Vector3.up;
         private float jumpCooldown = 0.1f;
         public Vector3 facingDirection {get; private set;} = Vector3.zero;
 
@@ -44,6 +45,11 @@ namespace MovementRework
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
+        private Vector3 mantleTopPoint = Vector3.zero;
+        private bool isClimbing = false;
+        private Vector3 climbStart = Vector3.zero;
+        private Vector3 climbTarget = Vector3.zero;
+        private float climbTimer = 0f;
 
         /// <summary>
         /// For compability reasons
@@ -93,7 +99,7 @@ namespace MovementRework
             GameInput.Instance.OnCrouchCanceled -= OnCrouchCanceled;
 
             Health.OnDeath -= (object sender, EventArgs args) => {
-                RespawnAtStart();
+                RespawnAtMapStart();
             };
         }
 
@@ -138,7 +144,19 @@ namespace MovementRework
         {
             if(IsMantling)
             {
-                core.linearVelocity = Vector3.zero;
+                if(isClimbing)
+                {
+                    ClimbStep();
+                }
+                else
+                {
+                    core.linearVelocity = Vector3.zero;
+                    // Hold forward from the mantle hold to pull up onto the ledge.
+                    if(movementInput.y > 0.1f)
+                    {
+                        StartClimb();
+                    }
+                }
                 return;
             }
 
@@ -194,6 +212,21 @@ namespace MovementRework
 
                 if(CheckGround())
                 {
+                    // Redirect the (horizontal) input along the slope surface so the player
+                    // walks *up* an incline instead of pushing straight into it. Skipped on
+                    // slopes steeper than the walkable limit, so steep faces act like walls
+                    // and give no climbing assist. Magnitude is preserved so analog input
+                    // and flat-ground behavior are unchanged.
+                    Vector3 accelDir = inputDir;
+                    if(Vector3.Angle(Vector3.up, groundNormal) <= movementData.maxWalkableSlopeAngle)
+                    {
+                        Vector3 projected = Vector3.ProjectOnPlane(inputDir, groundNormal);
+                        if(projected.sqrMagnitude > 0.0001f)
+                        {
+                            accelDir = projected.normalized * inputDir.magnitude;
+                        }
+                    }
+
                     // Only accelerate while under the speed cap. Above it (e.g. momentum
                     // carried in from a slide) we coast and let SoftCapSpeed bleed the
                     // excess off, so input can never push past maxSpeed. This keeps the
@@ -201,7 +234,7 @@ namespace MovementRework
                     // settle at different equilibrium speeds.
                     if(core.linearVelocity.magnitude < movementData.maxSpeed)
                     {
-                        core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
+                        core.AddForce(accelDir * movementData.acceleration * Time.deltaTime);
                     }
 
                     orientation.LookAt(core.position + inputDir);
@@ -280,7 +313,8 @@ namespace MovementRework
         }
 
         private void OnJumpPerformed(object sender, EventArgs e)
-        {   
+        {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
@@ -362,6 +396,7 @@ namespace MovementRework
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
                     groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
+                    groundNormal = hit.normal;
                 }
 
             } else
@@ -409,6 +444,7 @@ namespace MovementRework
                     {
                         IsMantling = true;
                         mantleHoldPoint = horizontalHit.point;
+                        mantleTopPoint = verticalHit.point;
                         camParent.Jolt(core.linearVelocity.y, movementData.mantleJoltPower);
                         core.useGravity = false;
                         core.linearVelocity = Vector3.zero;
@@ -425,6 +461,54 @@ namespace MovementRework
             StartCoroutine(MantleCooldownTimer());
         }
 
+        // Begin the scripted pull-up from a mantle hold. Position is captured now; the
+        // player is frozen (gravity off, zero velocity) while mantling so it stays valid.
+        private void StartClimb()
+        {
+            isClimbing = true;
+            climbTimer = 0f;
+            climbStart = core.position;
+            climbTarget = mantleTopPoint + Vector3.up * movementData.mantleClimbHeightOffset;
+            core.linearVelocity = Vector3.zero;
+        }
+
+        // Drives the climb each physics step. Two-phase so we clear the lip: rise straight
+        // up first, then move forward onto the top surface. Position is set directly so the
+        // ledge collider can't block the sweep; gravity is still off until FinishClimb.
+        private void ClimbStep()
+        {
+            climbTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(climbTimer / movementData.mantleClimbDuration);
+
+            Vector3 next;
+            if(t < 0.5f)
+            {
+                float phase = t / 0.5f;
+                next = new Vector3(climbStart.x, Mathf.Lerp(climbStart.y, climbTarget.y, phase), climbStart.z);
+            }
+            else
+            {
+                float phase = (t - 0.5f) / 0.5f;
+                next = new Vector3(Mathf.Lerp(climbStart.x, climbTarget.x, phase), climbTarget.y, Mathf.Lerp(climbStart.z, climbTarget.z, phase));
+            }
+
+            core.position = next;
+            core.linearVelocity = Vector3.zero;
+
+            if(t >= 1f)
+            {
+                FinishClimb();
+            }
+        }
+
+        private void FinishClimb()
+        {
+            core.position = climbTarget;
+            core.linearVelocity = Vector3.zero;
+            isClimbing = false;
+            LeaveMantle();
+        }
+
         private IEnumerator MantleCooldownTimer()
         {
             didMantle = true;
@@ -436,6 +520,7 @@ namespace MovementRework
 
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
@@ -516,9 +601,11 @@ namespace MovementRework
             Respawn(lastPlatformPosition, lastPlatformRotation);
         }
 
-        // Respawn back at the very start of the map.
+        // Respawn back at the very start of the map. T key and death are full level resets:
+        // clear every player-placed building and restore building counts.
         public void RespawnAtMapStart()
         {
+            Building.BuildingSystem.Instance?.ResetBuildings();
             Respawn(startPosition, startRotation);
         }
 
@@ -542,6 +629,11 @@ namespace MovementRework
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
 
+            // Clear any in-progress mantle/climb so we don't respawn frozen or without gravity.
+            isClimbing = false;
+            IsMantling = false;
+            core.useGravity = true;
+
             // Snap visuals so the camera/model don't smoothly slide to the new position.
             camParent.SnapPosition(core.position);
             if(!_isPlayerModelNull) playerModel.SnapPosition(core.position);
@@ -550,6 +642,17 @@ namespace MovementRework
         public void LungeForward()
         {
             core.AddForce(facingDirection * movementData.lungeForce, ForceMode.Impulse);
+        }
+
+        // Bounce the player straight up (e.g. off a jump pad), keeping horizontal momentum.
+        // Setting the vertical velocity gives a consistent launch height regardless of fall speed;
+        // flagging IsJumped (via the jump cooldown) stops the grounded "stopping power" from damping it.
+        public void JumpPadLaunch(float upwardVelocity)
+        {
+            Vector3 v = core.linearVelocity;
+            v.y = upwardVelocity;
+            core.linearVelocity = v;
+            StartCoroutine(JumpCooldownTimer());
         }
 
         private void OnDrawGizmos()

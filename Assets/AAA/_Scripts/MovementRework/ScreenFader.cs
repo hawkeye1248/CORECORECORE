@@ -43,7 +43,7 @@ namespace MovementRework {
             canvasGo.AddComponent<CanvasScaler>();
 
             canvasGroup = canvasGo.AddComponent<CanvasGroup>();
-            canvasGroup.alpha = 0f;
+            canvasGroup.alpha = 1f;
             canvasGroup.blocksRaycasts = false;
             canvasGroup.interactable = false;
 
@@ -60,6 +60,11 @@ namespace MovementRework {
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
+        }
+
+        void Start()
+        {
+            FadeFromBlack(() => {}, 1f);
         }
 
         /// <summary>
@@ -86,6 +91,46 @@ namespace MovementRework {
             fadeRoutine = null;
         }
 
+        /// <summary>
+        /// Fades to black and stays there, invoking <paramref name="onBlack"/> once the screen
+        /// is fully black. Unlike <see cref="FlashBlack"/> this does not fade back in, so use it
+        /// for transitions that replace the scene (the next scene reveals itself however it likes).
+        /// </summary>
+        public void FadeToBlack(Action onBlack = null, float? fadeTime = null)
+        {
+            if (fadeRoutine != null) StopCoroutine(fadeRoutine);
+            fadeRoutine = StartCoroutine(FadeToBlackRoutine(onBlack, fadeTime ?? defaultFadeTime));
+        }
+
+        private IEnumerator FadeToBlackRoutine(Action onBlack, float fadeTime)
+        {
+            yield return Fade(1f, fadeTime);
+
+            onBlack?.Invoke();
+
+            fadeRoutine = null;
+        }
+
+        public void FadeFromBlack(Action onBlack = null, float? fadeTime = null)
+        {
+            if(fadeRoutine != null) StopCoroutine(fadeRoutine);
+            fadeRoutine = StartCoroutine(FadeFromBlackRoutine(onBlack, fadeTime ?? defaultFadeTime));
+        }
+
+        private IEnumerator FadeFromBlackRoutine(Action onBlack, float fadeTime)
+        {
+            yield return Fade(0, fadeTime);
+
+            onBlack?.Invoke();
+
+            fadeRoutine = null;
+        }
+
+        // Cap how much "time" a single frame can advance the fade by. Right after a scene
+        // load the first frame's unscaledDeltaTime is huge (load + first-render hitch); without
+        // this cap one frame would skip the whole fade, so a fade-from-black just snaps in.
+        private const float maxFadeStep = 0.05f;
+
         private IEnumerator Fade(float target, float duration)
         {
             float start = canvasGroup.alpha;
@@ -96,7 +141,7 @@ namespace MovementRework {
                 yield break;
             }
 
-            for (float t = 0f; t < duration; t += Time.unscaledDeltaTime)
+            for (float t = 0f; t < duration; t += Mathf.Min(Time.unscaledDeltaTime, maxFadeStep))
             {
                 canvasGroup.alpha = Mathf.Lerp(start, target, t / duration);
                 yield return null;

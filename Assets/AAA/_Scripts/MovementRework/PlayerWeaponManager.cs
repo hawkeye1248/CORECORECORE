@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using AAA._Scripts.AnimationRelated.MCAnimations;
 using AAA._Scripts.Enums;
+using Building;
 using MovementRework;
 using UnityEngine;
 
@@ -94,6 +95,9 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void on_LMB_performed(object sender, EventArgs e)
     {
+        // While placing buildings, LMB is consumed by BuildingSystem — don't shoot/punch.
+        if (BuildingSystem.Instance != null && BuildingSystem.Instance.IsBuildModeActive) return;
+
         if (currentWeapon != null)
         {
             currentWeapon.Shoot(SpawnPos(), mainCam.rotation, false);
@@ -107,6 +111,9 @@ public class PlayerWeaponManager : MonoBehaviour
 
     private void on_RMB_performed(object sender, EventArgs e)
     {
+        // Right-click is inert while in build mode (reserved for building interactions).
+        if (BuildingSystem.Instance != null && BuildingSystem.Instance.IsBuildModeActive) return;
+
         if (currentWeapon != null)
         {
             RaycastHit castHit;

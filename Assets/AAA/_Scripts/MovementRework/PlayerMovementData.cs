@@ -21,6 +21,10 @@ namespace MovementRework
         public float overspeedDecay = 10f;
         public float sidewayDamping = 0.999f;
         public float backwardStoppingPower = 45f;
+        [Tooltip("Slopes up to this angle (degrees) are walkable: grounded acceleration is " +
+                 "redirected along the surface so the player climbs them. Steeper faces get no " +
+                 "up-slope assist, so they behave like walls.")]
+        public float maxWalkableSlopeAngle = 50f;
 
         [Header("Ground Check Parameters")]
         public Vector3 groundCheckScale = new Vector3(0.4f, 0.3f, 0.4f);
@@ -51,6 +55,11 @@ namespace MovementRework
         public float mantleJoltPower = 5f;
         public float mantleJumpForce = 5f;
         public float mantleCooldown = 0.25f;
+        [Tooltip("Seconds the pull-up climb takes when holding forward from a mantle hold.")]
+        public float mantleClimbDuration = 0.25f;
+        [Tooltip("How far above the ledge top surface the player center ends after a climb. " +
+                 "Tune to the player's height: too low pops out of the floor, too high leaves a drop.")]
+        public float mantleClimbHeightOffset = 1f;
 
         [Header("Wallrunning Parameters")]
         public float wallrunAcceleration = 1500f;
