@@ -18,7 +18,7 @@ namespace MovementRework {
         private void OnTriggerEnter(Collider other)
         {
             // GetComponentInParent so a child collider (e.g. the model) still finds the Health.
-            if (other.GetComponentInParent<Health>() is Health health && !health.IsDead())
+            if (other.GetComponentInParent<SimpleHealth>() is SimpleHealth health && !health.IsDead())
             {
                 health.KillCharacter();
             }

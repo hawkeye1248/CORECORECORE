@@ -222,7 +222,8 @@ public class NewEnemyTest : MonoBehaviour
 
             if (healOrbPrefab != null && player != null)
             {
-                Health playerHealth = MovementRework.Player.Instance.Health;
+                Health playerHealth = new Health();
+                //Health playerHealth = MovementRework.Player.Instance.Health;
                 if (playerHealth != null)
                 {
                     GameObject orb = Instantiate(healOrbPrefab, transform.position + Vector3.up, Quaternion.identity);

@@ -10,7 +10,7 @@ namespace MovementRework
         public static Player Instance {get; private set;}
         [Header("Objects and Components")]
         public PlayerModel playerModel {get; private set;}
-        public Health Health {get; private set;}
+        public SimpleHealth Health {get; private set;}
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] public Rigidbody core;
@@ -70,7 +70,7 @@ namespace MovementRework
             {
                 _isPlayerModelNull = true;
             }
-            Health = GetComponent<Health>();
+            Health = GetComponent<SimpleHealth>();
 
             jumpCooldown += movementData.coyoteTime;
 
