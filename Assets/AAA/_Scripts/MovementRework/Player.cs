@@ -10,7 +10,7 @@ namespace MovementRework
         public static Player Instance {get; private set;}
         [Header("Objects and Components")]
         public PlayerModel playerModel {get; private set;}
-        public Health Health {get; private set;}
+        public SimpleHealth Health {get; private set;}
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] public Rigidbody core;
@@ -70,7 +70,7 @@ namespace MovementRework
             {
                 _isPlayerModelNull = true;
             }
-            Health = GetComponent<Health>();
+            Health = GetComponent<SimpleHealth>();
 
             jumpCooldown += movementData.coyoteTime;
 
@@ -196,6 +196,14 @@ namespace MovementRework
                 if(groundDotValue >= 0.95f)
                 {
                     core.AddForce(-core.linearVelocity.normalized * movementData.slideStoppingPower);
+                }
+                else
+                {
+                    // On a slope: actively push the slide downhill so slope slides speed up
+                    // instead of just coasting. ProjectOnPlane(down, normal) points down the
+                    // slope with magnitude sin(slopeAngle), so steeper slopes accelerate harder.
+                    Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
+                    core.AddForce(slopeDir * movementData.slideSlopeAcceleration);
                 }
 
                 if(core.linearVelocity.magnitude <= movementData.slideEndSpeed)
@@ -411,10 +419,18 @@ namespace MovementRework
         private const float respawnGroundCheckRadius = 0.75f;
         private const float respawnGroundCheckLength = 1.5f;
 
-        // Returns true only when there is ground beneath the player on all sides,
-        // so respawn points are never recorded right at the edge of a platform.
+        // Returns true only when there is spawnable ground beneath the player on all sides,
+        // so respawn points are never recorded right at the edge of a platform — or on
+        // surfaces the player can walk on but shouldn't respawn onto (e.g. placed blocks).
         private bool IsStableGround()
         {
+            // Respawn points use spawnableLayers, which is separate from the movement groundLayers
+            // so the player can stand/wallrun on things without them counting as safe spawn ground.
+            // Falls back to groundLayers when spawnableLayers is left unset (Nothing).
+            LayerMask spawnMask = movementData.spawnableLayers == 0
+                ? movementData.groundLayers
+                : movementData.spawnableLayers;
+
             Vector3 origin = new Vector3(core.position.x, core.position.y - 0.4f, core.position.z);
             Vector3[] offsets = {
                 Vector3.forward * respawnGroundCheckRadius,
@@ -425,7 +441,7 @@ namespace MovementRework
 
             foreach(Vector3 offset in offsets)
             {
-                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, movementData.groundLayers))
+                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, spawnMask))
                 {
                     return false;
                 }
@@ -653,6 +669,27 @@ namespace MovementRework
             v.y = upwardVelocity;
             core.linearVelocity = v;
             StartCoroutine(JumpCooldownTimer());
+        }
+
+        // Give the player a horizontal speed boost (e.g. from a boost pad / speed strip).
+        // Only ever speeds the player up along `direction` — never slows them — and leaves vertical
+        // velocity untouched so jumps/falls are unaffected. Because this sets speed above maxSpeed,
+        // SoftCapSpeed eases it back down to normal on its own once the player leaves the pad, which
+        // gives the "shoot forward then coast back to normal" feel of a racing boost.
+        public void SpeedBoost(float boostSpeed, Vector3 direction)
+        {
+            Vector3 dir = new Vector3(direction.x, 0f, direction.z);
+            if (dir.sqrMagnitude < 1e-6f) return;
+            dir.Normalize();
+
+            Vector3 v = core.linearVelocity;
+            // Speed we already carry along the boost direction. Only boost when we're going slower
+            // than the target that way, so re-touching the pad can't stack past the intended speed
+            // and it never fights a faster entry (e.g. a slide onto the strip).
+            float speedAlong = Vector3.Dot(new Vector3(v.x, 0f, v.z), dir);
+            if (speedAlong >= boostSpeed) return;
+
+            core.linearVelocity = new Vector3(dir.x * boostSpeed, v.y, dir.z * boostSpeed);
         }
 
         private void OnDrawGizmos()

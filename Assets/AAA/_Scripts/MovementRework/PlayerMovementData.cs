@@ -29,6 +29,10 @@ namespace MovementRework
         [Header("Ground Check Parameters")]
         public Vector3 groundCheckScale = new Vector3(0.4f, 0.3f, 0.4f);
         public LayerMask groundLayers;
+        [Tooltip("Surfaces that count as valid respawn platforms (IsStableGround). Use this to " +
+                 "let the player stand/wallrun on things in groundLayers (e.g. placed blocks) " +
+                 "without saving a respawn point there. Leave empty to fall back to groundLayers.")]
+        public LayerMask spawnableLayers;
         public float coyoteTime = 0.25f;
 
         [Header("Jumping Parameters")]
@@ -47,6 +51,10 @@ namespace MovementRework
         public float slideForce = 5f;
         public float slideStoppingPower = 2f;
         public float slideEndSpeed = 1f;
+        [Tooltip("Downhill acceleration applied while sliding on a slope. Scales with slope " +
+                 "steepness (sin of the slope angle), so steeper slopes speed you up faster. " +
+                 "Higher = faster slope slides.")]
+        public float slideSlopeAcceleration = 40f;
 
         [Header("Mantle Parameters")]
         public Vector3 mantleRaycastPoint = new Vector3(0, 1.3f, 0);
