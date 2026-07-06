@@ -197,6 +197,14 @@ namespace MovementRework
                 {
                     core.AddForce(-core.linearVelocity.normalized * movementData.slideStoppingPower);
                 }
+                else
+                {
+                    // On a slope: actively push the slide downhill so slope slides speed up
+                    // instead of just coasting. ProjectOnPlane(down, normal) points down the
+                    // slope with magnitude sin(slopeAngle), so steeper slopes accelerate harder.
+                    Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
+                    core.AddForce(slopeDir * movementData.slideSlopeAcceleration);
+                }
 
                 if(core.linearVelocity.magnitude <= movementData.slideEndSpeed)
                 {
@@ -411,10 +419,18 @@ namespace MovementRework
         private const float respawnGroundCheckRadius = 0.75f;
         private const float respawnGroundCheckLength = 1.5f;
 
-        // Returns true only when there is ground beneath the player on all sides,
-        // so respawn points are never recorded right at the edge of a platform.
+        // Returns true only when there is spawnable ground beneath the player on all sides,
+        // so respawn points are never recorded right at the edge of a platform — or on
+        // surfaces the player can walk on but shouldn't respawn onto (e.g. placed blocks).
         private bool IsStableGround()
         {
+            // Respawn points use spawnableLayers, which is separate from the movement groundLayers
+            // so the player can stand/wallrun on things without them counting as safe spawn ground.
+            // Falls back to groundLayers when spawnableLayers is left unset (Nothing).
+            LayerMask spawnMask = movementData.spawnableLayers == 0
+                ? movementData.groundLayers
+                : movementData.spawnableLayers;
+
             Vector3 origin = new Vector3(core.position.x, core.position.y - 0.4f, core.position.z);
             Vector3[] offsets = {
                 Vector3.forward * respawnGroundCheckRadius,
@@ -425,7 +441,7 @@ namespace MovementRework
 
             foreach(Vector3 offset in offsets)
             {
-                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, movementData.groundLayers))
+                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, spawnMask))
                 {
                     return false;
                 }
