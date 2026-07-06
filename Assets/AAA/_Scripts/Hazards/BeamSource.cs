@@ -66,8 +66,10 @@ namespace Hazards
         [Header("Between two points (offsets from placed position)")]
         [SerializeField] private Vector3 pointA = Vector3.zero;
         [SerializeField] private Vector3 pointB = new Vector3(0f, 5f, 0f);
-        [Tooltip("Travel speed in units per second.")]
+        [Tooltip("Travel speed in units per second (the average pace when Ease In/Out is on).")]
         [SerializeField] private float moveSpeed = 3f;
+        [Tooltip("Slow to a stop at each point and accelerate through the middle. Off = constant speed.")]
+        [SerializeField] private bool pointsEaseInOut = true;
 
         [Header("Arc (semi-circular oscillation)")]
         [Tooltip("Axis the arc curves around. Up = the arc lies in the horizontal plane.")]
@@ -163,6 +165,7 @@ namespace Hazards
 
             // Ping-pong at a constant world speed, independent of how far apart the points are.
             float t = legLength > 0.0001f ? Mathf.PingPong(Time.time * moveSpeed / legLength, 1f) : 0f;
+            if (pointsEaseInOut) t = Mathf.SmoothStep(0f, 1f, t); // zero speed at the ends, faster mid-travel
             transform.position = Vector3.Lerp(a, b, t);
         }
 
