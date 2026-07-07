@@ -12225,6 +12225,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8919630033061241705, guid: 9a8ea0b38a2b42844b687fd09a281d53,
+        type: 3}
+      propertyPath: pushStrength
+      value: 60
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20267,12 +20272,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3956204420358000937, guid: 5c3ae96295f880a4dabf4394d582766f,
     type: 3}
   m_PrefabInstance: {fileID: 1216145418}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &1217722928 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 2262290399543870754, guid: 37f1614546d99d645ad308ccce5a3079,
-    type: 3}
-  m_PrefabInstance: {fileID: 6836121075951823231}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1218693277
 PrefabInstance:
@@ -34666,62 +34665,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2140742960508524758, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2140742960508524758, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2140742960508524758, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2539559982710127490, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_Size.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2539559982710127490, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_Size.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2539559982710127490, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_Size.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2539559982710127490, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: m_Center.z
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4655397018974273528, guid: 37f1614546d99d645ad308ccce5a3079,
         type: 3}
       propertyPath: m_Name
       value: FlameTrap
       objectReference: {fileID: 0}
-    - target: {fileID: 5088632111334063167, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: flameParticles
-      value: 
-      objectReference: {fileID: 1217722928}
-    - target: {fileID: 5088632111334063167, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: orientToSurface
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5088632111334063167, guid: 37f1614546d99d645ad308ccce5a3079,
-        type: 3}
-      propertyPath: impactEffectPrefab
-      value: 
-      objectReference: {fileID: 1259762591101698, guid: 8ad85e470bf8bf04294a606ea802dad7,
-        type: 3}
     - target: {fileID: 5518780234286554398, guid: 37f1614546d99d645ad308ccce5a3079,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -34907,6 +34855,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8919630033061241705, guid: 9a8ea0b38a2b42844b687fd09a281d53,
+        type: 3}
+      propertyPath: pushStrength
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
