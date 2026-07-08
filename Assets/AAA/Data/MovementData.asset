@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa178808272a254f80f02c089adaea5, type: 3}
   m_Name: MovementData
   m_EditorClassIdentifier: 
-  acceleration: 8500
+  acceleration: 5000
   maxSpeed: 14
   stoppingPower: 12
   overspeedDecay: 25
