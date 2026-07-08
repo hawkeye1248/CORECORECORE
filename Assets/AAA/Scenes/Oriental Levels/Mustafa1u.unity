@@ -2309,6 +2309,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelEnd
       objectReference: {fileID: 0}
+    - target: {fileID: 5870394642468533783, guid: c4f3fcf9c2507d74cb891191c1995e01,
+        type: 3}
+      propertyPath: targetScene.guid
+      value: a5099279ec3653942ba9fd619196c9c5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5870394642468533783, guid: c4f3fcf9c2507d74cb891191c1995e01,
+        type: 3}
+      propertyPath: targetScene.asset
+      value: 
+      objectReference: {fileID: 102900000, guid: a5099279ec3653942ba9fd619196c9c5,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
