@@ -216,7 +216,9 @@ namespace MovementRework
 
             if(movementInput != Vector2.zero)
             {
-                Vector3 inputDir = movementInput.y * facingDirection + movementInput.x * new Vector3(facingDirection.z, 0, -facingDirection.x);
+                Vector3 flatFacingDir = new Vector3(facingDirection.x, 0, facingDirection.z).normalized;
+                Vector3 rightDir = new Vector3(flatFacingDir.z, 0, -flatFacingDir.x);
+                Vector3 inputDir = movementInput.y * flatFacingDir + movementInput.x * rightDir;
 
                 if(CheckGround())
                 {
@@ -245,7 +247,16 @@ namespace MovementRework
                         core.AddForce(accelDir * movementData.acceleration * Time.deltaTime);
                     }
 
-                    orientation.LookAt(core.position + inputDir);
+                    // Face the movement direction. Set rotation directly from inputDir instead of
+                    // LookAt(core.position + inputDir): LookAt derives forward from the vector between
+                    // the orientation transform's OWN position and the target, and since that transform
+                    // doesn't follow the player, its forward ended up pointing from the world origin to
+                    // the player. That made facing (and the sideways/backward damping below) depend on
+                    // the player's position relative to origin instead of the actual input direction.
+                    if(inputDir.sqrMagnitude > 0.0001f)
+                    {
+                        orientation.rotation = Quaternion.LookRotation(inputDir);
+                    }
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.sidewayDamping * Time.deltaTime);
@@ -262,7 +273,16 @@ namespace MovementRework
                 {
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
 
-                    orientation.LookAt(core.position + inputDir);
+                    // Face the movement direction. Set rotation directly from inputDir instead of
+                    // LookAt(core.position + inputDir): LookAt derives forward from the vector between
+                    // the orientation transform's OWN position and the target, and since that transform
+                    // doesn't follow the player, its forward ended up pointing from the world origin to
+                    // the player. That made facing (and the sideways/backward damping below) depend on
+                    // the player's position relative to origin instead of the actual input direction.
+                    if(inputDir.sqrMagnitude > 0.0001f)
+                    {
+                        orientation.rotation = Quaternion.LookRotation(inputDir);
+                    }
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.airborneSidewayDamping * Time.deltaTime);
