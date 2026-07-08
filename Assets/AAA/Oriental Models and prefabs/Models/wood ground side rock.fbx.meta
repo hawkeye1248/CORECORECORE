@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f8e684d20aefa27439b38f38fea116e0
+guid: 5531a7f000fb17d4da56211f833be74c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Trim 1
-    second: {fileID: 2100000, guid: bb1db58b5157b0e4084644f81104135f, type: 2}
+    second: {fileID: 2100000, guid: 8ff12e374b0cb734eb1e764349ef393e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
