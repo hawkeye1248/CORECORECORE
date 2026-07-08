@@ -14,6 +14,7 @@ namespace MovementRework
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] public Rigidbody core;
+        [SerializeField] private CapsuleCollider bodyCollider;
         public CameraController cameraController;
 
         [Header("Data")]
@@ -34,6 +35,9 @@ namespace MovementRework
 
         [Header("Slide State")]
         [SerializeField] private bool tryingToSlide = false;
+        // Standing capsule dimensions, cached at Awake so crouch can shrink and restore them.
+        private float standingHeight;
+        private Vector3 standingCenter;
 
         [Header("Wallrun State")]
         private Vector3 wallForward = Vector3.zero;
@@ -71,6 +75,10 @@ namespace MovementRework
                 _isPlayerModelNull = true;
             }
             Health = GetComponent<SimpleHealth>();
+
+            if(!bodyCollider) bodyCollider = core.GetComponentInChildren<CapsuleCollider>();
+            standingHeight = bodyCollider.height;
+            standingCenter = bodyCollider.center;
 
             jumpCooldown += movementData.coyoteTime;
 
@@ -180,9 +188,8 @@ namespace MovementRework
             {
                 if(CheckGround())
                 {
-                    IsCrouching = true;
                     tryingToSlide = false;
-                    camParent.MoveCamToCrouching();
+                    StartCrouch();
                     if(core.linearVelocity.magnitude >= 0.1f)
                     {
                         core.AddForce(core.linearVelocity.normalized * movementData.slideForce, ForceMode.Impulse);
@@ -208,8 +215,7 @@ namespace MovementRework
 
                 if(core.linearVelocity.magnitude <= movementData.slideEndSpeed)
                 {
-                    IsCrouching = false;
-                    camParent.MoveCamToStanding(); 
+                    StopCrouch();
                 }
                 return;
             }
@@ -554,6 +560,34 @@ namespace MovementRework
             didMantle = false;
         }
 
+        // Enter the crouch/slide state: lower the camera and shrink the body capsule.
+        private void StartCrouch()
+        {
+            IsCrouching = true;
+            camParent.MoveCamToCrouching();
+            ApplyColliderHeight(movementData.crouchHeight);
+        }
+
+        // Leave the crouch/slide state: raise the camera and restore the standing capsule.
+        private void StopCrouch()
+        {
+            IsCrouching = false;
+            camParent.MoveCamToStanding();
+            ApplyColliderHeight(standingHeight);
+        }
+
+        // Resize the body capsule while keeping its bottom (the feet) fixed in place, so
+        // crouching lowers the head to fit under obstacles instead of lifting the feet off
+        // the ground. The bottom is always the standing bottom; only the top moves.
+        private void ApplyColliderHeight(float targetHeight)
+        {
+            float bottom = standingCenter.y - standingHeight * 0.5f;
+            bodyCollider.height = targetHeight;
+            Vector3 center = bodyCollider.center;
+            center.y = bottom + targetHeight * 0.5f;
+            bodyCollider.center = center;
+        }
+
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
             if(isClimbing) return;
@@ -562,8 +596,7 @@ namespace MovementRework
                 LeaveMantle();
             } else if(CheckGround())
             {
-                IsCrouching = true;
-                camParent.MoveCamToCrouching();
+                StartCrouch();
                 if(core.linearVelocity.magnitude >= 0.1f)
                 {
                     core.AddForce(core.linearVelocity.normalized * movementData.slideForce, ForceMode.Impulse);
@@ -579,8 +612,7 @@ namespace MovementRework
             tryingToSlide = false;
             if(IsCrouching)
             {
-                IsCrouching = false;
-                camParent.MoveCamToStanding(); 
+                StopCrouch();
             }
         }
 
