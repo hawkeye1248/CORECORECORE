@@ -38,7 +38,8 @@ MonoBehaviour:
   slideForce: 15
   slideStoppingPower: 2
   slideEndSpeed: 3
-  slideSlopeAcceleration: 1000
+  slideSlopeAcceleration: 100
+  crouchHeight: 1
   mantleRaycastPoint: {x: 0, y: 1.3, z: 0}
   mantleDistance: 1
   mantleLength: 0.5

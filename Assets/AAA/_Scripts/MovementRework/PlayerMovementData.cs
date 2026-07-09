@@ -55,6 +55,10 @@ namespace MovementRework
                  "steepness (sin of the slope angle), so steeper slopes speed you up faster. " +
                  "Higher = faster slope slides.")]
         public float slideSlopeAcceleration = 40f;
+        [Tooltip("Body capsule height (world units) while crouching/sliding. Should be smaller " +
+                 "than the collider's standing height. The capsule shrinks from the top so the " +
+                 "feet stay planted, lowering the head to fit under obstacles.")]
+        public float crouchHeight = 1f;
 
         [Header("Mantle Parameters")]
         public Vector3 mantleRaycastPoint = new Vector3(0, 1.3f, 0);
