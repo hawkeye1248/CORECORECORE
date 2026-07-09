@@ -34,6 +34,16 @@ namespace MovementRework {
             handModel.forward = Vector3.Lerp(handModel.forward, playerScript.cameraController.transform.forward, Time.deltaTime * turningSpeed);
         }
 
+        // Instantly snaps to the target instead of lerping, used for teleports/respawn.
+        public void SnapPosition(Vector3 position)
+        {
+            if(playerScript.IsCrouching)
+            {
+                position.y -= 0.5f;
+            }
+            transform.position = new Vector3(position.x, position.y - 0.5f, position.z);
+        }
+
         private void CheckStatus()
         {
             if(playerScript.IsMantling)

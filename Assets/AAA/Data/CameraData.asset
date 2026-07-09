@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperVerticalLimit: 85
   lowerVerticalLimit: 85
-  camSmoothingFactor: 30
-  camSpeed: 100
+  camSmoothingFactor: 20
+  camSpeed: 50
   cameraTiltMultiplier: 1
   lookTiltMultiplier: 1
   maxLookTilt: 1

@@ -52,5 +52,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "CORECORECORE.sln"
+    "dotnet.defaultSolution": "CORECORECORE.slnx",
+    "dotnet.preferCSharpExtension": true
 }

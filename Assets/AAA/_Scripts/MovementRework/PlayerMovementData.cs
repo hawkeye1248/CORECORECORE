@@ -14,14 +14,25 @@ namespace MovementRework
         /// As declared in <see cref="Player"/>
         /// <code>core.AddForce(-core.linearVelocity * movementData.stoppingPower);</code>
         /// </summary>
-        [Tooltip("Shouldn't be above maxSpeed attribute. See documentation.")] 
+        [Tooltip("Shouldn't be above maxSpeed attribute. See documentation.")]
         public float stoppingPower = 5f;
+        [Tooltip("How fast (units/sec) speed above maxSpeed eases back down to maxSpeed, " +
+                 "e.g. after sliding. Lower = built-up momentum is preserved longer.")]
+        public float overspeedDecay = 10f;
         public float sidewayDamping = 0.999f;
         public float backwardStoppingPower = 45f;
+        [Tooltip("Slopes up to this angle (degrees) are walkable: grounded acceleration is " +
+                 "redirected along the surface so the player climbs them. Steeper faces get no " +
+                 "up-slope assist, so they behave like walls.")]
+        public float maxWalkableSlopeAngle = 50f;
 
         [Header("Ground Check Parameters")]
         public Vector3 groundCheckScale = new Vector3(0.4f, 0.3f, 0.4f);
         public LayerMask groundLayers;
+        [Tooltip("Surfaces that count as valid respawn platforms (IsStableGround). Use this to " +
+                 "let the player stand/wallrun on things in groundLayers (e.g. placed blocks) " +
+                 "without saving a respawn point there. Leave empty to fall back to groundLayers.")]
+        public LayerMask spawnableLayers;
         public float coyoteTime = 0.25f;
 
         [Header("Jumping Parameters")]
@@ -40,6 +51,14 @@ namespace MovementRework
         public float slideForce = 5f;
         public float slideStoppingPower = 2f;
         public float slideEndSpeed = 1f;
+        [Tooltip("Downhill acceleration applied while sliding on a slope. Scales with slope " +
+                 "steepness (sin of the slope angle), so steeper slopes speed you up faster. " +
+                 "Higher = faster slope slides.")]
+        public float slideSlopeAcceleration = 40f;
+        [Tooltip("Body capsule height (world units) while crouching/sliding. Should be smaller " +
+                 "than the collider's standing height. The capsule shrinks from the top so the " +
+                 "feet stay planted, lowering the head to fit under obstacles.")]
+        public float crouchHeight = 1f;
 
         [Header("Mantle Parameters")]
         public Vector3 mantleRaycastPoint = new Vector3(0, 1.3f, 0);
@@ -48,6 +67,11 @@ namespace MovementRework
         public float mantleJoltPower = 5f;
         public float mantleJumpForce = 5f;
         public float mantleCooldown = 0.25f;
+        [Tooltip("Seconds the pull-up climb takes when holding forward from a mantle hold.")]
+        public float mantleClimbDuration = 0.25f;
+        [Tooltip("How far above the ledge top surface the player center ends after a climb. " +
+                 "Tune to the player's height: too low pops out of the floor, too high leaves a drop.")]
+        public float mantleClimbHeightOffset = 1f;
 
         [Header("Wallrunning Parameters")]
         public float wallrunAcceleration = 1500f;
@@ -55,6 +79,7 @@ namespace MovementRework
         public float wallCheckDistance = 1f;
         public float wallrunCooldown = 0.25f;
         public float wallJumpForce = 10f;
+        public float wallJumpNormalForce = 8f;
         public float wallrunUpwardForce = 25f;
         public float wallrunDecayTime = 2f;
         public float wallrunBurstForce = 10f;

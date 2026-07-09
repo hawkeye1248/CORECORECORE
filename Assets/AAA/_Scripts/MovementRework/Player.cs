@@ -17,6 +17,7 @@ namespace MovementRework
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] public Rigidbody core;
+        [SerializeField] private CapsuleCollider bodyCollider;
         public CameraController cameraController;
 
         [Header("Data")]
@@ -31,11 +32,15 @@ namespace MovementRework
 
         private float coyoteTimer = 0f;
         private float groundDotValue = 0f;
+        private Vector3 groundNormal = Vector3.up;
         private float jumpCooldown = 0.1f;
         public Vector3 facingDirection {get; private set;} = Vector3.zero;
 
         [Header("Slide State")]
         [SerializeField] private bool tryingToSlide = false;
+        // Standing capsule dimensions, cached at Awake so crouch can shrink and restore them.
+        private float standingHeight;
+        private Vector3 standingCenter;
 
         [Header("Wallrun State")]
         private Vector3 wallForward = Vector3.zero;
@@ -47,6 +52,11 @@ namespace MovementRework
         [Header("Mantle State")]
         private Vector3 mantleHoldPoint = Vector3.zero;
         private bool didMantle = false;
+        private Vector3 mantleTopPoint = Vector3.zero;
+        private bool isClimbing = false;
+        private Vector3 climbStart = Vector3.zero;
+        private Vector3 climbTarget = Vector3.zero;
+        private float climbTimer = 0f;
 
         /// <summary>
         /// For compability reasons
@@ -55,6 +65,8 @@ namespace MovementRework
         [Header("Respawn State")]
         private Vector3 startPosition = Vector3.zero;
         private Quaternion startRotation = Quaternion.identity;
+        private Vector3 lastPlatformPosition = Vector3.zero;
+        private Quaternion lastPlatformRotation = Quaternion.identity;
 
         private void Awake() {
             OverlayCamInitialize();
@@ -66,12 +78,18 @@ namespace MovementRework
             {
                 _isPlayerModelNull = true;
             }
-            Health = GetComponent<Health>();
+            Health = GetComponent<SimpleHealth>();
+
+            if(!bodyCollider) bodyCollider = core.GetComponentInChildren<CapsuleCollider>();
+            standingHeight = bodyCollider.height;
+            standingCenter = bodyCollider.center;
 
             jumpCooldown += movementData.coyoteTime;
 
             startPosition = core.position;
             startRotation = core.rotation;
+            lastPlatformPosition = core.position;
+            lastPlatformRotation = core.rotation;
 
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -94,6 +112,20 @@ namespace MovementRework
             GameInput.Instance.OnJumpPerformed += OnJumpPerformed;
             GameInput.Instance.OnCrouchPerformed += OnCrouchPerformed;
             GameInput.Instance.OnCrouchCanceled += OnCrouchCanceled;
+
+            Health.OnDeath += (object sender, EventArgs args) => {
+                RespawnAtStart();
+            };
+        }
+
+        private void OnDisable() {
+            GameInput.Instance.OnJumpPerformed -= OnJumpPerformed;
+            GameInput.Instance.OnCrouchPerformed -= OnCrouchPerformed;
+            GameInput.Instance.OnCrouchCanceled -= OnCrouchCanceled;
+
+            Health.OnDeath -= (object sender, EventArgs args) => {
+                RespawnAtMapStart();
+            };
         }
 
         private void Update()
@@ -103,9 +135,15 @@ namespace MovementRework
                 RespawnAtStart();
             }
 
+            if(Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                RespawnAtMapStart();
+            }
+
             SetFacingDirection();
             if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
+            
         }
 
         private void FixedUpdate()
@@ -131,7 +169,19 @@ namespace MovementRework
         {
             if(IsMantling)
             {
-                core.linearVelocity = Vector3.zero;
+                if(isClimbing)
+                {
+                    ClimbStep();
+                }
+                else
+                {
+                    core.linearVelocity = Vector3.zero;
+                    // Hold forward from the mantle hold to pull up onto the ledge.
+                    if(movementInput.y > 0.1f)
+                    {
+                        StartClimb();
+                    }
+                }
                 return;
             }
 
@@ -155,9 +205,8 @@ namespace MovementRework
             {
                 if(CheckGround())
                 {
-                    IsCrouching = true;
                     tryingToSlide = false;
-                    camParent.MoveCamToCrouching();
+                    StartCrouch();
                     if(core.linearVelocity.magnitude >= 0.1f)
                     {
                         core.AddForce(core.linearVelocity.normalized * movementData.slideForce, ForceMode.Impulse);
@@ -172,24 +221,65 @@ namespace MovementRework
                 {
                     core.AddForce(-core.linearVelocity.normalized * movementData.slideStoppingPower);
                 }
+                else
+                {
+                    // On a slope: actively push the slide downhill so slope slides speed up
+                    // instead of just coasting. ProjectOnPlane(down, normal) points down the
+                    // slope with magnitude sin(slopeAngle), so steeper slopes accelerate harder.
+                    Vector3 slopeDir = Vector3.ProjectOnPlane(Vector3.down, groundNormal);
+                    core.AddForce(slopeDir * movementData.slideSlopeAcceleration);
+                }
 
                 if(core.linearVelocity.magnitude <= movementData.slideEndSpeed)
                 {
-                    IsCrouching = false;
-                    camParent.MoveCamToStanding(); 
+                    StopCrouch();
                 }
                 return;
             }
 
             if(movementInput != Vector2.zero)
             {
-                Vector3 inputDir = movementInput.y * facingDirection + movementInput.x * new Vector3(facingDirection.z, 0, -facingDirection.x);
+                Vector3 flatFacingDir = new Vector3(facingDirection.x, 0, facingDirection.z).normalized;
+                Vector3 rightDir = new Vector3(flatFacingDir.z, 0, -flatFacingDir.x);
+                Vector3 inputDir = movementInput.y * flatFacingDir + movementInput.x * rightDir;
 
                 if(CheckGround())
                 {
-                    core.AddForce(inputDir * movementData.acceleration * Time.deltaTime);
+                    // Redirect the (horizontal) input along the slope surface so the player
+                    // walks *up* an incline instead of pushing straight into it. Skipped on
+                    // slopes steeper than the walkable limit, so steep faces act like walls
+                    // and give no climbing assist. Magnitude is preserved so analog input
+                    // and flat-ground behavior are unchanged.
+                    Vector3 accelDir = inputDir;
+                    if(Vector3.Angle(Vector3.up, groundNormal) <= movementData.maxWalkableSlopeAngle)
+                    {
+                        Vector3 projected = Vector3.ProjectOnPlane(inputDir, groundNormal);
+                        if(projected.sqrMagnitude > 0.0001f)
+                        {
+                            accelDir = projected.normalized * inputDir.magnitude;
+                        }
+                    }
 
-                    orientation.LookAt(inputDir);
+                    // Only accelerate while under the speed cap. Above it (e.g. momentum
+                    // carried in from a slide) we coast and let SoftCapSpeed bleed the
+                    // excess off, so input can never push past maxSpeed. This keeps the
+                    // cap uniform across all directions instead of letting forward/strafe
+                    // settle at different equilibrium speeds.
+                    if(core.linearVelocity.magnitude < movementData.maxSpeed)
+                    {
+                        core.AddForce(accelDir * movementData.acceleration * Time.deltaTime);
+                    }
+
+                    // Face the movement direction. Set rotation directly from inputDir instead of
+                    // LookAt(core.position + inputDir): LookAt derives forward from the vector between
+                    // the orientation transform's OWN position and the target, and since that transform
+                    // doesn't follow the player, its forward ended up pointing from the world origin to
+                    // the player. That made facing (and the sideways/backward damping below) depend on
+                    // the player's position relative to origin instead of the actual input direction.
+                    if(inputDir.sqrMagnitude > 0.0001f)
+                    {
+                        orientation.rotation = Quaternion.LookRotation(inputDir);
+                    }
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.sidewayDamping * Time.deltaTime);
@@ -201,12 +291,21 @@ namespace MovementRework
                         core.AddForce(-core.linearVelocity.normalized * movementData.backwardStoppingPower);
                     }
 
-                    core.linearVelocity = Vector3.ClampMagnitude(core.linearVelocity, movementData.maxSpeed);
+                    SoftCapSpeed(movementData.maxSpeed);
                 } else
                 {
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
 
-                    orientation.LookAt(inputDir);
+                    // Face the movement direction. Set rotation directly from inputDir instead of
+                    // LookAt(core.position + inputDir): LookAt derives forward from the vector between
+                    // the orientation transform's OWN position and the target, and since that transform
+                    // doesn't follow the player, its forward ended up pointing from the world origin to
+                    // the player. That made facing (and the sideways/backward damping below) depend on
+                    // the player's position relative to origin instead of the actual input direction.
+                    if(inputDir.sqrMagnitude > 0.0001f)
+                    {
+                        orientation.rotation = Quaternion.LookRotation(inputDir);
+                    }
 
                     Vector3 localVelocity = orientation.transform.InverseTransformVector(core.linearVelocity); 
                     localVelocity.x = Mathf.Lerp(localVelocity.x, 0, movementData.airborneSidewayDamping * Time.deltaTime);
@@ -218,8 +317,7 @@ namespace MovementRework
                         core.AddForce(-new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z).normalized * movementData.airborneBackwardStoppingPower);
                     }
 
-                    Vector3 clampedVelocity = Vector3.ClampMagnitude(new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z), movementData.airborneMaxSpeed);
-                    core.linearVelocity = new Vector3(clampedVelocity.x, core.linearVelocity.y, clampedVelocity.z);
+                    SoftCapHorizontalSpeed(movementData.airborneMaxSpeed);
                 }
                 
             } else
@@ -234,8 +332,40 @@ namespace MovementRework
             }
         }
 
+        // Eases speed down toward the cap instead of snapping to it, so momentum built up
+        // (e.g. sliding down a slope) bleeds off gradually instead of vanishing in one frame.
+        // Below the cap this is a no-op, matching the old ClampMagnitude behavior.
+        private void SoftCapSpeed(float cap)
+        {
+            float speed = core.linearVelocity.magnitude;
+            if (speed <= cap)
+            {
+                return;
+            }
+
+            float newSpeed = Mathf.MoveTowards(speed, cap, movementData.overspeedDecay * Time.deltaTime);
+            core.linearVelocity = core.linearVelocity.normalized * newSpeed;
+        }
+
+        // Same gradual ease-down as SoftCapSpeed, but only on the horizontal (x/z) plane so
+        // jump/fall (y) velocity is left untouched. Used for the airborne speed cap.
+        private void SoftCapHorizontalSpeed(float cap)
+        {
+            Vector3 horizontal = new Vector3(core.linearVelocity.x, 0, core.linearVelocity.z);
+            float speed = horizontal.magnitude;
+            if (speed <= cap)
+            {
+                return;
+            }
+
+            float newSpeed = Mathf.MoveTowards(speed, cap, movementData.overspeedDecay * Time.deltaTime);
+            horizontal = horizontal.normalized * newSpeed;
+            core.linearVelocity = new Vector3(horizontal.x, core.linearVelocity.y, horizontal.z);
+        }
+
         private void OnJumpPerformed(object sender, EventArgs e)
-        {   
+        {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
@@ -260,6 +390,7 @@ namespace MovementRework
         {
             core.AddForce(Vector3.up * movementData.jumpForce, ForceMode.Impulse);
             core.AddForce(cameraController.transform.forward * movementData.wallJumpForce, ForceMode.Impulse);
+            core.AddForce(wallNormal * movementData.wallJumpNormalForce, ForceMode.Impulse);
             StartCoroutine(JumpCooldownTimer());
         }
 
@@ -307,9 +438,16 @@ namespace MovementRework
             {
                 coyoteTimer = 0;
 
+                if(IsStableGround())
+                {
+                    lastPlatformPosition = core.position;
+                    lastPlatformRotation = core.rotation;
+                }
+
                 if(Physics.Raycast(new Vector3(core.transform.position.x, core.transform.position.y - 0.5f, core.transform.position.z), Vector3.down, out RaycastHit hit))
                 {
                     groundDotValue = Vector3.Dot(Vector3.up, hit.normal);
+                    groundNormal = hit.normal;
                 }
 
             } else
@@ -320,16 +458,52 @@ namespace MovementRework
             return IsGrounded;
         }
 
+        // How far around the player ground must exist for a respawn point to count as "safe".
+        private const float respawnGroundCheckRadius = 0.75f;
+        private const float respawnGroundCheckLength = 1.5f;
+
+        // Returns true only when there is spawnable ground beneath the player on all sides,
+        // so respawn points are never recorded right at the edge of a platform — or on
+        // surfaces the player can walk on but shouldn't respawn onto (e.g. placed blocks).
+        private bool IsStableGround()
+        {
+            // Respawn points use spawnableLayers, which is separate from the movement groundLayers
+            // so the player can stand/wallrun on things without them counting as safe spawn ground.
+            // Falls back to groundLayers when spawnableLayers is left unset (Nothing).
+            LayerMask spawnMask = movementData.spawnableLayers == 0
+                ? movementData.groundLayers
+                : movementData.spawnableLayers;
+
+            Vector3 origin = new Vector3(core.position.x, core.position.y - 0.4f, core.position.z);
+            Vector3[] offsets = {
+                Vector3.forward * respawnGroundCheckRadius,
+                Vector3.back * respawnGroundCheckRadius,
+                Vector3.left * respawnGroundCheckRadius,
+                Vector3.right * respawnGroundCheckRadius,
+            };
+
+            foreach(Vector3 offset in offsets)
+            {
+                if(!Physics.Raycast(origin + offset, Vector3.down, respawnGroundCheckLength, spawnMask))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private void CheckMantle()
         {
             if(!CheckGround() && core.linearVelocity.y < 0 && !didMantle)
             {
                 if(Physics.Raycast(movementData.mantleRaycastPoint + core.position + facingDirection * movementData.mantleDistance, Vector3.down, out RaycastHit verticalHit, movementData.mantleLength, movementData.groundLayers))
                 {
-                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), orientation.forward, out RaycastHit horizontalHit, 1f, movementData.groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), orientation.forward, 1f, movementData.groundLayers))
+                    if(Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y - 0.1f, core.position.z), facingDirection, out RaycastHit horizontalHit, 1f, movementData.groundLayers) && !Physics.Raycast(new Vector3(core.position.x, verticalHit.point.y + 0.2f, core.position.z), facingDirection, 1f, movementData.groundLayers))
                     {
                         IsMantling = true;
                         mantleHoldPoint = horizontalHit.point;
+                        mantleTopPoint = verticalHit.point;
                         camParent.Jolt(core.linearVelocity.y, movementData.mantleJoltPower);
                         core.useGravity = false;
                         core.linearVelocity = Vector3.zero;
@@ -346,6 +520,54 @@ namespace MovementRework
             StartCoroutine(MantleCooldownTimer());
         }
 
+        // Begin the scripted pull-up from a mantle hold. Position is captured now; the
+        // player is frozen (gravity off, zero velocity) while mantling so it stays valid.
+        private void StartClimb()
+        {
+            isClimbing = true;
+            climbTimer = 0f;
+            climbStart = core.position;
+            climbTarget = mantleTopPoint + Vector3.up * movementData.mantleClimbHeightOffset;
+            core.linearVelocity = Vector3.zero;
+        }
+
+        // Drives the climb each physics step. Two-phase so we clear the lip: rise straight
+        // up first, then move forward onto the top surface. Position is set directly so the
+        // ledge collider can't block the sweep; gravity is still off until FinishClimb.
+        private void ClimbStep()
+        {
+            climbTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(climbTimer / movementData.mantleClimbDuration);
+
+            Vector3 next;
+            if(t < 0.5f)
+            {
+                float phase = t / 0.5f;
+                next = new Vector3(climbStart.x, Mathf.Lerp(climbStart.y, climbTarget.y, phase), climbStart.z);
+            }
+            else
+            {
+                float phase = (t - 0.5f) / 0.5f;
+                next = new Vector3(Mathf.Lerp(climbStart.x, climbTarget.x, phase), climbTarget.y, Mathf.Lerp(climbStart.z, climbTarget.z, phase));
+            }
+
+            core.position = next;
+            core.linearVelocity = Vector3.zero;
+
+            if(t >= 1f)
+            {
+                FinishClimb();
+            }
+        }
+
+        private void FinishClimb()
+        {
+            core.position = climbTarget;
+            core.linearVelocity = Vector3.zero;
+            isClimbing = false;
+            LeaveMantle();
+        }
+
         private IEnumerator MantleCooldownTimer()
         {
             didMantle = true;
@@ -355,15 +577,43 @@ namespace MovementRework
             didMantle = false;
         }
 
+        // Enter the crouch/slide state: lower the camera and shrink the body capsule.
+        private void StartCrouch()
+        {
+            IsCrouching = true;
+            camParent.MoveCamToCrouching();
+            ApplyColliderHeight(movementData.crouchHeight);
+        }
+
+        // Leave the crouch/slide state: raise the camera and restore the standing capsule.
+        private void StopCrouch()
+        {
+            IsCrouching = false;
+            camParent.MoveCamToStanding();
+            ApplyColliderHeight(standingHeight);
+        }
+
+        // Resize the body capsule while keeping its bottom (the feet) fixed in place, so
+        // crouching lowers the head to fit under obstacles instead of lifting the feet off
+        // the ground. The bottom is always the standing bottom; only the top moves.
+        private void ApplyColliderHeight(float targetHeight)
+        {
+            float bottom = standingCenter.y - standingHeight * 0.5f;
+            bodyCollider.height = targetHeight;
+            Vector3 center = bodyCollider.center;
+            center.y = bottom + targetHeight * 0.5f;
+            bodyCollider.center = center;
+        }
+
         private void OnCrouchPerformed(object sender, EventArgs e)
         {
+            if(isClimbing) return;
             if(IsMantling)
             {
                 LeaveMantle();
             } else if(CheckGround())
             {
-                IsCrouching = true;
-                camParent.MoveCamToCrouching();
+                StartCrouch();
                 if(core.linearVelocity.magnitude >= 0.1f)
                 {
                     core.AddForce(core.linearVelocity.normalized * movementData.slideForce, ForceMode.Impulse);
@@ -379,8 +629,7 @@ namespace MovementRework
             tryingToSlide = false;
             if(IsCrouching)
             {
-                IsCrouching = false;
-                camParent.MoveCamToStanding(); 
+                StopCrouch();
             }
         }
 
@@ -431,17 +680,85 @@ namespace MovementRework
             didWallrun = false;
         }
 
+        // Respawn at the last platform the player stood on.
         public void RespawnAtStart()
         {
-            core.position = startPosition;
-            core.rotation = startRotation;
+            Respawn(lastPlatformPosition, lastPlatformRotation);
+        }
+
+        // Respawn back at the very start of the map. T key and death are full level resets:
+        // clear every player-placed building and restore building counts.
+        public void RespawnAtMapStart()
+        {
+            Building.BuildingSystem.Instance?.ResetBuildings();
+            Respawn(startPosition, startRotation);
+        }
+
+        private void Respawn(Vector3 position, Quaternion rotation)
+        {
+            if(ScreenFader.Instance != null)
+            {
+                ScreenFader.Instance.FlashBlack(() => DoRespawn(position, rotation));
+            }
+            else
+            {
+                DoRespawn(position, rotation);
+            }
+        }
+
+        private void DoRespawn(Vector3 position, Quaternion rotation)
+        {
+            Health.ResetCharacter();
+            core.position = position;
+            core.rotation = rotation;
             core.linearVelocity = Vector3.zero;
             core.angularVelocity = Vector3.zero;
+
+            // Clear any in-progress mantle/climb so we don't respawn frozen or without gravity.
+            isClimbing = false;
+            IsMantling = false;
+            core.useGravity = true;
+
+            // Snap visuals so the camera/model don't smoothly slide to the new position.
+            camParent.SnapPosition(core.position);
+            if(!_isPlayerModelNull) playerModel.SnapPosition(core.position);
         }
 
         public void LungeForward()
         {
             core.AddForce(facingDirection * movementData.lungeForce, ForceMode.Impulse);
+        }
+
+        // Bounce the player straight up (e.g. off a jump pad), keeping horizontal momentum.
+        // Setting the vertical velocity gives a consistent launch height regardless of fall speed;
+        // flagging IsJumped (via the jump cooldown) stops the grounded "stopping power" from damping it.
+        public void JumpPadLaunch(float upwardVelocity)
+        {
+            Vector3 v = core.linearVelocity;
+            v.y = upwardVelocity;
+            core.linearVelocity = v;
+            StartCoroutine(JumpCooldownTimer());
+        }
+
+        // Give the player a horizontal speed boost (e.g. from a boost pad / speed strip).
+        // Only ever speeds the player up along `direction` — never slows them — and leaves vertical
+        // velocity untouched so jumps/falls are unaffected. Because this sets speed above maxSpeed,
+        // SoftCapSpeed eases it back down to normal on its own once the player leaves the pad, which
+        // gives the "shoot forward then coast back to normal" feel of a racing boost.
+        public void SpeedBoost(float boostSpeed, Vector3 direction)
+        {
+            Vector3 dir = new Vector3(direction.x, 0f, direction.z);
+            if (dir.sqrMagnitude < 1e-6f) return;
+            dir.Normalize();
+
+            Vector3 v = core.linearVelocity;
+            // Speed we already carry along the boost direction. Only boost when we're going slower
+            // than the target that way, so re-touching the pad can't stack past the intended speed
+            // and it never fights a faster entry (e.g. a slide onto the strip).
+            float speedAlong = Vector3.Dot(new Vector3(v.x, 0f, v.z), dir);
+            if (speedAlong >= boostSpeed) return;
+
+            core.linearVelocity = new Vector3(dir.x * boostSpeed, v.y, dir.z * boostSpeed);
         }
 
         private void OnDrawGizmos()
