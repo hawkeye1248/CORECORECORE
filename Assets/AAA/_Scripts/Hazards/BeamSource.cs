@@ -36,6 +36,10 @@ namespace Hazards
         [Tooltip("Radius of the lethal capsule around the beam line.")]
         [SerializeField] private float beamLethalRadius = 0.3f;
 
+        [Header("Destruction")]
+        [Tooltip("Shatter placeable buildings this source (and its beam) touches. See BreakableBuilding.")]
+        [SerializeField] private bool breakBuildings = true;
+
         [Header("Beam chain (optional prefab tiling)")]
         [Tooltip("If set, the beam tiles these prefab(s) along its length (cycling the list) instead of the line. " +
                  "Leave empty to use the line renderer.")]
@@ -98,6 +102,7 @@ namespace Hazards
         private float _angle;
         private EnergyBeam _beam;
         private Transform _beamOther;
+        private Collider _lethalCol;
 
         private void Awake()
         {
@@ -134,6 +139,29 @@ namespace Hazards
                     UpdateArc();
                     break;
             }
+
+            BreakBuildingsInReach();
+        }
+
+        /// <summary>Shatter any breakable building the source sphere currently overlaps.</summary>
+        private void BreakBuildingsInReach()
+        {
+            if (!breakBuildings || _lethalCol == null) return;
+
+            Vector3 center = _lethalCol.bounds.center;
+            float radius;
+            if (_lethalCol is SphereCollider sphere)
+            {
+                Vector3 s = transform.lossyScale;
+                radius = sphere.radius * Mathf.Max(Mathf.Abs(s.x), Mathf.Abs(s.y), Mathf.Abs(s.z));
+            }
+            else
+            {
+                // Any other collider shape: approximate with the largest half-extent of its bounds.
+                radius = Mathf.Max(_lethalCol.bounds.extents.x,
+                                   Mathf.Max(_lethalCol.bounds.extents.y, _lethalCol.bounds.extents.z));
+            }
+            Hazard.BreakBuildingsInSphere(center, radius);
         }
 
         private void LateUpdate()
@@ -189,6 +217,7 @@ namespace Hazards
             if (!TryGetComponent<Collider>(out var col))
                 col = gameObject.AddComponent<SphereCollider>();
             col.isTrigger = true;
+            _lethalCol = col;
 
             if (!TryGetComponent<LethalTrigger>(out var lethal))
                 lethal = gameObject.AddComponent<LethalTrigger>();
@@ -270,6 +299,7 @@ namespace Hazards
                 segmentSpacing = beamSegmentSpacing,
                 segmentTwist = beamSegmentTwist,
                 hideLineWhenSegmented = hideLineWhenSegmented,
+                breakBuildings = breakBuildings,
             });
 
             // Tell the far end about us so it can align too, even if it has no partner assigned.
