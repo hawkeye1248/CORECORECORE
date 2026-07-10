@@ -6,14 +6,17 @@ using UnityEngine.Rendering;
 namespace Building
 {
     /// <summary>
-    /// Makes a placed building shatter when a destructive hazard touches it (the energy beam / beam
-    /// source, see <c>Hazard.TryBreak</c>). The intact model lives on this root (or on non-piece
-    /// children); the broken debris are child GameObjects, each with its own Rigidbody + Collider,
-    /// that start hidden.
+    /// The shatter system, shared by everything that can break. The intact model lives on this root
+    /// (or on non-piece children); the broken debris are child GameObjects, each with its own
+    /// Rigidbody + Collider, that start hidden.
     ///
     /// On <see cref="Break"/> the intact renderers/colliders switch off and the debris pieces switch
     /// on so they drop under gravity. They stay solid for <see cref="debrisLifetime"/> seconds, then
     /// fade out over <see cref="fadeDuration"/> seconds before the whole object is destroyed.
+    ///
+    /// Despite the name nothing here is building-specific — it works on any level object. Break() is
+    /// called by destructive hazards (<c>Hazard.TryBreak</c>, i.e. the beam source / energy beam) and
+    /// by <c>BreakOnPlayerTouch</c> for props that crumble underfoot.
     /// </summary>
     public class BreakableBuilding : MonoBehaviour
     {
@@ -56,6 +59,10 @@ namespace Building
         private readonly List<FadeTarget> _fadeTargets = new();
         private readonly List<Material> _ownedMaterials = new();
         private bool _broken;
+
+        /// <summary>True once it has shattered. Lets a countdown (e.g. a warning shake) bail out when
+        /// something else — a beam, say — breaks the object first.</summary>
+        public bool IsBroken => _broken;
 
         private void Awake()
         {
