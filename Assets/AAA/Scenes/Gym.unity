@@ -2898,6 +2898,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &461711783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4785,6 +4788,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &693791243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5084,6 +5090,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &703679299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14079,7 +14088,27 @@ MonoBehaviour:
     prefab: {fileID: 2304214663471795860, guid: a8574b3c11697b44f95215bcbd207b10, type: 3}
     icon: {fileID: 0}
     maxCount: 20
-  blueprintMaterial: {fileID: 2100000, guid: e9fcf7bdee76dca4bb41baf3a9e96faf, type: 2}
+  blueprintEffect: 1
+  blueprintMaterial: {fileID: 2100000, guid: 3f4a9c1d7e5b42c0b8d61a2f9e0c7b54, type: 2}
+  sandEffect: 1
+  sandMaterial: {fileID: 2100000, guid: 8d2c5b71ae4f4c93a0e7f61d5c39b2e8, type: 2}
+  sandSettings:
+    region: 0
+    grainsPerUnit: 60
+    maxGrains: 3000
+    grainSize: {x: 0.02, y: 0.06}
+    lifetime: {x: 1.5, y: 3.5}
+    driftSpeed: 0.05
+    wind: {x: 0, y: 0, z: 0}
+    fieldStrength: 0.04
+    fieldFrequency: 0.4
+    fieldScrollSpeed: 0.27
+    gravity: 0
+    colorA: {r: 3.2041886, g: 2.6265671, b: 0.42924038, a: 1}
+    colorB: {r: 1.735602, g: 0.5906145, b: 0, a: 1}
+    fadeIn: 0.15
+    fadeOut: 0.35
+    simulateInWorldSpace: 0
   minDistance: 5
   maxDistance: 60
   distanceStep: 2
@@ -14930,6 +14959,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &1741585135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19895,6 +19927,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &8784386855784730815
 MonoBehaviour:
   m_ObjectHideFlags: 0
