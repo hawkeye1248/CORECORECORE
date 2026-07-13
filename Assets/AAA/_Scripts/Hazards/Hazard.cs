@@ -53,5 +53,15 @@ namespace Hazards
             int count = Physics.OverlapCapsuleNonAlloc(p0, p1, radius, OverlapBuffer, ~0, QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++) TryBreak(OverlapBuffer[i]);
         }
+
+        /// <summary>
+        /// Breaks every building whose solid collider overlaps the given oriented box. Use this for
+        /// thin, elongated hazards (e.g. spikes) where a bounding sphere would over-reach.
+        /// </summary>
+        public static void BreakBuildingsInBox(Vector3 center, Vector3 halfExtents, Quaternion orientation)
+        {
+            int count = Physics.OverlapBoxNonAlloc(center, halfExtents, OverlapBuffer, orientation, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++) TryBreak(OverlapBuffer[i]);
+        }
     }
 }

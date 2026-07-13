@@ -2898,6 +2898,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &461711783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4785,6 +4788,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &693791243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5084,6 +5090,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &703679299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14079,7 +14088,7 @@ MonoBehaviour:
     prefab: {fileID: 2304214663471795860, guid: a8574b3c11697b44f95215bcbd207b10, type: 3}
     icon: {fileID: 0}
     maxCount: 20
-  blueprintMaterial: {fileID: 2100000, guid: e9fcf7bdee76dca4bb41baf3a9e96faf, type: 2}
+  blueprintMaterial: {fileID: 2100000, guid: 3f4a9c1d7e5b42c0b8d61a2f9e0c7b54, type: 2}
   minDistance: 5
   maxDistance: 60
   distanceStep: 2
@@ -14930,6 +14939,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &1741585135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19895,6 +19907,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakDelay: 1
   topOnly: 1
+  shakeAmplitude: 0.03
+  shakeFrequency: 25
+  shakeRampsUp: 1
 --- !u!114 &8784386855784730815
 MonoBehaviour:
   m_ObjectHideFlags: 0

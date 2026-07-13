@@ -57,6 +57,10 @@ namespace Building
         /// <summary>Fired when a building's remaining count changes. Argument is the catalog index.</summary>
         public event Action<int> OnCountChanged;
 
+        // Object-space bounds the wireframe blueprint shader outlines. Fed per renderer in CreateGhost.
+        private static readonly int BoundsMinId = Shader.PropertyToID("_BoundsMin");
+        private static readonly int BoundsMaxId = Shader.PropertyToID("_BoundsMax");
+
         private GameObject _ghost;
         private Quaternion _baseRotation = Quaternion.identity;
         private float _distance;
@@ -374,6 +378,8 @@ namespace Building
 
             if (blueprintMaterial != null)
             {
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+
                 foreach (Renderer r in g.GetComponentsInChildren<Renderer>(true))
                 {
                     // Assign via sharedMaterials so we reference the blueprint asset (no leaked
@@ -381,6 +387,16 @@ namespace Building
                     var mats = new Material[r.sharedMaterials.Length];
                     for (int i = 0; i < mats.Length; i++) mats[i] = blueprintMaterial;
                     r.sharedMaterials = mats;
+
+                    // The wireframe blueprint shader draws the edges of the mesh's bounding box, so
+                    // it needs those bounds; every buildable is the same cube mesh at a different
+                    // scale, hence per renderer rather than authored on the material. A blueprint
+                    // material that doesn't declare these just ignores them.
+                    Bounds b = r.localBounds;
+                    r.GetPropertyBlock(mpb);
+                    mpb.SetVector(BoundsMinId, b.min);
+                    mpb.SetVector(BoundsMaxId, b.max);
+                    r.SetPropertyBlock(mpb);
                 }
             }
 
