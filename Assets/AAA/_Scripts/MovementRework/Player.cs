@@ -13,7 +13,7 @@ namespace MovementRework
         public PlayerModel playerModel {get; private set;}
 
         [SerializeField] private GameObject overlayCamera;
-        public Health Health {get; private set;}
+        public SimpleHealth Health {get; private set;}
         [SerializeField] private Transform orientation;
         private CamPositioner camParent;
         [SerializeField] public Rigidbody core;
