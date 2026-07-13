@@ -111,6 +111,17 @@ namespace Building
             return sand;
         }
 
+        /// <summary>
+        /// Stop emitting and clean up once the last grain has died, so a one-shot burst (a block
+        /// materialising, say) drifts out naturally instead of being cut off mid-air.
+        /// </summary>
+        public void Release()
+        {
+            var ps = GetComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Destroy(gameObject, ps.main.startLifetime.constantMax + 0.1f);
+        }
+
         private void Build(Material grainMaterial, Settings s, Bounds local, Vector3 rootScale)
         {
             // The buildables are a cube mesh stretched by their transform, so this node inherits a
