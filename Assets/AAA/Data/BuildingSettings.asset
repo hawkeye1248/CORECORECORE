@@ -11,13 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e6f8a41c95b4d3e9b70c8f5a1d64b73, type: 3}
   m_Name: BuildingSettings
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   blueprintEffect: 1
   blueprintMaterial: {fileID: 2100000, guid: 3f4a9c1d7e5b42c0b8d61a2f9e0c7b54, type: 2}
   sandEffect: 1
   sandMaterial: {fileID: 2100000, guid: 8d2c5b71ae4f4c93a0e7f61d5c39b2e8, type: 2}
   sandSettings:
-    region: 0
+    region: 1
     grainsPerUnit: 60
     maxGrains: 3000
     grainSize: {x: 0.02, y: 0.06}

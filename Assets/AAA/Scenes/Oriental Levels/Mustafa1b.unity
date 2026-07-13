@@ -3063,8 +3063,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene:
-    asset: {fileID: 102900000, guid: 6b067998cc26ca344a46d69fa7aaed69, type: 3}
-    guid: 6b067998cc26ca344a46d69fa7aaed69
+    asset: {fileID: 102900000, guid: 065b6f02d07a1e24c8452af75e462c21, type: 3}
+    guid: 065b6f02d07a1e24c8452af75e462c21
   fadeTime: 0.5
 --- !u!1 &950252065
 GameObject:
