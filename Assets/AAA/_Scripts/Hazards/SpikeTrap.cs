@@ -46,7 +46,12 @@ namespace Hazards
         [Range(0f, 1f)]
         [SerializeField] private float lethalThreshold = 0.1f;
 
+        [Header("Destruction")]
+        [Tooltip("Shatter placeable buildings the spikes stab into while extended. See BreakableBuilding.")]
+        [SerializeField] private bool breakBuildings = true;
+
         private LethalTrigger _lethal;
+        private BoxCollider _lethalCol;
         private Vector3 _retractedLocalPos;
         private Phase _phase = Phase.Hidden;
         private float _timer;
@@ -72,6 +77,22 @@ namespace Hazards
         {
             Advance();
             ApplyExtension();
+            BreakBuildingsInReach();
+        }
+
+        /// <summary>Shatter any breakable building the extended spikes currently overlap.</summary>
+        private void BreakBuildingsInReach()
+        {
+            // Only stab buildings while the spikes are out and lethal — retracted spikes are harmless.
+            if (!breakBuildings || _lethalCol == null || !_lethal.active) return;
+
+            Transform t = _lethalCol.transform;
+            Vector3 s = t.lossyScale;
+            Vector3 center = t.TransformPoint(_lethalCol.center);
+            Vector3 half = 0.5f * new Vector3(_lethalCol.size.x * Mathf.Abs(s.x),
+                                              _lethalCol.size.y * Mathf.Abs(s.y),
+                                              _lethalCol.size.z * Mathf.Abs(s.z));
+            Hazard.BreakBuildingsInBox(center, half, t.rotation);
         }
 
         private void Advance()
@@ -118,13 +139,14 @@ namespace Hazards
 
         private LethalTrigger EnsureLethalTrigger(GameObject go)
         {
-            if (!go.TryGetComponent<Collider>(out var col))
+            if (!go.TryGetComponent<BoxCollider>(out var col))
             {
                 col = go.AddComponent<BoxCollider>();
-                Debug.LogWarning($"{nameof(SpikeTrap)} on '{name}': spikes had no Collider; added a " +
+                Debug.LogWarning($"{nameof(SpikeTrap)} on '{name}': spikes had no BoxCollider; added a " +
                                  "BoxCollider. Size it to cover the spikes.", this);
             }
             col.isTrigger = true;
+            _lethalCol = col;
 
             if (!go.TryGetComponent<LethalTrigger>(out var lethal))
                 lethal = go.AddComponent<LethalTrigger>();

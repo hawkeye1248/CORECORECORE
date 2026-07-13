@@ -29,6 +29,8 @@ namespace Hazards
             public float segmentSpacing;         // target world distance between instances
             public float segmentTwist;           // extra roll (deg) on every other instance
             public bool hideLineWhenSegmented;
+
+            public bool breakBuildings;          // shatter placeable buildings the beam sweeps through
         }
 
         private Transform _a;
@@ -41,6 +43,9 @@ namespace Hazards
         private float _segmentTwist;
         private bool _segmented;
         private readonly List<Transform> _segments = new List<Transform>();
+
+        private bool _breakBuildings;
+        private float _lethalRadius;
 
         public void Initialize(Transform a, Transform b, Settings settings)
         {
@@ -59,6 +64,9 @@ namespace Hazards
             _collider.isTrigger = true;
             _collider.direction = 1;
             _collider.radius = settings.lethalRadius;
+
+            _lethalRadius = settings.lethalRadius;
+            _breakBuildings = settings.breakBuildings;
 
             gameObject.AddComponent<LethalTrigger>().active = true;
 
@@ -83,6 +91,10 @@ namespace Hazards
         {
             if (_a == null || _b == null) return;
             UpdateBeam();
+
+            // Beam endpoints are the sources; the lethal capsule spans between them.
+            if (_breakBuildings)
+                Hazard.BreakBuildingsInCapsule(_a.position, _b.position, _lethalRadius);
         }
 
         private void UpdateBeam()

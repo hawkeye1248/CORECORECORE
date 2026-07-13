@@ -21,8 +21,18 @@ namespace Building
         [SerializeField] private List<BuildableItem> buildables = new List<BuildableItem>();
 
         [Header("Preview")]
+        [Tooltip("Draw the ghost's meshes with the blueprint material. Turn off to hide them and " +
+                 "leave only the sand — with both this and Sand Effect off, the ghost is invisible.")]
+        [SerializeField] private bool blueprintEffect = true;
         [Tooltip("Translucent material applied to every renderer of the ghost preview.")]
         [SerializeField] private Material blueprintMaterial;
+
+        [Header("Sand")]
+        [Tooltip("Drift sand grains over the ghost. Turn off to show the blueprint material alone.")]
+        [SerializeField] private bool sandEffect = true;
+        [Tooltip("Additive grain material (BlueprintSand.mat). Without it the sand is skipped.")]
+        [SerializeField] private Material sandMaterial;
+        [SerializeField] private BlueprintSand.Settings sandSettings = new BlueprintSand.Settings();
 
         [Header("Distance (mouse scroll)")]
         [SerializeField] private float minDistance = 5f;
@@ -56,6 +66,10 @@ namespace Building
         public event Action<int> OnSelectionChanged;
         /// <summary>Fired when a building's remaining count changes. Argument is the catalog index.</summary>
         public event Action<int> OnCountChanged;
+
+        // Object-space bounds the wireframe blueprint shader outlines. Fed per renderer in CreateGhost.
+        private static readonly int BoundsMinId = Shader.PropertyToID("_BoundsMin");
+        private static readonly int BoundsMaxId = Shader.PropertyToID("_BoundsMax");
 
         private GameObject _ghost;
         private Quaternion _baseRotation = Quaternion.identity;
@@ -264,11 +278,28 @@ namespace Building
         /// <summary>World-axis-aligned bounding box of all renderers under <paramref name="go"/>.</summary>
         private static bool TryGetWorldBounds(GameObject go, out Bounds bounds)
         {
-            Renderer[] rends = go.GetComponentsInChildren<Renderer>();
-            if (rends.Length == 0) { bounds = default; return false; }
-            bounds = rends[0].bounds;
-            for (int i = 1; i < rends.Length; i++) bounds.Encapsulate(rends[i].bounds);
-            return true;
+            bounds = default;
+            bool any = false;
+
+            foreach (Renderer r in go.GetComponentsInChildren<Renderer>())
+            {
+                // Skip the sand: a particle renderer's bounds cover wherever the grains have drifted
+                // to, which balloons past the block itself and would push every snap out by the size
+                // of the cloud. Snapping must measure the mesh, not the effect.
+                if (r is ParticleSystemRenderer) continue;
+
+                if (!any)
+                {
+                    bounds = r.bounds;
+                    any = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(r.bounds);
+                }
+            }
+
+            return any;
         }
 
         /// <summary>Signed unit vector of the world axis closest to <paramref name="v"/>.</summary>
@@ -345,6 +376,18 @@ namespace Building
             }
         }
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// Rebuild the live ghost when the preview settings are edited in play mode. The ghost is
+        /// otherwise only built when you switch buildable, so toggling the effects (or tuning the
+        /// sand) would look like it did nothing until the next hotbar press.
+        /// </summary>
+        private void OnValidate()
+        {
+            if (Application.isPlaying && IsBuildModeActive && _ghost != null) RebuildGhost();
+        }
+#endif
+
         private void RebuildGhost()
         {
             DestroyGhost();
@@ -372,8 +415,19 @@ namespace Building
             foreach (Rigidbody rb in g.GetComponentsInChildren<Rigidbody>(true))
                 rb.isKinematic = true;
 
-            if (blueprintMaterial != null)
+            if (!blueprintEffect)
             {
+                // Sand-only. Switch the meshes off rather than just skipping the material swap —
+                // left alone they'd render in the prefab's solid materials and the "ghost" would be
+                // indistinguishable from an already-placed block. Their bounds still drive snapping,
+                // which reads Renderer.bounds and doesn't care that the renderer is disabled.
+                foreach (Renderer r in g.GetComponentsInChildren<Renderer>(true))
+                    r.enabled = false;
+            }
+            else if (blueprintMaterial != null)
+            {
+                MaterialPropertyBlock mpb = new MaterialPropertyBlock();
+
                 foreach (Renderer r in g.GetComponentsInChildren<Renderer>(true))
                 {
                     // Assign via sharedMaterials so we reference the blueprint asset (no leaked
@@ -381,8 +435,22 @@ namespace Building
                     var mats = new Material[r.sharedMaterials.Length];
                     for (int i = 0; i < mats.Length; i++) mats[i] = blueprintMaterial;
                     r.sharedMaterials = mats;
+
+                    // The wireframe blueprint shader draws the edges of the mesh's bounding box, so
+                    // it needs those bounds; every buildable is the same cube mesh at a different
+                    // scale, hence per renderer rather than authored on the material. A blueprint
+                    // material that doesn't declare these just ignores them.
+                    Bounds b = r.localBounds;
+                    r.GetPropertyBlock(mpb);
+                    mpb.SetVector(BoundsMinId, b.min);
+                    mpb.SetVector(BoundsMaxId, b.max);
+                    r.SetPropertyBlock(mpb);
                 }
             }
+
+            // Added last: BlueprintSand measures the ghost's renderers, so every mesh has to be in
+            // place (and the sand's own renderer must not exist yet) before it sizes itself.
+            if (sandEffect) BlueprintSand.Attach(g, sandMaterial, sandSettings);
 
             return g;
         }
