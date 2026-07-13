@@ -47,5 +47,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/AAA/Scenes/ContributerLevels/BirdemLevels/Level3.unity
     guid: 3e7c84f00ecf73a4da8a6904e192474f
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa1b.unity
+    guid: ef21fb69427439148be75509d7ee5338
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa3c.unity
+    guid: 6b067998cc26ca344a46d69fa7aaed69
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -48,13 +48,13 @@ MonoBehaviour:
   mantleCooldown: 0.25
   mantleClimbDuration: 0.5
   mantleClimbHeightOffset: 1
-  wallrunAcceleration: 1500
+  wallrunAcceleration: 3000
   wallrunMaxSpeed: 12
   wallCheckDistance: 1
   wallrunCooldown: 0.25
   wallJumpForce: 5
   wallJumpNormalForce: 15
   wallrunUpwardForce: 35
-  wallrunDecayTime: 2
+  wallrunDecayTime: 4
   wallrunBurstForce: 0
   lungeForce: 5
