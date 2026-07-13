@@ -97,6 +97,17 @@ namespace AAA._Scripts.AnimationRelated.MCAnimations
             }
         }
 
-        
+        public void Run()
+        {
+            if (_animator.GetCurrentAnimatorClipInfo(0)[0].clip.name != "Running")
+            {
+                _animator.CrossFade(running, .1f);
+            }
+        }
+
+        public void ResetToIdle()
+        {
+            _animator.Play(idle,0, .1f);
+        }
     }
 }

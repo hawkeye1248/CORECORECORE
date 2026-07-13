@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using AAA._Scripts.AnimationRelated.MCAnimations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -19,6 +20,7 @@ namespace MovementRework
         [SerializeField] public Rigidbody core;
         [SerializeField] private CapsuleCollider bodyCollider;
         public CameraController cameraController;
+        private PlayerAnimations playerAnimScript;
 
         [Header("Data")]
         [SerializeField] private PlayerMovementData movementData;
@@ -29,6 +31,7 @@ namespace MovementRework
         [SerializeField] public bool IsJumped {get; private set;} = false;
         [SerializeField] public bool IsCrouching {get; private set;} = false;
         [SerializeField] public bool IsMantling {get; private set;} = false;
+        public bool IsMoving {get; private set;} = false;
 
         private float coyoteTimer = 0f;
         private float groundDotValue = 0f;
@@ -79,6 +82,7 @@ namespace MovementRework
                 _isPlayerModelNull = true;
             }
             Health = GetComponent<SimpleHealth>();
+            playerAnimScript = GameObject.FindGameObjectWithTag("OverlayCamera").GetComponentInChildren<PlayerAnimations>();
 
             if(!bodyCollider) bodyCollider = core.GetComponentInChildren<CapsuleCollider>();
             standingHeight = bodyCollider.height;
@@ -239,6 +243,8 @@ namespace MovementRework
 
             if(movementInput != Vector2.zero)
             {
+                IsMoving = true;
+                playerAnimScript.Run();
                 Vector3 flatFacingDir = new Vector3(facingDirection.x, 0, facingDirection.z).normalized;
                 Vector3 rightDir = new Vector3(flatFacingDir.z, 0, -flatFacingDir.x);
                 Vector3 inputDir = movementInput.y * flatFacingDir + movementInput.x * rightDir;
@@ -294,6 +300,8 @@ namespace MovementRework
                     SoftCapSpeed(movementData.maxSpeed);
                 } else
                 {
+                    IsMoving = false;
+                    playerAnimScript.ResetToIdle();
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
 
                     // Face the movement direction. Set rotation directly from inputDir instead of
