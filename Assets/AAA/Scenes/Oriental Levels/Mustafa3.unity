@@ -3734,19 +3734,7 @@ MonoBehaviour:
     prefab: {fileID: 1129868953054736, guid: ff950f3725e3a584ba3eb3ef7c84e655, type: 3}
     icon: {fileID: 0}
     maxCount: 2
-  blueprintMaterial: {fileID: 2100000, guid: e9fcf7bdee76dca4bb41baf3a9e96faf, type: 2}
-  minDistance: 5
-  maxDistance: 60
-  distanceStep: 2
-  startDistance: 15
-  rotationSpeed: 90
-  toggleKey: 16
-  rotateLeftKey: 31
-  rotateRightKey: 19
-  enableSnapping: 1
-  snapMask:
-    serializedVersion: 2
-    m_Bits: 49152
+  settings: {fileID: 11400000, guid: b71fa3c609e84d52ae1c7b60d5f3298a, type: 2}
 --- !u!4 &1976990724
 Transform:
   m_ObjectHideFlags: 0
