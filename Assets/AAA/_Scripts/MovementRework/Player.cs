@@ -243,8 +243,8 @@ namespace MovementRework
 
             if(movementInput != Vector2.zero)
             {
+                playerAnimScript.Run(IsMoving);
                 IsMoving = true;
-                playerAnimScript.Run();
                 Vector3 flatFacingDir = new Vector3(facingDirection.x, 0, facingDirection.z).normalized;
                 Vector3 rightDir = new Vector3(flatFacingDir.z, 0, -flatFacingDir.x);
                 Vector3 inputDir = movementInput.y * flatFacingDir + movementInput.x * rightDir;
@@ -300,8 +300,6 @@ namespace MovementRework
                     SoftCapSpeed(movementData.maxSpeed);
                 } else
                 {
-                    IsMoving = false;
-                    playerAnimScript.ResetToIdle();
                     core.AddForce(inputDir * movementData.airborneAcceleration * Time.deltaTime);
 
                     // Face the movement direction. Set rotation directly from inputDir instead of
@@ -330,6 +328,9 @@ namespace MovementRework
                 
             } else
             {
+                
+                playerAnimScript.ResetToIdle(IsMoving);
+                IsMoving = false;
                 if(CheckGround() && !IsJumped)
                 {
                     core.AddForce(-core.linearVelocity * movementData.stoppingPower);
