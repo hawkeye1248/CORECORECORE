@@ -61,10 +61,6 @@ namespace MovementRework
         private Vector3 climbTarget = Vector3.zero;
         private float climbTimer = 0f;
 
-        /// <summary>
-        /// For compability reasons
-        /// </summary>
-        private bool _isPlayerModelNull;
         [Header("Respawn State")]
         private Vector3 startPosition = Vector3.zero;
         private Quaternion startRotation = Quaternion.identity;
@@ -76,11 +72,6 @@ namespace MovementRework
             Instance = this;
 
             camParent = GetComponentInChildren<CamPositioner>();
-            //! playerModel = GetComponentInChildren<PlayerModel>(); // Obsolete, PlayerModel class isn't used since we switched to 2D Player
-            if (!playerModel)
-            {
-                _isPlayerModelNull = true;
-            }
             Health = GetComponent<SimpleHealth>();
             playerAnimScript = GameObject.FindGameObjectWithTag("OverlayCamera").GetComponentInChildren<PlayerAnimations>();
 
@@ -145,7 +136,6 @@ namespace MovementRework
             }
 
             SetFacingDirection();
-            if (!_isPlayerModelNull) playerModel.SimplePosition(core.position);
             camParent.SimplePosition(core.position);
             
         }
@@ -730,7 +720,6 @@ namespace MovementRework
 
             // Snap visuals so the camera/model don't smoothly slide to the new position.
             camParent.SnapPosition(core.position);
-            if(!_isPlayerModelNull) playerModel.SnapPosition(core.position);
         }
 
         public void LungeForward()
