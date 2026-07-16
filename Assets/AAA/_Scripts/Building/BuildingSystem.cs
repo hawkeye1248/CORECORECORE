@@ -17,44 +17,15 @@ namespace Building
         public static BuildingSystem Instance { get; private set; }
 
         [Header("Catalog (editable in inspector and code)")]
-        [Tooltip("Buildings the player can place. Pick with the number keys; shown in the hotbar.")]
+        [Tooltip("Buildings the player can place. Pick with the number keys; shown in the hotbar. " +
+                 "Stays per-scene: different levels hand the player different blocks.")]
         [SerializeField] private List<BuildableItem> buildables = new List<BuildableItem>();
 
-        [Header("Preview")]
-        [Tooltip("Draw the ghost's meshes with the blueprint material. Turn off to hide them and " +
-                 "leave only the sand — with both this and Sand Effect off, the ghost is invisible.")]
-        [SerializeField] private bool blueprintEffect = true;
-        [Tooltip("Translucent material applied to every renderer of the ghost preview.")]
-        [SerializeField] private Material blueprintMaterial;
-
-        [Header("Sand")]
-        [Tooltip("Drift sand grains over the ghost. Turn off to show the blueprint material alone.")]
-        [SerializeField] private bool sandEffect = true;
-        [Tooltip("Additive grain material (BlueprintSand.mat). Without it the sand is skipped.")]
-        [SerializeField] private Material sandMaterial;
-        [SerializeField] private BlueprintSand.Settings sandSettings = new BlueprintSand.Settings();
-
-        [Header("Distance (mouse scroll)")]
-        [SerializeField] private float minDistance = 5f;
-        [SerializeField] private float maxDistance = 60f;
-        [SerializeField] private float distanceStep = 2f;
-        [SerializeField] private float startDistance = 15f;
-
-        [Header("Rotation (hold Q / E)")]
-        [Tooltip("Degrees per second the blueprint yaws while Q or E is held down.")]
-        [SerializeField] private float rotationSpeed = 90f;
-
-        [Header("Keys")]
-        [SerializeField] private Key toggleKey = Key.B;
-        [SerializeField] private Key rotateLeftKey = Key.Q;
-        [SerializeField] private Key rotateRightKey = Key.E;
-
-        [Header("Snapping")]
-        [Tooltip("Master switch. When on, the ghost auto-snaps when the crosshair ray hits something.")]
-        [SerializeField] private bool enableSnapping = true;
-        [Tooltip("Layers the aim ray can snap to. Include Ground (blocks + terrain) and Wall; " +
-                 "exclude Player/Weapon/Enemy/DeadEnemy so the ray never snaps to you or a held weapon.")]
-        [SerializeField] private LayerMask snapMask = ~0;
+        [Header("Tuning")]
+        [Tooltip("How the build system looks and feels: preview, sand, reach, rotation, keys, " +
+                 "snapping. Shared asset — edit it once and every scene follows. " +
+                 "Create via Assets > Create > Building > Building Settings.")]
+        [SerializeField] private BuildingSettings settings;
 
         public bool IsBuildModeActive { get; private set; }
         public int SelectedIndex { get; private set; }
@@ -86,7 +57,21 @@ namespace Building
                 return;
             }
             Instance = this;
-            _distance = Mathf.Clamp(startDistance, minDistance, maxDistance);
+
+            // Every key, distance and material now lives in the asset, so without it there is
+            // nothing to read and the whole component would just throw on the first frame. Say so
+            // once, plainly, instead of spraying null references.
+            if (settings == null)
+            {
+                Debug.LogError(
+                    $"{nameof(BuildingSystem)} on '{name}' has no {nameof(BuildingSettings)} assigned — " +
+                    "build mode is disabled. Assign one (Assets/AAA/Settings/BuildingSettings.asset).",
+                    this);
+                enabled = false;
+                return;
+            }
+
+            _distance = Mathf.Clamp(settings.StartDistance, settings.MinDistance, settings.MaxDistance);
 
             // Seed each building's runtime stock from its inspector limit.
             foreach (BuildableItem item in buildables)
@@ -113,7 +98,7 @@ namespace Building
         {
             if (Keyboard.current == null) return;
 
-            if (Keyboard.current[toggleKey].wasPressedThisFrame)
+            if (Keyboard.current[settings.ToggleKey].wasPressedThisFrame)
                 ToggleBuildMode();
 
             if (!IsBuildModeActive) return;
@@ -179,7 +164,8 @@ namespace Building
             if (Mouse.current == null) return;
             float scroll = Mouse.current.scroll.ReadValue().y;
             if (Mathf.Abs(scroll) > 0.01f)
-                _distance = Mathf.Clamp(_distance + Mathf.Sign(scroll) * distanceStep, minDistance, maxDistance);
+                _distance = Mathf.Clamp(_distance + Mathf.Sign(scroll) * settings.DistanceStep,
+                                        settings.MinDistance, settings.MaxDistance);
         }
 
         /// <summary>
@@ -201,9 +187,9 @@ namespace Building
             if (cam == null) return;
 
             RaycastHit h = default;
-            bool hit = enableSnapping &&
-                       Physics.Raycast(cam.position, cam.forward, out h, maxDistance, snapMask,
-                                       QueryTriggerInteraction.Ignore);
+            bool hit = settings.EnableSnapping &&
+                       Physics.Raycast(cam.position, cam.forward, out h, settings.MaxDistance,
+                                       settings.SnapMask, QueryTriggerInteraction.Ignore);
             PlaceableBlock block = hit ? h.collider.GetComponentInParent<PlaceableBlock>() : null;
 
             HandleRotationInput(snapping: hit);
@@ -246,7 +232,7 @@ namespace Building
                                 + Mathf.Abs(dir.z) * gB.extents.z;
                 // Pivot distance at which the ghost's front face just touches the hit surface.
                 float maxD = h.distance - (Vector3.Dot(pivotToCenter, dir) + ghostHalf);
-                float d = Mathf.Clamp(Mathf.Min(_distance, maxD), 0.1f, maxDistance);
+                float d = Mathf.Clamp(Mathf.Min(_distance, maxD), 0.1f, settings.MaxDistance);
                 pos = cam.position + dir * d;
             }
             else
@@ -262,16 +248,16 @@ namespace Building
             if (snapping)
             {
                 // Snapped (cases A/B): discrete 90° steps on key press.
-                if (Keyboard.current[rotateRightKey].wasPressedThisFrame) _snapYawSteps++;
-                if (Keyboard.current[rotateLeftKey].wasPressedThisFrame) _snapYawSteps--;
+                if (Keyboard.current[settings.RotateRightKey].wasPressedThisFrame) _snapYawSteps++;
+                if (Keyboard.current[settings.RotateLeftKey].wasPressedThisFrame) _snapYawSteps--;
             }
             else
             {
                 // Free (case C): continuous yaw while held.
                 float dir = 0f;
-                if (Keyboard.current[rotateLeftKey].isPressed) dir -= 1f;
-                if (Keyboard.current[rotateRightKey].isPressed) dir += 1f;
-                if (dir != 0f) _yaw += dir * rotationSpeed * Time.deltaTime;
+                if (Keyboard.current[settings.RotateLeftKey].isPressed) dir -= 1f;
+                if (Keyboard.current[settings.RotateRightKey].isPressed) dir += 1f;
+                if (dir != 0f) _yaw += dir * settings.RotationSpeed * Time.deltaTime;
             }
         }
 
@@ -415,7 +401,7 @@ namespace Building
             foreach (Rigidbody rb in g.GetComponentsInChildren<Rigidbody>(true))
                 rb.isKinematic = true;
 
-            if (!blueprintEffect)
+            if (!settings.BlueprintEffect)
             {
                 // Sand-only. Switch the meshes off rather than just skipping the material swap —
                 // left alone they'd render in the prefab's solid materials and the "ghost" would be
@@ -424,7 +410,7 @@ namespace Building
                 foreach (Renderer r in g.GetComponentsInChildren<Renderer>(true))
                     r.enabled = false;
             }
-            else if (blueprintMaterial != null)
+            else if (settings.BlueprintMaterial != null)
             {
                 MaterialPropertyBlock mpb = new MaterialPropertyBlock();
 
@@ -433,7 +419,7 @@ namespace Building
                     // Assign via sharedMaterials so we reference the blueprint asset (no leaked
                     // material instances) and never touch the source prefab's materials.
                     var mats = new Material[r.sharedMaterials.Length];
-                    for (int i = 0; i < mats.Length; i++) mats[i] = blueprintMaterial;
+                    for (int i = 0; i < mats.Length; i++) mats[i] = settings.BlueprintMaterial;
                     r.sharedMaterials = mats;
 
                     // The wireframe blueprint shader draws the edges of the mesh's bounding box, so
@@ -450,7 +436,8 @@ namespace Building
 
             // Added last: BlueprintSand measures the ghost's renderers, so every mesh has to be in
             // place (and the sand's own renderer must not exist yet) before it sizes itself.
-            if (sandEffect) BlueprintSand.Attach(g, sandMaterial, sandSettings);
+            if (settings.SandEffect)
+                BlueprintSand.Attach(g, settings.SandMaterial, settings.SandSettings);
 
             return g;
         }

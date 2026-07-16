@@ -18,25 +18,25 @@ EditorBuildSettings:
     path: Assets/AAA/Scenes/Oriental Levels/Alparslan_5.unity
     guid: 5cb2cb6525081c4468856e87f8d10eda
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa1u.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa1u.unity
     guid: fe35ca76aa782b749b3fc002dc616469
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa2u.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa2u.unity
     guid: a5099279ec3653942ba9fd619196c9c5
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa3.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa3.unity
     guid: f48c4da3f60d79549b88d16905154f77
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa4.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa4.unity
     guid: f050523e4af7cb5439261621903f838a
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa5.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa5.unity
     guid: c858f7fb37ca7f544b27b90ada503ae1
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa6.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa6.unity
     guid: 3ea44793141130346bbd55f9f3a4c203
   - enabled: 1
-    path: Assets/AAA/Scenes/Oriental Levels/Mustafa7.unity
+    path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa7.unity
     guid: 11bf0f80b7580274c949a25ae5673674
   - enabled: 1
     path: Assets/AAA/Scenes/ContributerLevels/BirdemLevels/Level1.unity
@@ -47,5 +47,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/AAA/Scenes/ContributerLevels/BirdemLevels/Level3.unity
     guid: 3e7c84f00ecf73a4da8a6904e192474f
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa1b.unity
+    guid: ef21fb69427439148be75509d7ee5338
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa2c.unity
+    guid: 065b6f02d07a1e24c8452af75e462c21
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Mustafa3c.unity
+    guid: 6b067998cc26ca344a46d69fa7aaed69
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

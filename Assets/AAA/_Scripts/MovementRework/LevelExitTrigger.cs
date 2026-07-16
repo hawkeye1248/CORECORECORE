@@ -1,11 +1,13 @@
 using Eflatun.SceneReference;
+using Progression;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace MovementRework {
     /// <summary>
     /// Place at the end of a level on a GameObject with a Collider marked "Is Trigger".
-    /// When the player enters, the screen fades to black and the target scene is loaded.
+    /// When the player enters, the run is timed out and recorded on the level's leaderboard, the board
+    /// is shown, and once the player dismisses it the screen fades to black and the target scene loads.
     /// Assign the destination scene in the inspector (it must also be added to Build Settings).
     /// </summary>
     [RequireComponent(typeof(Collider))]
@@ -33,6 +35,18 @@ namespace MovementRework {
             if (other.GetComponentInParent<Player>() == null) return;
 
             triggered = true;
+
+            LevelTimer timer = LevelTimer.Instance;
+            LeaderboardUI leaderboard = LeaderboardUI.Instance;
+            if (timer != null && leaderboard != null)
+            {
+                // Stop the clock and record the run, then hold on the board. The transition to the next
+                // scene is what the player's "continue" press sets off.
+                LevelResult result = timer.FinishLevel();
+                leaderboard.Show(result, BeginTransition);
+                return;
+            }
+
             BeginTransition();
         }
 

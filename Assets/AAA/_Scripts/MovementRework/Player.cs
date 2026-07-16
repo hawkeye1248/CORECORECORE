@@ -113,12 +113,17 @@ namespace MovementRework
 
         private void Update()
         {
-            if(Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+            // Once the level is finished the leaderboard is up and any key press dismisses it, so the
+            // respawn hotkeys must not fire on that same press and drag us back into the level.
+            bool levelFinished = Progression.LevelTimer.Instance != null
+                                 && Progression.LevelTimer.Instance.HasFinished;
+
+            if(!levelFinished && Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
             {
                 RespawnAtStart();
             }
 
-            if(Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
+            if(!levelFinished && Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame)
             {
                 RespawnAtMapStart();
             }
@@ -674,6 +679,9 @@ namespace MovementRework
         public void RespawnAtMapStart()
         {
             Building.BuildingSystem.Instance?.ResetBuildings();
+            // Starting the map over starts the run over, so the clock goes back to zero. A plain death
+            // (RespawnAtStart) deliberately does not: the time lost to it is the cost of dying.
+            Progression.LevelTimer.Instance?.ResetTimer();
             Respawn(startPosition, startRotation);
         }
 
