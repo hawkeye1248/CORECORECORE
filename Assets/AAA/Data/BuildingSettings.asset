@@ -17,7 +17,7 @@ MonoBehaviour:
   sandEffect: 1
   sandMaterial: {fileID: 2100000, guid: 8d2c5b71ae4f4c93a0e7f61d5c39b2e8, type: 2}
   sandSettings:
-    region: 1
+    region: 0
     grainsPerUnit: 60
     maxGrains: 3000
     grainSize: {x: 0.02, y: 0.06}
@@ -32,7 +32,7 @@ MonoBehaviour:
     colorB: {r: 1.735602, g: 0.5906145, b: 0, a: 1}
     fadeIn: 0.15
     fadeOut: 0.35
-    simulateInWorldSpace: 0
+    simulateInWorldSpace: 1
   minDistance: 5
   maxDistance: 60
   distanceStep: 2

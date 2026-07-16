@@ -10512,8 +10512,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScene:
-    asset: {fileID: 102900000, guid: 8aee5cb312387e3499bff0c1a1f3629a, type: 3}
-    guid: 8aee5cb312387e3499bff0c1a1f3629a
+    asset: {fileID: 102900000, guid: 9a20c7ea34469e24ea5b5b67dae10dc3, type: 3}
+    guid: 9a20c7ea34469e24ea5b5b67dae10dc3
   fadeTime: 0.5
 --- !u!1001 &941753549
 PrefabInstance:

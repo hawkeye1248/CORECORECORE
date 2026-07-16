@@ -15,8 +15,17 @@ EditorBuildSettings:
     path: Assets/AAA/Scenes/Oriental Levels/Alparslan_2.unity
     guid: 7eb23faec4194c74d979245438b048fa
   - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Alparslan_3.unity
+    guid: c2dd0b07bb9c466428ea57feca5dd845
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Alparslan_4.unity
+    guid: 9a20c7ea34469e24ea5b5b67dae10dc3
+  - enabled: 1
     path: Assets/AAA/Scenes/Oriental Levels/Alparslan_5.unity
     guid: 5cb2cb6525081c4468856e87f8d10eda
+  - enabled: 1
+    path: Assets/AAA/Scenes/Oriental Levels/Alparslan_6.unity
+    guid: fa4b1e3c6ced4744f999de4f75ae3844
   - enabled: 1
     path: Assets/AAA/Scenes/Oriental Levels/OldLevels/Mustafa1u.unity
     guid: fe35ca76aa782b749b3fc002dc616469
